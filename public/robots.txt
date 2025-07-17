@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://lasu.app
+
+# Sitemaps
+Sitemap: https://lasu.app/sitemap.xml
