@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "LaSu - Your AI Language Support",
   description:
-    "LaSu helps you learn languages effortlessly by translating selected text with real-life examples and AI-powered context understanding. Built for learners, loved by polyglots.",
+    "Learn languages effortlessly with LaSu - the Chrome extension that offers AI-powered translations, real-life examples, and contextual understanding as you browse.",
   keywords: [
     "language learning",
     "AI translation",
@@ -24,9 +24,14 @@ export const metadata: Metadata = {
     "multilingual",
     "context-aware translation",
     "AI Language Support",
+    "learn languages while browsing",
   ],
-  authors: [{ name: "Motasem Abubaraka" }],
+  icons: {
+    icon: "/favicon.ico",
+  },
+  authors: [{ name: "Motasem Abubaraka", url: "https://lasu.app" }],
   creator: "Motasem Abubaraka",
+  metadataBase: new URL("https://lasu.app"),
   openGraph: {
     title: "LaSu - Your AI Language Support",
     description:
@@ -35,6 +40,22 @@ export const metadata: Metadata = {
     siteName: "LaSu",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "https://lasu.app/meta-img.png",
+        width: 1200,
+        height: 630,
+        alt: "LaSu AI Language Support Preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LaSu - Your AI Language Support",
+    description:
+      "AI-powered Chrome extension for smarter language learning and browsing.",
+    images: ["https://lasu.app/meta-img.png"],
+    creator: "@mota6em",
   },
 };
 
