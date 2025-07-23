@@ -1,27 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 import TranslationSettingDialog from "./TranslationSettingDialog";
+import { useTranslateStore } from "@/store/useTranslateStore";
 
 export function Translate() {
   const [text, setText] = useState("");
-  const [translationType, setTranslationType] = useState("formal");
-  const [selectedLanguages, setSelectedLanguages] = useState([
-    { value: "english", label: "English 🇺🇸" },
-  ]);
+  const translationType = useTranslateStore((state) => state.translationType);
+  const selectedLanguages = useTranslateStore(
+    (state) => state.selectedLanguages
+  );
+  const [result, setResult] = useState({});
+  const handleTranslate = async () => {
+    const langs = selectedLanguages.map((lang) => lang.value);
 
-  const handleTranslate = () => {
-    const updated: Record<string, string> = {};
-    selectedLanguages.forEach((lang) => {
-      updated[
-        lang.value
-      ] = `🔁 ${text} translated (${translationType}) to ${lang.label}`;
-    });
-    setResult(updated);
+    try {
+      const raw = await fetch(`/api/translate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: text,
+          langs,
+          translationType,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => data.translation)
+        .catch((err) => console.log("LaSu: Backend error. ", err.message));
+
+      const apiResult = JSON.parse(raw);
+      setResult({
+        translations: apiResult.translations || {},
+        example: apiResult.example || {},
+      });
+    } catch (err) {
+      console.warn("LaSu: Frontend error. ", err.message);
+    }
   };
+
+  console.log("res outside", result);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full space-y-6 flex flex-row gap-x-5">
@@ -41,8 +61,20 @@ export function Translate() {
         <TranslationSettingDialog />
         <div className="mt-6 space-y-4">
           <div className="p-4 bg-muted rounded shadow-sm border">
-            <p className="font-semibold mb-1">Translation Result</p>
-            <p>No translation yet.</p>
+            <p className="font-semibold mb-2">Translation Result</p>
+            {Object.entries(result.translations || {}).map(([lang, text]) => (
+              <div key={lang} className="mb-2 p-3 border rounded bg-white">
+                <div className="flex flex-row gap-x-2">
+                  <p className="font-semibold capitalize">{lang} :</p>
+                  <p>{text}</p>
+                </div>
+                {result.example?.[lang] && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Example: {result.example[lang]}
+                  </p>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -48,10 +48,10 @@ const TranslationSettingDialog = () => {
     <div>
       <Dialog>
         <DialogTrigger>
-          <button className="btn btn-neutral  px-2 ">
+          <div className="btn btn-neutral  px-2 ">
             <CiSettings className="w-6 h-6" />
             Translation Settings
-          </button>
+          </div>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
