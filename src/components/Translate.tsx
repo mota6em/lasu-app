@@ -13,7 +13,10 @@ export function Translate() {
   const selectedLanguages = useTranslateStore(
     (state) => state.selectedLanguages
   );
-  const [result, setResult] = useState({});
+  const [result, setResult] = useState<{
+    translations?: Record<string, string>;
+    example?: Record<string, string>;
+  }>({});
   const handleTranslate = async () => {
     const langs = selectedLanguages.map((lang) => lang.value);
 
@@ -33,10 +36,10 @@ export function Translate() {
 
       const apiResult = JSON.parse(raw);
       setResult({
-        translations: apiResult.translations || {},
-        example: apiResult.example || {},
+        translations: apiResult?.translations || {},
+        example: apiResult?.example || {},
       });
-    } catch (err) {
+    } catch (err: any) {
       console.warn("LaSu: Frontend error. ", err.message);
     }
   };
@@ -62,13 +65,13 @@ export function Translate() {
         <div className="mt-6 space-y-4">
           <div className="p-4 bg-muted rounded shadow-sm border">
             <p className="font-semibold mb-2">Translation Result</p>
-            {Object.entries(result.translations || {}).map(([lang, text]) => (
+            {Object.entries(result?.translations || {}).map(([lang, text]) => (
               <div key={lang} className="mb-2 p-3 border rounded bg-white">
                 <div className="flex flex-row gap-x-2">
                   <p className="font-semibold capitalize">{lang} :</p>
                   <p>{text}</p>
                 </div>
-                {result.example?.[lang] && (
+                {result?.example?.[lang] && (
                   <p className="text-sm text-muted-foreground mt-1">
                     Example: {result.example[lang]}
                   </p>
