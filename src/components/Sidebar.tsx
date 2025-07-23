@@ -20,7 +20,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r min-h-screen px-4 py-6">
+    <aside className="w-56 bg-white border-r min-h-screen px-4 py-6">
       <h2 className="text-xl font-bold mb-6 lasu-logo">LaSu</h2>
       <nav className="space-y-2">
         {menu.map((item) => (
