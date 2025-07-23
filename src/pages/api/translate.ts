@@ -16,26 +16,10 @@ export default async function handler(
   }
 
   const preferredLangs = langs || ["en"];
-  const langNames: Record<string, string> = {
-    en: "English",
-    ar: "Arabic",
-    hun: "Hungarian",
-    es: "Spanish",
-    zh: "Chinese",
-    hi: "Hindi",
-    bn: "Bengali",
-    fr: "French",
-    ru: "Russian",
-    pt: "Portuguese",
-    ur: "Urdu",
-  };
 
-  const readableLangs = preferredLangs.map(
-    (code: string) => langNames[code] || code
-  );
   const isSingleWord = text.trim().split(/\s+/).length === 1;
 
-  const formatLines = readableLangs
+  const formatLines = preferredLangs
     .map((lang: string) => `${lang}: ...`)
     .join("\n");
   const userPrompt = isSingleWord
@@ -45,16 +29,20 @@ export default async function handler(
       Respond in this JSON format only, using this structure only and no other text!!!:
        {
         "translations": { 
-          ${readableLangs.map((lang: string) => `"${lang}": "..."`).join(",\n")}
+          ${preferredLangs
+            .map((lang: string) => `"${lang}": "..."`)
+            .join(",\n")}
         },
         "example": {
-          ${readableLangs.map((lang: string) => `"${lang}": "..."`).join(",\n")}
+          ${preferredLangs
+            .map((lang: string) => `"${lang}": "..."`)
+            .join(",\n")}
         }
       }
      
 
       1. Detect its original language.
-      2. Translate it into: ${readableLangs.join(", ")}.
+      2. Translate it into: ${preferredLangs.join(", ")}.
       3. Write a short meaning in the word's language.
       4. Write real-life example sentence in each target language. Meaning must match.
       Important: Use ${translationType} tone. Respond with raw JSON only. Do NOT use markdown, backticks, or any extra text.
@@ -65,12 +53,12 @@ export default async function handler(
     Respond in this JSON format only, using this structure only and no other text!!!:
     {
       "translations": {
-        ${readableLangs.map((lang: string) => `"${lang}": "..."`).join(",\n")}
+        ${preferredLangs.map((lang: string) => `"${lang}": "..."`).join(",\n")}
       }
     }
   
     1. Detect the original language.
-    2. Translate into: ${readableLangs.join(", ")}.
+    2. Translate into: ${preferredLangs.join(", ")}.
    Important: Use ${translationType} tone. Respond with raw JSON only. Do NOT use markdown, backticks, or any extra text.
     `;
   try {
@@ -87,7 +75,8 @@ export default async function handler(
     });
 
     const reply = chat.choices[0].message.content;
-    res.json({ translation: reply });
+    const translation = reply?.replace("```json", "").replace("```", "");
+    res.json({ translation });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Translation failed." });
