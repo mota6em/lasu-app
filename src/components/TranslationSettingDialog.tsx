@@ -15,6 +15,7 @@ import { useTranslateStore } from "@/store/useTranslateStore";
 import { Button } from "./ui/button";
 
 const TranslationSettingDialog = () => {
+  const [open, setOpen] = useState(false);
   const MAX_LANGS = 4;
   const MIN_LANGS = 1;
   const [activeTab, setActiveTab] = useState("english");
@@ -46,7 +47,7 @@ const TranslationSettingDialog = () => {
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger>
           <div className="btn btn-neutral  px-2 ">
             <CiSettings className="w-6 h-6" />
@@ -117,7 +118,9 @@ const TranslationSettingDialog = () => {
             </div>
           </DialogHeader>
           <div className="flex justify-end">
-            <Button className="w-fit">Save</Button>
+            <Button className="w-fit" onClick={() => setOpen(false)}>
+              Save
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
