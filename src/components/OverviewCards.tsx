@@ -1,4 +1,6 @@
+"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSession } from "next-auth/react";
 
 export function OverviewCards() {
   const cards = [
@@ -6,7 +8,10 @@ export function OverviewCards() {
     { title: "This Week", value: "189" },
     { title: "Most Used Lang", value: "🇺🇸 English" },
   ];
-
+  const { data: session } = useSession();
+  if (!session) {
+    return null;
+  }
   return (
     <div className="flex flex-col gap-y-5">
       <h2 className="text-2xl font-semibold mt-2 -mb-2">Overview</h2>
