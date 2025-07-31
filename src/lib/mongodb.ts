@@ -6,6 +6,9 @@ const options = {};
 let client;
 let clientPromise: Promise<MongoClient>;
 
+declare global {
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
+}
 if (!process.env.MONGODB_URI) {
   throw new Error("Please add MONGODB_URI to your .env.local");
 }
