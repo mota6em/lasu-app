@@ -1,8 +1,9 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Copy, Check } from "lucide-react";
 
 import TranslationSettingDialog from "./TranslationSettingDialog";
 import { useTranslateStore } from "@/store/useTranslateStore";
@@ -18,6 +19,8 @@ export function Translate() {
     translations?: Record<string, string>;
     example?: Record<string, string>;
   }>({});
+  const [copiedLang, setCopiedLang] = useState<string | null>(null);
+
   const handleTranslate = async () => {
     if (!text || text.length === 0) return;
     const langs = selectedLanguages.map((lang) => lang.value);
@@ -106,11 +109,50 @@ export function Translate() {
                 <div key={lang} className="mb-2 p-3 border rounded bg-white">
                   <div className="flex flex-row gap-x-2">
                     <p className="font-semibold capitalize">{lang} :</p>
-                    <p>{text}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-slate-700 dark:text-blue-400 font-semibold">
+                        {text}
+                      </p>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(text);
+                          setCopiedLang(lang);
+                          setTimeout(() => setCopiedLang(null), 2000);
+                        }}
+                        className="text-muted-foreground hover:text-primary transition"
+                      >
+                        {copiedLang === lang ? (
+                          <Check size={16} className="text-green-500" />
+                        ) : (
+                          <Copy size={16} />
+                        )}
+                      </button>
+                    </div>
                   </div>
                   {result?.example?.[lang] && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Example: {result.example[lang]}
+                    <p className="text-sm text-muted-foreground mt-1 flex flex-row gap-x-2">
+                      Example:{" "}
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm text-muted-foreground ">
+                          {result.example[lang]}
+                        </p>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              result.example[lang] || ""
+                            );
+                            setCopiedLang(lang + "-example");
+                            setTimeout(() => setCopiedLang(null), 2000);
+                          }}
+                          className="text-muted-foreground hover:text-primary transition"
+                        >
+                          {copiedLang === lang + "-example" ? (
+                            <Check size={16} className="text-green-500" />
+                          ) : (
+                            <Copy size={13} />
+                          )}
+                        </button>
+                      </div>
                     </p>
                   )}
                 </div>

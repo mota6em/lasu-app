@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { availableLanguages } from "@/lib/languages";
+import { Copy, Check } from "lucide-react";
 
 interface Translation {
   _id: string;
@@ -20,6 +21,7 @@ interface Translation {
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<Translation[]>([]);
+  const [copiedLang, setCopiedLang] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/translation/history")
@@ -68,12 +70,51 @@ export default function HistoryPage() {
                             )[0]?.label || lang}
                             :
                           </p>
-                          <p>{text}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-slate-700 dark:text-blue-400 font-semibold">
+                              {text}
+                            </p>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(text);
+                                setCopiedLang(lang);
+                                setTimeout(() => setCopiedLang(null), 2000);
+                              }}
+                              className="text-muted-foreground hover:text-primary transition"
+                            >
+                              {copiedLang === lang ? (
+                                <Check size={16} className="text-green-500" />
+                              ) : (
+                                <Copy size={16} />
+                              )}
+                            </button>
+                          </div>
                         </div>
 
                         {item.result.example?.[lang] && (
-                          <p className="text-sm text-muted-foreground mt-2 italic">
-                            💡 Example: {item.result.example[lang]}
+                          <p className="text-sm text-muted-foreground mt-2 italic flex flex-row gap-x-2">
+                            💡 Example:{" "}
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm text-muted-foreground ">
+                                {item.result.example[lang]}
+                              </p>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(
+                                    item.result.example[lang]
+                                  );
+                                  setCopiedLang(lang + "-example");
+                                  setTimeout(() => setCopiedLang(null), 2000);
+                                }}
+                                className="text-muted-foreground hover:text-primary transition"
+                              >
+                                {copiedLang === lang + "-example" ? (
+                                  <Check size={13} className="text-green-500" />
+                                ) : (
+                                  <Copy size={13} />
+                                )}
+                              </button>
+                            </div>
                           </p>
                         )}
                       </div>
