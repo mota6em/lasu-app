@@ -15,9 +15,10 @@ import { useTranslateStore } from "@/store/useTranslateStore";
 import { Button } from "./ui/button";
 import saveSettings from "@/store/saveSettings";
 import { useSession } from "next-auth/react";
+import { useSettingsDialog } from "@/store/useSettingsDialog";
 
 const TranslationSettingDialog = () => {
-  const [open, setOpen] = useState(false);
+  const { isOpen, toggleSettingsDialog } = useSettingsDialog();
   const MAX_LANGS = 4;
   const MIN_LANGS = 1;
   const [activeTab, setActiveTab] = useState("english");
@@ -50,7 +51,7 @@ const TranslationSettingDialog = () => {
 
   return (
     <div>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={isOpen} onOpenChange={toggleSettingsDialog}>
         <DialogTrigger>
           <div className="btn btn-neutral  px-2 ">
             <CiSettings className="w-6 h-6" />
@@ -129,7 +130,7 @@ const TranslationSettingDialog = () => {
                   translationType,
                 };
                 await saveSettings(settings, session);
-                setOpen(false);
+                toggleSettingsDialog();
               }}
             >
               Save
