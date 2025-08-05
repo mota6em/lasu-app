@@ -42,6 +42,22 @@ export function Translate() {
         example: apiResult?.example || {},
       });
       setResultLoading(false);
+
+      //save to db
+      console.log("save to db", {
+        sourceText: text,
+        result: apiResult || {},
+        translationType,
+      });
+      await fetch("/api/translation/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sourceText: text,
+          result: apiResult,
+          translationType,
+        }),
+      });
     } catch (err: any) {
       console.warn("LaSu: Frontend error. ", err.message);
     }
