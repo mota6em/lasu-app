@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { availableLanguages } from "@/lib/languages";
 import { Copy, Check } from "lucide-react";
+import { MdDelete } from "react-icons/md";
 
 interface Translation {
   _id: string;
@@ -32,6 +33,21 @@ export default function HistoryPage() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
+      {history.length === 0 && (
+        <>
+          <p className="text-muted-foreground text-sm my-5 ms-5">
+            No translation history found, start a translation to see it here.
+          </p>
+          <button
+            className="btn btn-primary ms-5"
+            onClick={() => {
+              window.location.href = "/dashboard";
+            }}
+          >
+            Start a translation
+          </button>
+        </>
+      )}
       <ScrollArea className="h-screen p-6">
         <div className="grid gap-6">
           {history.map((item) => (
@@ -46,7 +62,25 @@ export default function HistoryPage() {
                   <div className=" text-blue-950/90 text-sm">
                     {new Date(item.createdAt).toLocaleString().slice(0, -3)}
                   </div>
-                  <Badge>{item.translationType}</Badge>
+                  <div className="flex items-center">
+                    <Badge>{item.translationType}</Badge>
+                    <MdDelete
+                      onClick={() => {
+                        fetch(
+                          `/api/translation/history/${item._id.toString()}`,
+                          {
+                            method: "DELETE",
+                          }
+                        ).then(() => {
+                          setHistory((prev) =>
+                            prev.filter((i) => i._id !== item._id)
+                          );
+                        });
+                      }}
+                      size={23}
+                      className="float-right ms-2  cursor-pointer text-red-600 hover:text-red-500 transition duration-300 ease-in-out"
+                    />
+                  </div>
                 </div>
 
                 <div>
