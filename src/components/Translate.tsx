@@ -134,12 +134,12 @@ export function Translate() {
                       Example:{" "}
                       <div className="flex items-center gap-2">
                         <p className="text-sm text-muted-foreground ">
-                          {result.example[lang]}
+                          {result?.example?.[lang] || ""}
                         </p>
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(
-                              result.example[lang] || ""
+                              result?.example?.[lang] || ""
                             );
                             setCopiedLang(lang + "-example");
                             setTimeout(() => setCopiedLang(null), 2000);
