@@ -52,13 +52,7 @@ const TranslationSettingDialog = () => {
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={toggleSettingsDialog}>
-        <DialogTrigger>
-          <div className="btn btn-neutral  px-2 ">
-            <CiSettings className="w-6 h-6" />
-            Translation Settings
-          </div>
-        </DialogTrigger>
-        <DialogContent>
+         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-2xl">Settings</DialogTitle>
             <DialogDescription>

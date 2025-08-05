@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Copy, Check } from "lucide-react";
 
-import TranslationSettingDialog from "./TranslationSettingDialog";
 import { useTranslateStore } from "@/store/useTranslateStore";
+import { CiSettings } from "react-icons/ci";
+import { useSettingsDialog } from "@/store/useSettingsDialog";
 
 export function Translate() {
   const [resultLoading, setResultLoading] = useState(false);
@@ -20,6 +21,7 @@ export function Translate() {
     example?: Record<string, string>;
   }>({});
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
+  const { toggleSettingsDialog } = useSettingsDialog();
 
   const handleTranslate = async () => {
     if (!text || text.length === 0) return;
@@ -66,8 +68,6 @@ export function Translate() {
     }
   };
 
-  console.log("res outside", result);
-
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full space-y-6 flex flex-row gap-x-5">
       <form
@@ -95,7 +95,13 @@ export function Translate() {
       </form>
 
       <div className="flex flex-col w-1/2 ">
-        <TranslationSettingDialog />
+        <div
+          className="btn btn-neutral  px-1.5 text-xs  w-fit"
+          onClick={() => toggleSettingsDialog()}
+        >
+          <CiSettings className="w-5.5 h-5.5" />
+          Translation Settings
+        </div>
         <div className="mt-6 space-y-4">
           <div className="p-4 bg-gray-50 rounded shadow-sm border">
             <p className="font-semibold mb-2">Translation Result</p>

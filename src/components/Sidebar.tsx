@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Home, History, BarChart, Settings, LogOut } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
+import TranslationSettingDialog from "./TranslationSettingDialog";
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
@@ -28,6 +29,7 @@ export function Sidebar() {
   return (
     <aside className="w-56 bg-white border-r min-h-screen px-5 py-6 flex flex-col justify-between">
       <div>
+        <TranslationSettingDialog />
         <h2 className="text-2xl font-bold mb-8 text-gray-800 lasu-logo">
           LaSu
         </h2>
@@ -70,7 +72,11 @@ export function Sidebar() {
                   <div
                     key={item.href}
                     onClick={() => showSettingsDialog()}
-                    className={`${isOpen ? "bg-gray-100 text-black border border-gray-300" : ""} flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md transition text-sm font-medium ${
+                    className={`${
+                      isOpen
+                        ? "bg-gray-100 text-black border border-gray-300"
+                        : ""
+                    } flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md transition text-sm font-medium ${
                       isActive
                         ? "bg-gray-100 text-black"
                         : "text-gray-600 hover:bg-gray-50"
