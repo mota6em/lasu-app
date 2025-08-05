@@ -1,3 +1,4 @@
+import SettingsLoader from "@/components/SettingsLoader";
 import { Sidebar } from "@/components/Sidebar";
 import { Topbar } from "@/components/Topbar";
 import type { Metadata } from "next";
@@ -9,6 +10,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen">
+      <SettingsLoader />
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />

@@ -13,6 +13,8 @@ import { CiSettings } from "react-icons/ci";
 import Language from "@/types/language";
 import { useTranslateStore } from "@/store/useTranslateStore";
 import { Button } from "./ui/button";
+import saveSettings from "@/store/saveSettings";
+import { useSession } from "next-auth/react";
 
 const TranslationSettingDialog = () => {
   const [open, setOpen] = useState(false);
@@ -44,6 +46,7 @@ const TranslationSettingDialog = () => {
       }
     }
   };
+  const { data: session } = useSession();
 
   return (
     <div>
@@ -118,7 +121,17 @@ const TranslationSettingDialog = () => {
             </div>
           </DialogHeader>
           <div className="flex justify-end">
-            <Button className="w-fit" onClick={() => setOpen(false)}>
+            <Button
+              className="w-fit"
+              onClick={async () => {
+                const settings = {
+                  selectedLanguages,
+                  translationType,
+                };
+                await saveSettings(settings, session);
+                setOpen(false);
+              }}
+            >
               Save
             </Button>
           </div>
