@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 
 const uri = process.env.MONGODB_URI!;
 const options = {};
@@ -25,3 +26,9 @@ if (process.env.NODE_ENV === "development") {
 }
 
 export default clientPromise;
+
+export const connectToDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+
+  await mongoose.connect(uri);
+};
