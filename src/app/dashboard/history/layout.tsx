@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description:
       "Track and review your past translations with examples and language stats. Your learning journey, stored and synced.",
     url: "https://lasu.app/dashboard/history",
-    siteName: "LaSu",
+    siteName: "LaSu - Your AI Language Support",
     type: "website",
   },
 };

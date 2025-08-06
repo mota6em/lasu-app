@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description:
       "Translate, understand, and learn languages as you browse. The ultimate tool for polyglots and learners.",
     url: "https://lasu.app",
-    siteName: "LaSu",
+    siteName: "LaSu - Your AI Language Support",
     locale: "en_US",
     type: "website",
     images: [
@@ -68,6 +68,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="light">
+      <script type="application/ld+json" suppressHydrationWarning>
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "LaSu - Your AI Language Support",
+          url: "https://lasu.app",
+          description:
+            "Learn languages effortlessly with LaSu - the Chrome extension that offers AI-powered translations, real-life examples, and contextual understanding as you browse.",
+        })}
+      </script>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

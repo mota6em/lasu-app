@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     description:
       "Translate, understand, and learn languages as you browse. The ultimate tool for polyglots and learners.",
     url: "https://lasu.app",
-    siteName: "LaSu",
+    siteName: "LaSu - Your AI Language Support",
     locale: "en_US",
     type: "website",
     images: [
