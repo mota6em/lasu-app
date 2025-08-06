@@ -10,11 +10,13 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen">
-      <SettingsLoader />
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="fixed top-0 left-0 h-screen w-56 bg-white border-r z-50">
+        <SettingsLoader />
+        <Sidebar />
+      </div>
+      <div className="flex-1 ml-56 flex flex-col">
         <Topbar />
-        <main className="flex-1 p-6 bg-muted/50">{children}</main>
+        <main className="flex-1 mt-6 px-5 bg-muted/50">{children}</main>
       </div>
     </div>
   );
