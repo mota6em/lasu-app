@@ -8,17 +8,7 @@ import { cn } from "@/lib/utils";
 import { availableLanguages } from "@/lib/languages";
 import { Copy, Check } from "lucide-react";
 import { MdDelete } from "react-icons/md";
-
-interface Translation {
-  _id: string;
-  sourceText: string;
-  translationType: string;
-  createdAt: string;
-  result: {
-    translations: Record<string, string>;
-    example?: Record<string, string>;
-  };
-}
+import Translation from "@/types/translation";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<Translation[]>([]);
