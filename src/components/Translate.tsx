@@ -118,11 +118,11 @@ export function Translate() {
 
       <div className="flex flex-col w-1/2 ">
         <div
-          className="btn btn-neutral  bg-slate-600 hover:bg-slate-700 border-0 rounded-md px-2 text-xs  w-fit"
+          className="flex flex-row gap-x-0.5 items-center text-sm cursor-pointer hover:underline  w-fit"
           onClick={() => toggleSettingsDialog()}
         >
-          <CiSettings className="w-5.5 h-5.5" />
-          Translation Settings
+          <CiSettings className="w-5.5 h-5.5 p-0" />
+          <span className="flex  text-center">Translation Settings</span>
         </div>
         <div className="mt-6 space-y-4">
           <div className="p-4 bg-gray-50 rounded shadow-sm border">
