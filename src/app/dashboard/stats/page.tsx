@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
 import { availableLanguages } from "@/lib/languages";
-import type { Translation } from "@/types/translation";
 import {
   LineChart,
   Line,
@@ -14,6 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Translation from "@/types/translation";
 
 export default function StatsPage() {
   const { data: session } = useSession();
