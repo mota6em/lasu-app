@@ -10,14 +10,23 @@ export function OverviewCards() {
 
   const { data: session } = useSession();
   useEffect(() => {
-    if (!session) return;
+    const loadHistory = async () => {
+      if (session?.user?.id) {
+        const res = await fetch("/api/translation/history");
+        const data = await res.json();
+        if (Array.isArray(data)) setHistory(data);
+      } else {
+        const local = localStorage.getItem("lasu-history");
+        if (local) {
+          const parsed = JSON.parse(local);
+          if (Array.isArray(parsed)) setHistory(parsed);
+        }
+      }
+    };
 
-    fetch("/api/translation/history")
-      .then((res) => res.json())
-      .then((data) => setHistory(data));
+    loadHistory();
   }, [session]);
 
-  if (!session) return null;
   const totalTranslations = history.length;
 
   const oneWeekAgo = new Date();
