@@ -12,7 +12,7 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          prompt: "consent select_account",
+          prompt: "consent",
         },
       },
     }),
