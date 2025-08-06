@@ -8,6 +8,7 @@ import { Copy, Check } from "lucide-react";
 import { useTranslateStore } from "@/store/useTranslateStore";
 import { CiSettings } from "react-icons/ci";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
+import { useSession } from "next-auth/react";
 
 export function Translate() {
   const [resultLoading, setResultLoading] = useState(false);
@@ -22,7 +23,7 @@ export function Translate() {
   }>({});
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
   const { toggleSettingsDialog } = useSettingsDialog();
-
+  const { data: session } = useSession();
   const handleTranslate = async () => {
     if (!text || text.length === 0) return;
     const langs = selectedLanguages.map((lang) => lang.value);
@@ -54,15 +55,36 @@ export function Translate() {
         result: apiResult || {},
         translationType,
       });
-      await fetch("/api/translation/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sourceText: text,
-          result: apiResult,
-          translationType,
-        }),
-      });
+      if (session) {
+        await fetch("/api/translation/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sourceText: text,
+            result: apiResult,
+            translationType,
+          }),
+        });
+      } else {
+        console.log("save to local storage");
+        try {
+          const existing = localStorage.getItem("lasu-history");
+          const parsed = JSON.parse(existing || "[]");
+          const history = Array.isArray(parsed) ? parsed : [];
+
+          const newEntry = {
+            sourceText: text,
+            result: apiResult,
+            translationType,
+            createdAt: new Date().toISOString(),
+          };
+
+          history.unshift(newEntry);
+          localStorage.setItem("lasu-history", JSON.stringify(history));
+        } catch (err) {
+          console.warn("LaSu: Failed to save history to local storage", err);
+        }
+      }
     } catch (err: any) {
       console.warn("LaSu: Frontend error. ", err.message);
     }
@@ -96,7 +118,7 @@ export function Translate() {
 
       <div className="flex flex-col w-1/2 ">
         <div
-          className="btn btn-neutral  px-1.5 text-xs  w-fit"
+          className="btn btn-neutral  bg-slate-600 hover:bg-slate-700 border-0 rounded-md px-2 text-xs  w-fit"
           onClick={() => toggleSettingsDialog()}
         >
           <CiSettings className="w-5.5 h-5.5" />
@@ -136,7 +158,7 @@ export function Translate() {
                     </div>
                   </div>
                   {result?.example?.[lang] && (
-                    <p className="text-sm text-muted-foreground mt-1 flex flex-row gap-x-2">
+                    <div className="text-sm text-muted-foreground mt-1 flex flex-row gap-x-2">
                       Example:{" "}
                       <div className="flex items-center gap-2">
                         <p className="text-sm text-muted-foreground ">
@@ -159,7 +181,7 @@ export function Translate() {
                           )}
                         </button>
                       </div>
-                    </p>
+                    </div>
                   )}
                 </div>
               ))}

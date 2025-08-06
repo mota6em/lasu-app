@@ -9,20 +9,52 @@ import { availableLanguages } from "@/lib/languages";
 import { Copy, Check } from "lucide-react";
 import { MdDelete } from "react-icons/md";
 import Translation from "@/types/translation";
+import { useSession } from "next-auth/react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<Translation[]>([]);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
-
+  const { data: session } = useSession();
   useEffect(() => {
-    fetch("/api/translation/history")
-      .then((res) => res.json())
-      .then((data) => setHistory(data));
-  }, []);
+    if (session) {
+      fetch("/api/translation/history")
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setHistory(data);
+          } else {
+            console.warn("History API returned non-array:", data);
+            setHistory([]);
+          }
+        });
+    } else {
+      const local = localStorage.getItem("lasu-history");
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed)) setHistory(parsed);
+      }
+    }
+  }, [session]);
 
   return (
     <>
+      {!session && (
+        <Alert variant="destructive" className="mb-5 bg-red-100">
+          <AlertTitle className="flex items-center font-bold text-lg">
+            You're not logged in!
+          </AlertTitle>
+          <AlertDescription>
+            To save your translation history and access it anytime, please sign
+            in with your Google account.
+            <br />
+            It only takes a few seconds — and we’ll remember your progress for
+            you 😊
+          </AlertDescription>
+        </Alert>
+      )}
       <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
+
       {history.length === 0 && (
         <>
           <p className="text-muted-foreground text-sm my-5 ms-5">
@@ -40,7 +72,7 @@ export default function HistoryPage() {
       )}
       <ScrollArea className="h-screen p-6">
         <div className="grid gap-6">
-          {history.map((item) => (
+          {history?.map((item) => (
             <Card
               key={item._id}
               className={cn(
@@ -56,16 +88,22 @@ export default function HistoryPage() {
                     <Badge>{item.translationType}</Badge>
                     <MdDelete
                       onClick={() => {
-                        fetch(
-                          `/api/translation/history/${item._id.toString()}`,
-                          {
-                            method: "DELETE",
-                          }
-                        ).then(() => {
-                          setHistory((prev) =>
-                            prev.filter((i) => i._id !== item._id)
-                          );
-                        });
+                        session
+                          ? fetch(
+                              `/api/translation/history/${item._id.toString()}`,
+                              {
+                                method: "DELETE",
+                              }
+                            )
+                          : localStorage.setItem(
+                              "lasu-history",
+                              JSON.stringify(
+                                history.filter((i) => i._id !== item._id)
+                              )
+                            );
+                        setHistory((prev) =>
+                          prev.filter((i) => i._id !== item._id)
+                        );
                       }}
                       size={23}
                       className="float-right ms-2  cursor-pointer text-red-600 hover:text-red-500 transition duration-300 ease-in-out"
