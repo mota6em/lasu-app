@@ -5,8 +5,6 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { Home, History, BarChart, Settings, LogOut } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import TranslationSettingDialog from "./TranslationSettingDialog";
-import { useTheme } from "next-themes";
-import { themeColors } from "@/lib/theme";
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
