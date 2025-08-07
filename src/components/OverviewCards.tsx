@@ -4,11 +4,13 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Translation from "@/types/translation";
 import { availableLanguages } from "@/lib/languages";
+import { Skeleton } from "./ui/skeleton";
 
 export function OverviewCards() {
   const [history, setHistory] = useState<Translation[]>([]);
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading";
   useEffect(() => {
     const loadHistory = async () => {
       if (session?.user?.id) {
@@ -23,9 +25,9 @@ export function OverviewCards() {
         }
       }
     };
-
-    loadHistory();
-  }, [session]);
+    if (status === "authenticated" || status === "unauthenticated")
+      loadHistory();
+  }, [session, status]);
 
   const totalTranslations = history.length;
 
@@ -68,7 +70,11 @@ export function OverviewCards() {
               <CardTitle>{card.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{card.value}</p>
+              {isLoading ? (
+                <Skeleton className="h-8 w-[150px]" />
+              ) : (
+                <p className="text-2xl font-bold">{card.value || "-"}</p>
+              )}
             </CardContent>
           </Card>
         ))}
