@@ -11,31 +11,63 @@ import { MdDelete } from "react-icons/md";
 import Translation from "@/types/translation";
 import { useSession } from "next-auth/react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { HistoryCardSkeleton } from "@/components/HistoryCardSkeleton";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<Translation[]>([]);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [fetched, setFetched] = useState(false);
+
   useEffect(() => {
-    if (session) {
-      fetch("/api/translation/history")
-        .then((res) => res.json())
-        .then((data) => {
-          if (Array.isArray(data)) {
-            setHistory(data);
-          } else {
-            console.warn("History API returned non-array:", data);
-            setHistory([]);
-          }
-        });
-    } else {
-      const local = localStorage.getItem("lasu-history");
-      if (local) {
-        const parsed = JSON.parse(local);
-        if (Array.isArray(parsed)) setHistory(parsed);
+    const fetchHistory = async () => {
+      if (status === "authenticated") {
+        const res = await fetch("/api/translation/history");
+        const data = await res.json();
+        if (Array.isArray(data)) setHistory(data);
+      } else if (status === "unauthenticated") {
+        const local = localStorage.getItem("lasu-history");
+        if (local) {
+          const parsed = JSON.parse(local);
+          if (Array.isArray(parsed)) setHistory(parsed);
+        }
       }
-    }
-  }, [session]);
+      setFetched(true);
+    };
+    fetchHistory();
+  }, [session, status]);
+  const isLoading = status === "loading";
+  if (isLoading)
+    return (
+      <>
+        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>{" "}
+        <ScrollArea className="h-screen p-6">
+          <div className="space-y-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <HistoryCardSkeleton key={i} />
+            ))}
+          </div>
+        </ScrollArea>
+      </>
+    );
+
+  if (fetched && history.length === 0)
+    return (
+      <>
+        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>{" "}
+        <p className="text-muted-foreground text-sm my-5 ms-5">
+          No translation history found, start a translation to see it here.
+        </p>
+        <button
+          className="btn btn-primary ms-5"
+          onClick={() => {
+            window.location.href = "/dashboard";
+          }}
+        >
+          Start a translation
+        </button>
+      </>
+    );
 
   return (
     <>
@@ -58,28 +90,13 @@ export default function HistoryPage() {
       )}
       <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
 
-      {history.length === 0 && (
-        <>
-          <p className="text-muted-foreground text-sm my-5 ms-5">
-            No translation history found, start a translation to see it here.
-          </p>
-          <button
-            className="btn btn-primary ms-5"
-            onClick={() => {
-              window.location.href = "/dashboard";
-            }}
-          >
-            Start a translation
-          </button>
-        </>
-      )}
       <ScrollArea className="h-screen p-6">
         <div className="grid gap-6">
           {history?.map((item) => (
             <Card
               key={item._id}
               className={cn(
-                "border border-slate-400 dark:border-zinc-700 bg-accent dark:bg-zinc-800  border-l-5 rounded-xl w-full  "
+                "border border-slate-400 dark:border-zinc-700 bg-accent dark:bg-zinc-900  border-l-5 rounded-xl w-full  "
               )}
             >
               <CardContent className="p-5 space-y-4">
@@ -121,12 +138,12 @@ export default function HistoryPage() {
                   <p className="text-lg font-semibold">{item.sourceText}</p>
                 </div>
 
-                <div className="grid gap-3 bg-accent dark:bg-zinc-800">
+                <div className="grid gap-3 bg-accent dark:bg-zinc-900">
                   {Object.entries(item.result.translations).map(
                     ([lang, text]) => (
                       <div
                         key={lang}
-                        className="rounded-md border p-3 bg-muted/10 dark:bg-zinc-800"
+                        className="rounded-md border p-3 bg-muted/10 dark:bg-zinc-850"
                       >
                         <div className="space-x-1 flex flex-row items-center ">
                           <p className="font-medium text-md">
