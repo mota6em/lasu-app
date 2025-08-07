@@ -10,12 +10,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function UserMenu() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const user = session?.user;
 
-  if (!user) {
+  if (status === "loading") {
+    return (
+      <div className="flex items-center space-x-4">
+        <Skeleton className="h-8 w-8 rounded-full" />
+      </div>
+    );
+  }
+
+  if (!user || status === "unauthenticated") {
     return (
       <button
         onClick={() => signIn("google")}

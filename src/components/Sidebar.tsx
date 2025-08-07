@@ -5,6 +5,8 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { Home, History, BarChart, Settings, LogOut } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import TranslationSettingDialog from "./TranslationSettingDialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { stat } from "fs";
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
@@ -19,7 +21,7 @@ const menu = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
 
   const showSettingsDialog = () => {
@@ -74,7 +76,7 @@ export function Sidebar() {
               </Link>
             );
           })}
-          {!session && (
+          {status === "unauthenticated" && !session && (
             <div className="group absolute bottom-10 left-3 w-45">
               <div className="space-y-4 group">
                 <div className="flex flex-row gap-2 items-center ">
@@ -104,11 +106,11 @@ export function Sidebar() {
           )}
         </nav>
       </div>
-
+      {status === "loading" && <Skeleton className="h-4 w-[75px]" />}
       {session && (
         <button
           onClick={() => signOut()}
-          className="flex items-center gap-2 text-sm cursor-pointer text-gray-500 hover:text-black transition mt-8"
+          className="flex items-center gap-2 text-sm cursor-pointer text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition mt-8"
         >
           <LogOut size={18} />
           Logout
