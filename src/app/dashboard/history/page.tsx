@@ -40,7 +40,10 @@ export default function HistoryPage() {
   return (
     <>
       {!session && (
-        <Alert variant="destructive" className="mb-5 bg-red-100">
+        <Alert
+          variant="destructive"
+          className="mb-5 bg-red-100 dark:bg-red-300/10"
+        >
           <AlertTitle className="flex items-center font-bold text-lg">
             You're not logged in!
           </AlertTitle>
@@ -76,12 +79,12 @@ export default function HistoryPage() {
             <Card
               key={item._id}
               className={cn(
-                "border border-slate-400  border-l-5 rounded-xl w-full  "
+                "border border-slate-400 dark:border-zinc-700 bg-accent dark:bg-zinc-800  border-l-5 rounded-xl w-full  "
               )}
             >
               <CardContent className="p-5 space-y-4">
                 <div className="flex justify-between items-center">
-                  <div className=" text-blue-950/90 text-sm">
+                  <div className=" text-blue-950/90 dark:text-white/60 text-sm">
                     {new Date(item.createdAt).toLocaleString().slice(0, -3)}
                   </div>
                   <div className="flex items-center">
@@ -106,7 +109,7 @@ export default function HistoryPage() {
                         );
                       }}
                       size={23}
-                      className="float-right ms-2  cursor-pointer text-red-600 hover:text-red-500 transition duration-300 ease-in-out"
+                      className="float-right ms-2  cursor-pointer text-red-600 dark:text-red-500  hover:text-red-500 dark:hover:text-red-400 transition duration-300 ease-in-out"
                     />
                   </div>
                 </div>
@@ -118,12 +121,12 @@ export default function HistoryPage() {
                   <p className="text-lg font-semibold">{item.sourceText}</p>
                 </div>
 
-                <div className="grid gap-3">
+                <div className="grid gap-3 bg-accent dark:bg-zinc-800">
                   {Object.entries(item.result.translations).map(
                     ([lang, text]) => (
                       <div
                         key={lang}
-                        className="rounded-md border p-3 bg-muted/10"
+                        className="rounded-md border p-3 bg-muted/10 dark:bg-zinc-800"
                       >
                         <div className="space-x-1 flex flex-row items-center ">
                           <p className="font-medium text-md">
@@ -133,7 +136,7 @@ export default function HistoryPage() {
                             :
                           </p>
                           <div className="flex items-center gap-2">
-                            <p className="text-sm text-slate-700 dark:text-blue-400 font-semibold">
+                            <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold">
                               {text}
                             </p>
                             <button

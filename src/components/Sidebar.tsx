@@ -5,6 +5,8 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { Home, History, BarChart, Settings, LogOut } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import TranslationSettingDialog from "./TranslationSettingDialog";
+import { useTheme } from "next-themes";
+import { themeColors } from "@/lib/theme";
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
@@ -27,12 +29,12 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-56 bg-white border-r min-h-screen px-5 py-6 flex flex-col justify-between">
+    <aside className="w-56 bg-white dark:bg-[#121212] border-r min-h-screen px-5 py-6 flex flex-col justify-between">
       <div>
         <TranslationSettingDialog />
         <Link
-          className="text-2xl font-bold mb-8 text-gray-800 lasu-logo"
-          href="/"
+          className="text-2xl font-bold mb-8 text-gray-800 dark:text-gray-200 lasu-logo"
+          href="/dashboard"
         >
           LaSu
         </Link>
@@ -46,12 +48,12 @@ export function Sidebar() {
                   onClick={() => showSettingsDialog()}
                   className={`${
                     isOpen
-                      ? "bg-gray-100 text-black border border-gray-300"
+                      ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-300 dark:border-gray-600"
                       : ""
-                  } flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md transition text-sm font-medium ${
+                  } flex items-center gap-2 px-3 py-2 rounded-md transition text-sm font-medium  ${
                     isActive
-                      ? "bg-gray-100 text-black"
-                      : "text-gray-600 hover:bg-gray-50"
+                      ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-300 dark:border-gray-600"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                 >
                   {item.icon}
@@ -65,8 +67,8 @@ export function Sidebar() {
                 href={item.href}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition text-sm font-medium ${
                   isActive
-                    ? "bg-gray-100 text-black border border-gray-300"
-                    : "text-gray-600 hover:bg-gray-50"
+                    ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-300 dark:border-gray-600"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 {item.icon}
@@ -81,20 +83,20 @@ export function Sidebar() {
                   <img
                     src="/imgs/sad-lasu-icon.png"
                     alt="Sad Owl"
-                    className="w-10 h-10 group-hover:hidden"
+                    className="w-10 h-10 group-hover:hidden dark:bg-amber-600 rounded-2xl "
                   />
                   <img
                     src="/imgs/happy-lasu-icon.png"
                     alt="Happy Owl"
-                    className="w-10 h-10 hidden group-hover:block"
+                    className="w-10 h-10 hidden group-hover:block dark:bg-amber-500 rounded-xl"
                   />
-                  <p className="text-sm text-gray-500 ">
+                  <p className="text-sm text-gray-500 dark:text-gray-50 ">
                     You're not logged in. <br />
                     Please log in to use our full features.
                   </p>
                 </div>
                 <button
-                  className="bg-black group-hover:bg-blue-950 cursor-pointer text-white text-sm px-3 py-2 rounded-md w-full group"
+                  className="bg-black group-hover:bg-blue-950 dark:bg-amber-600 dark:group-hover:bg-amber-500  cursor-pointer text-white text-sm px-3 py-2 rounded-md w-full group"
                   onClick={() => signIn("google")}
                 >
                   Login with Google

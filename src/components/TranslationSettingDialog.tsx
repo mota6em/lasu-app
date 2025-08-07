@@ -52,7 +52,7 @@ const TranslationSettingDialog = () => {
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={toggleSettingsDialog}>
-         <DialogContent>
+        <DialogContent className="bg-white dark:bg-[#121212] text-black dark:text-gray-100">
           <DialogHeader>
             <DialogTitle className="text-2xl">Settings</DialogTitle>
             <DialogDescription>

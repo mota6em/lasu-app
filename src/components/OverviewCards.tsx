@@ -63,7 +63,7 @@ export function OverviewCards() {
       <h2 className="text-2xl font-semibold mt-2 -mb-2 -ml-2.5">📃Overview</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {cards.map((card, idx) => (
-          <Card key={idx}>
+          <Card key={idx} className="bg-muted dark:bg-zinc-800/50">
             <CardHeader>
               <CardTitle>{card.title}</CardTitle>
             </CardHeader>

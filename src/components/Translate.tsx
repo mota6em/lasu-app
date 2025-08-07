@@ -91,7 +91,7 @@ export function Translate() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md w-full space-y-6 flex flex-row gap-x-5">
+    <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-md w-full space-y-6 flex flex-row gap-x-5">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -111,7 +111,10 @@ export function Translate() {
             }
           }}
         />
-        <Button type="submit" className="w-fit">
+        <Button
+          type="submit"
+          className="w-fit bg-slate-600 dark:bg-zinc-100 text-white dark:text-black"
+        >
           Translate
         </Button>
       </form>
@@ -125,7 +128,7 @@ export function Translate() {
           <span className="flex  text-center">Translation Settings</span>
         </div>
         <div className="mt-6 space-y-4">
-          <div className="p-4 bg-gray-50 rounded shadow-sm border">
+          <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded shadow-sm border">
             <p className="font-semibold mb-2">Translation Result</p>
             {resultLoading &&
               [1, 2, 3, 4].map((i) => (
@@ -134,11 +137,14 @@ export function Translate() {
 
             {!resultLoading &&
               Object.entries(result?.translations || {}).map(([lang, text]) => (
-                <div key={lang} className="mb-2 p-3 border rounded bg-white">
+                <div
+                  key={lang}
+                  className="mb-2 p-3 border rounded bg-white dark:bg-zinc-800"
+                >
                   <div className="flex flex-row gap-x-2">
                     <p className="font-semibold capitalize">{lang} :</p>
                     <div className="flex items-center gap-2">
-                      <p className="text-sm text-slate-700 dark:text-blue-400 font-semibold">
+                      <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold">
                         {text}
                       </p>
                       <button

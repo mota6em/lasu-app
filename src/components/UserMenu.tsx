@@ -19,7 +19,7 @@ export function UserMenu() {
     return (
       <button
         onClick={() => signIn("google")}
-        className="text-sm px-4 py-2 rounded-md font-semibold bg-black cursor-pointer hover:bg-blue-950 text-white"
+        className="text-sm px-4 py-2 rounded-md font-semibold bg-black dark:bg-amber-600 cursor-pointer hover:bg-blue-950 text-white"
       >
         Login
       </button>
@@ -38,7 +38,7 @@ export function UserMenu() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="text-md text-black font-bold">
+        <DropdownMenuLabel className="text-md text-black dark:text-white font-bold">
           {user.name}
         </DropdownMenuLabel>
         <DropdownMenuLabel className="text-xs text-gray-400">

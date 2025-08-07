@@ -10,13 +10,15 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen">
-      <div className="fixed top-0 left-0 h-screen w-56 bg-white border-r z-50">
+      <div className="fixed top-0 left-0 h-screen w-56 bg-white dark:bg-zinc-900 border-r z-50">
         <SettingsLoader />
         <Sidebar />
       </div>
-      <div className="flex-1 ml-56 flex flex-col">
+      <div className="flex-1 ml-56 flex flex-col bg-white dark:bg-zinc-900">
         <Topbar />
-        <main className="flex-1 mt-6 px-5 bg-muted/50">{children}</main>
+        <main className="flex-1  dark:bg-zinc-900 mt-6 px-5 bg-muted/50">
+          {children}
+        </main>
       </div>
     </div>
   );

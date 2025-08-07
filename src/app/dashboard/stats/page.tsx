@@ -13,6 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTheme } from "next-themes"; 
 import Translation from "@/types/translation";
 import { OverviewCards } from "@/components/OverviewCards";
 
@@ -59,6 +60,9 @@ export default function StatsPage() {
       count,
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const { resolvedTheme } = useTheme();
+
+  const isDark = resolvedTheme === "dark";
 
   return (
     <div className="px-6 py-8 max-w-6xl mx-auto space-y-10">
@@ -77,13 +81,29 @@ export default function StatsPage() {
             <Line
               type="monotone"
               dataKey="count"
-              stroke="#4F46E5"
+              stroke={isDark ? "#93C5FD" : "#4F46E5"} // lighter in dark
               strokeWidth={2}
             />
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" fontSize={12} />
-            <YAxis fontSize={12} />
-            <Tooltip />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={isDark ? "#444" : "#ccc"}
+            />
+            <XAxis
+              dataKey="date"
+              fontSize={12}
+              stroke={isDark ? "#aaa" : "#333"}
+            />
+            <YAxis fontSize={12} stroke={isDark ? "#aaa" : "#333"} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: isDark ? "#1f2937" : "#fff", // bg-zinc-800
+                border: "none",
+                borderRadius: 8,
+                fontSize: 12,
+                color: isDark ? "#fff" : "#000",
+              }}
+              labelStyle={{ color: isDark ? "#ccc" : "#333" }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -93,7 +113,7 @@ export default function StatsPage() {
           {topLangs.map(([lang, count]) => (
             <Card
               key={lang}
-              className="bg-gradient-to-tr from-blue-100 via-white to-purple-100 dark:from-muted dark:to-muted/10"
+              className="bg-gradient-to-tr from-blue-100 via-white to-purple-100 dark:from-muted dark:via-muted/20 dark:to-muted/10"
             >
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
