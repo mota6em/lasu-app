@@ -30,12 +30,12 @@ export function Sidebar() {
     <aside className="w-56 bg-white border-r min-h-screen px-5 py-6 flex flex-col justify-between">
       <div>
         <TranslationSettingDialog />
-        <h2
-          onClick={() => (window.location.href = "/")}
+        <Link
           className="text-2xl font-bold mb-8 text-gray-800 lasu-logo"
+          href="/"
         >
           LaSu
-        </h2>
+        </Link>
         <nav className="space-y-2">
           {menu.map((item) => {
             const isActive = pathname === item.href;

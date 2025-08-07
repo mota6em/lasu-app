@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Translation from "@/types/translation";
+import { OverviewCards } from "@/components/OverviewCards";
 
 export default function StatsPage() {
   const { data: session } = useSession();
@@ -52,37 +53,18 @@ export default function StatsPage() {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  const chartData = Object.entries(dailyCount).map(([date, count]) => ({
-    date,
-    count,
-  }));
+  const chartData = Object.entries(dailyCount)
+    .map(([date, count]) => ({
+      date,
+      count,
+    }))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
     <div className="px-6 py-8 max-w-6xl mx-auto space-y-10">
       <h1 className="text-4xl font-extrabold text-center tracking-tight">
         📊 Your Language Stats
       </h1>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {topLangs.map(([lang, count]) => (
-          <Card
-            key={lang}
-            className="bg-gradient-to-tr from-blue-100 via-white to-purple-100 dark:from-muted dark:to-muted/10"
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {availableLanguages.find((l) => l.value === lang)?.label ||
-                  lang}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold text-primary">{count}</p>
-              <p className="text-muted-foreground text-sm">translations</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       <div className="bg-white dark:bg-muted/20 p-6 rounded-xl shadow-sm border">
         <h2 className="text-xl font-bold mb-4">
           📈 Daily Translation Activity
@@ -105,6 +87,29 @@ export default function StatsPage() {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <div>
+        <h2 className="text-xl font-bold mb-4 -ml-2.5">🌟 Top Languages</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
+          {topLangs.map(([lang, count]) => (
+            <Card
+              key={lang}
+              className="bg-gradient-to-tr from-blue-100 via-white to-purple-100 dark:from-muted dark:to-muted/10"
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  {availableLanguages.find((l) => l.value === lang)?.label ||
+                    lang}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold text-primary">{count}</p>
+                <p className="text-muted-foreground text-sm">translations</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+      <OverviewCards />
     </div>
   );
 }
