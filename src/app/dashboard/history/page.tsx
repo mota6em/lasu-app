@@ -195,11 +195,11 @@ export default function HistoryPage() {
                           </p>
                           <div className="flex items-center gap-2">
                             <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold">
-                              {text}
+                              {String(text)}
                             </p>
                             <button
                               onClick={() => {
-                                navigator.clipboard.writeText(text);
+                                navigator.clipboard.writeText(String(text));
                                 setCopiedLang(lang);
                                 setTimeout(() => setCopiedLang(null), 2000);
                               }}
