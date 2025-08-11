@@ -84,9 +84,12 @@ export function OverviewCards() {
     if (status !== "loading") load();
   }, [session, status]);
 
-  const showSkeleton =
-    status === "loading" ||
-    (status === "unauthenticated" && loadingLocal && cards.length === 0);
+  const isServerLoading = status === "loading";
+  const isLocalLoading = status === "unauthenticated" && loadingLocal;
+  const isCardsReady = cards.length > 0;
+
+  const showSkeleton = isServerLoading || isLocalLoading || !isCardsReady;
+
   return (
     <div className="flex flex-col gap-y-5">
       <h2 className="text-2xl font-semibold mt-2 -mb-2 -ml-2.5">📃Overview</h2>
