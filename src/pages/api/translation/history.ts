@@ -45,13 +45,35 @@ export default async function handler(
     const langCount = Object.fromEntries(
       langAgg.map(({ _id, count }) => [_id, count])
     );
-    const mostUsedLang = langAgg[0]?._id || null;
+    const mostUsedLang = langAgg[0] || null;
+    const topLangs: [string, number][] = langAgg.map((x: any) => [
+      x._id,
+      x.count,
+    ]);
+
+    const dailyAgg = await Translation.aggregate([
+      { $match: { userId } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const dailySeries = dailyAgg.map((d: any) => ({
+      date: d._id,
+      count: d.count,
+    }));
 
     return res.status(200).json({
       totalTranslations,
       thisWeekCount,
       langCount,
       mostUsedLang,
+      topLangs,
+      dailySeries,
     });
   }
 

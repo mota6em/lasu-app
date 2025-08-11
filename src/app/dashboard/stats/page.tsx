@@ -18,49 +18,36 @@ import Translation from "@/types/translation";
 import { OverviewCards } from "@/components/OverviewCards";
 import { Skeleton } from "@/components/ui/skeleton";
 
+type TopLangPair = [string, number];
+
 export default function StatsPage() {
   const { data: session, status } = useSession();
-  const [history, setHistory] = useState<Translation[]>([]);
   const isLoading = status === "loading";
+  const [topLangs, setTopLangs] = useState<TopLangPair[]>([]);
+  const [dailySeries, setDailySeries] = useState<
+    { date: string; count: number }[]
+  >([]);
+  const [localHistory, setLocalHistory] = useState<Translation[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       if (session?.user?.id) {
-        const res = await fetch("/api/translation/history");
+        const res = await fetch("/api/translation/history?wantStats=1");
         const data = await res.json();
-        if (Array.isArray(data)) setHistory(data);
+        setTopLangs(data.topLangs || []);
+        setDailySeries(data.dailySeries || []);
       } else {
         const local = localStorage.getItem("lasu-history");
         if (local) {
           const parsed = JSON.parse(local);
-          if (Array.isArray(parsed)) setHistory(parsed);
+          if (Array.isArray(parsed)) setLocalHistory(parsed);
         }
       }
     };
     fetchData();
   }, [session, status]);
 
-  const langCount: Record<string, number> = {};
-  const dailyCount: Record<string, number> = {};
+  const chartData = dailySeries;
 
-  history.forEach((h) => {
-    Object.keys(h.result.translations).forEach((lang) => {
-      langCount[lang] = (langCount[lang] || 0) + 1;
-    });
-
-    const date = new Date(h.createdAt).toLocaleDateString();
-    dailyCount[date] = (dailyCount[date] || 0) + 1;
-  });
-
-  const topLangs = Object.entries(langCount)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
-  const chartData = Object.entries(dailyCount)
-    .map(([date, count]) => ({
-      date,
-      count,
-    }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const { resolvedTheme } = useTheme();
 
   const isDark = resolvedTheme === "dark";
@@ -74,7 +61,7 @@ export default function StatsPage() {
         <h2 className="text-xl font-bold mb-4">
           📈 Daily Translation Activity
         </h2>
-        {isLoading && <Skeleton className="h-74 w-full rounded-md" />}
+        {isLoading && <Skeleton className="h-72 w-full rounded-md" />}
         {!isLoading && (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart

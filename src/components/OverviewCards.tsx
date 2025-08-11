@@ -26,10 +26,11 @@ export function OverviewCards() {
           { title: "This Week", value: stats.thisWeekCount },
           {
             title: "Most Used Lang",
-            value: stats.mostUsedLang
+            value: stats.mostUsedLang._id
               ? `${
-                  availableLanguages.find((l) => l.value === stats.mostUsedLang)
-                    ?.label
+                  availableLanguages.find(
+                    (l) => l.value === stats.mostUsedLang._id
+                  )?.label
                 } `
               : "-",
           },
