@@ -77,6 +77,9 @@ export function Translate() {
             result: apiResult,
             translationType,
             createdAt: new Date().toISOString(),
+            _id:
+              apiResult._id ||
+              Date.now().toString() + Math.random().toString(36),
           };
 
           history.unshift(newEntry);

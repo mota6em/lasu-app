@@ -12,35 +12,81 @@ import Translation from "@/types/translation";
 import { useSession } from "next-auth/react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { HistoryCardSkeleton } from "@/components/HistoryCardSkeleton";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+
+const ITEMS_PER_PAGE = 10;
 
 export default function HistoryPage() {
-  const [history, setHistory] = useState<Translation[]>([]);
+  const [localHistory, setLocalHistory] = useState<Translation[]>([]);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
   const { data: session, status } = useSession();
-  const [fetched, setFetched] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      if (status === "authenticated") {
-        const res = await fetch("/api/translation/history");
-        const data = await res.json();
-        if (Array.isArray(data)) setHistory(data);
-      } else if (status === "unauthenticated") {
-        const local = localStorage.getItem("lasu-history");
-        if (local) {
-          const parsed = JSON.parse(local);
-          if (Array.isArray(parsed)) setHistory(parsed);
-        }
+    if (status === "unauthenticated") {
+      const local = localStorage.getItem("lasu-history");
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed)) setLocalHistory(parsed);
       }
-      setFetched(true);
-    };
-    fetchHistory();
-  }, [session, status]);
-  const isLoading = status === "loading";
-  if (isLoading)
+    }
+  }, [status]);
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+  } = useInfiniteQuery({
+    queryKey: ["translation-history"],
+    queryFn: async ({ pageParam = 0 }) => {
+      const res = await fetch(
+        `/api/translation/history?page=${pageParam}&limit=${ITEMS_PER_PAGE}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch history");
+      return res.json();
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length === ITEMS_PER_PAGE ? allPages.length : undefined;
+    },
+    enabled: status === "authenticated",
+    initialPageParam: 0,
+  });
+  const history = data?.pages.flatMap((page) => page) || [];
+  const displayHistory = status === "authenticated" ? history : localHistory;
+
+  const handleDelete = async (itemId: string) => {
+    if (status === "authenticated") {
+      await fetch(`/api/translation/history/${itemId}`, {
+        method: "DELETE",
+      });
+      // You might want to invalidate the query here to refetch
+      queryClient.invalidateQueries({ queryKey: ["translation-history"] });
+    } else {
+      const updatedHistory = localHistory.filter((i) => i._id !== itemId);
+      setLocalHistory(updatedHistory);
+      localStorage.setItem("lasu-history", JSON.stringify(updatedHistory));
+    }
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (
+      scrollHeight - scrollTop <= clientHeight * 1.2 &&
+      hasNextPage &&
+      !isFetchingNextPage &&
+      status === "authenticated"
+    ) {
+      fetchNextPage();
+    }
+  };
+
+  if (status === "loading" || (status === "authenticated" && isLoading)) {
     return (
       <>
-        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>{" "}
+        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
         <ScrollArea className="h-screen p-6">
           <div className="space-y-5">
             {Array.from({ length: 10 }).map((_, i) => (
@@ -50,11 +96,22 @@ export default function HistoryPage() {
         </ScrollArea>
       </>
     );
+  }
 
-  if (fetched && history.length === 0)
+  if (isError) {
     return (
       <>
-        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>{" "}
+        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
+        <p className="text-red-500 text-sm my-5 ms-5">
+          Error loading translation history. Please try again.
+        </p>
+      </>
+    );
+  }
+  if (displayHistory.length === 0) {
+    return (
+      <>
+        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
         <p className="text-muted-foreground text-sm my-5 ms-5">
           No translation history found, start a translation to see it here.
         </p>
@@ -68,6 +125,7 @@ export default function HistoryPage() {
         </button>
       </>
     );
+  }
 
   return (
     <>
@@ -83,50 +141,33 @@ export default function HistoryPage() {
             To save your translation history and access it anytime, please sign
             in with your Google account.
             <br />
-            It only takes a few seconds — and we’ll remember your progress for
+            It only takes a few seconds — and we'll remember your progress for
             you 😊
           </AlertDescription>
         </Alert>
       )}
       <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
 
-      <ScrollArea className="h-screen p-6">
+      <ScrollArea className="h-screen p-6" onScrollCapture={handleScroll}>
         <div className="grid gap-6">
-          {history?.map((item) => (
+          {displayHistory.map((item) => (
             <Card
               key={item._id}
               className={cn(
-                "border border-slate-400 dark:border-zinc-700 bg-accent dark:bg-zinc-900  border-l-5 rounded-xl w-full  "
+                "border border-slate-400 dark:border-zinc-700 bg-accent dark:bg-zinc-900 border-l-5 rounded-xl w-full"
               )}
             >
               <CardContent className="p-5 space-y-4">
                 <div className="flex justify-between items-center">
-                  <div className=" text-blue-950/90 dark:text-white/60 text-sm">
+                  <div className="text-blue-950/90 dark:text-white/60 text-sm">
                     {new Date(item.createdAt).toLocaleString().slice(0, -3)}
                   </div>
                   <div className="flex items-center">
                     <Badge>{item.translationType}</Badge>
                     <MdDelete
-                      onClick={() => {
-                        session
-                          ? fetch(
-                              `/api/translation/history/${item._id.toString()}`,
-                              {
-                                method: "DELETE",
-                              }
-                            )
-                          : localStorage.setItem(
-                              "lasu-history",
-                              JSON.stringify(
-                                history.filter((i) => i._id !== item._id)
-                              )
-                            );
-                        setHistory((prev) =>
-                          prev.filter((i) => i._id !== item._id)
-                        );
-                      }}
+                      onClick={() => handleDelete(item._id.toString())}
                       size={23}
-                      className="float-right ms-2  cursor-pointer text-red-600 dark:text-red-500  hover:text-red-500 dark:hover:text-red-400 transition duration-300 ease-in-out"
+                      className="float-right ms-2 cursor-pointer text-red-600 dark:text-red-500 hover:text-red-500 dark:hover:text-red-400 transition duration-300 ease-in-out"
                     />
                   </div>
                 </div>
@@ -145,7 +186,7 @@ export default function HistoryPage() {
                         key={lang}
                         className="rounded-md border p-3 bg-muted/10 dark:bg-zinc-850"
                       >
-                        <div className="space-x-1 flex flex-row items-center ">
+                        <div className="space-x-1 flex flex-row items-center">
                           <p className="font-medium text-md">
                             {availableLanguages.filter(
                               (l) => l.value === lang
@@ -175,9 +216,9 @@ export default function HistoryPage() {
 
                         {item.result.example?.[lang] && (
                           <p className="text-sm text-muted-foreground mt-2 italic flex flex-row gap-x-2">
-                            💡 Example:{" "}
+                            💡 Example:
                             <div className="flex items-center gap-2">
-                              <p className="text-sm text-muted-foreground ">
+                              <p className="text-sm text-muted-foreground">
                                 {item.result.example?.[lang]}
                               </p>
                               <button
@@ -206,6 +247,15 @@ export default function HistoryPage() {
               </CardContent>
             </Card>
           ))}
+
+          {/* Loading indicator for fetching next page */}
+          {isFetchingNextPage && (
+            <div className="space-y-5">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <HistoryCardSkeleton key={`loading-${i}`} />
+              ))}
+            </div>
+          )}
         </div>
       </ScrollArea>
     </>
