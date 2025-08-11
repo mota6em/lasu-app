@@ -6,17 +6,34 @@ import Translation from "@/types/translation";
 import { availableLanguages } from "@/lib/languages";
 import { Skeleton } from "./ui/skeleton";
 
+interface Card {
+  title: string;
+  value: string;
+}
+
 export function OverviewCards() {
   const [history, setHistory] = useState<Translation[]>([]);
-
+  const [cards, setCards] = useState<Card[]>([]);
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
   useEffect(() => {
     const loadHistory = async () => {
       if (session?.user?.id) {
-        const res = await fetch("/api/translation/history");
-        const data = await res.json();
-        if (Array.isArray(data)) setHistory(data);
+        const res = await fetch("/api/translation/history?wantStats=1");
+        const stats = await res.json();
+        setCards([
+          { title: "Total Translations", value: stats.totalTranslations },
+          { title: "This Week", value: stats.thisWeekCount },
+          {
+            title: "Most Used Lang",
+            value: stats.mostUsedLang
+              ? `${
+                  availableLanguages.find((l) => l.value === stats.mostUsedLang)
+                    ?.label
+                } `
+              : "-",
+          },
+        ]);
       } else {
         const local = localStorage.getItem("lasu-history");
         if (local) {
@@ -28,37 +45,6 @@ export function OverviewCards() {
     if (status === "authenticated" || status === "unauthenticated")
       loadHistory();
   }, [session, status]);
-
-  const totalTranslations = history.length;
-
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  const thisWeekCount = history.filter(
-    (h) => new Date(h.createdAt) > oneWeekAgo
-  ).length;
-
-  const langCount: Record<string, number> = {};
-  history.forEach((h) => {
-    Object.keys(h.result.translations).forEach((lang) => {
-      langCount[lang] = (langCount[lang] || 0) + 1;
-    });
-  });
-
-  const mostUsedLang = Object.entries(langCount).sort(
-    (a, b) => b[1] - a[1]
-  )[0]?.[0];
-
-  const cards = [
-    { title: "Total Translations", value: totalTranslations },
-    { title: "This Week", value: thisWeekCount },
-    {
-      title: "Most Used Lang",
-      value: mostUsedLang
-        ? `${availableLanguages.find((l) => l.value === mostUsedLang)?.label}  `
-        : "-",
-    },
-  ];
 
   return (
     <div className="flex flex-col gap-y-5">
