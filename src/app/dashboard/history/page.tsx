@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { HistoryCardSkeleton } from "@/components/HistoryCardSkeleton";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -21,6 +22,11 @@ export default function HistoryPage() {
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
   const { data: session, status } = useSession();
   const queryClient = useQueryClient();
+
+  const { ref: loadMoreRef, inView } = useInView({
+    rootMargin: "200px 0px",
+    triggerOnce: false,
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -71,17 +77,16 @@ export default function HistoryPage() {
     }
   };
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+  useEffect(() => {
     if (
-      scrollHeight - scrollTop <= clientHeight * 1.2 &&
+      status === "authenticated" &&
+      inView &&
       hasNextPage &&
-      !isFetchingNextPage &&
-      status === "authenticated"
+      !isFetchingNextPage
     ) {
       fetchNextPage();
     }
-  };
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, status]);
 
   if (status === "loading" || (status === "authenticated" && isLoading)) {
     return (
@@ -148,7 +153,7 @@ export default function HistoryPage() {
       )}
       <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
 
-      <ScrollArea className="h-screen p-6" onScrollCapture={handleScroll}>
+      <ScrollArea className="h-screen p-6">
         <div className="grid gap-6">
           {displayHistory.map((item) => (
             <Card
@@ -247,7 +252,6 @@ export default function HistoryPage() {
               </CardContent>
             </Card>
           ))}
-
           {/* Loading indicator for fetching next page */}
           {isFetchingNextPage && (
             <div className="space-y-5">
@@ -256,6 +260,7 @@ export default function HistoryPage() {
               ))}
             </div>
           )}
+          <div ref={loadMoreRef} className="h-6" />
         </div>
       </ScrollArea>
     </>
