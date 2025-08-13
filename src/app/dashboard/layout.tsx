@@ -1,27 +1,8 @@
-import SettingsLoader from "@/components/SettingsLoader";
-import { Sidebar } from "@/components/Sidebar";
-import { Topbar } from "@/components/Topbar";
 import type { Metadata } from "next";
+import DashboardLayoutClient from "./DashboardLayoutClient";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex min-h-screen">
-      <div className="fixed top-0 left-0 h-screen w-56 bg-white dark:bg-zinc-900 border-r z-50">
-        <SettingsLoader />
-        <Sidebar />
-      </div>
-      <div className="flex-1 ml-56 flex flex-col bg-white dark:bg-zinc-900">
-        <Topbar />
-        <main className="flex-1  dark:bg-zinc-900 mt-6 px-5 bg-muted/50">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
 }
 
 export const metadata: Metadata = {

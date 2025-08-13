@@ -28,7 +28,7 @@ export function UserMenu() {
     return (
       <button
         onClick={() => signIn("google")}
-        className="text-sm px-4 py-2 rounded-md font-semibold bg-black dark:bg-amber-600 cursor-pointer hover:bg-blue-950 text-white"
+        className="text-xs md:text-sm px-4 py-2 rounded-md font-semibold bg-black dark:bg-amber-600 cursor-pointer hover:bg-blue-950 text-white"
       >
         Login
       </button>

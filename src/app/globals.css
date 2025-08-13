@@ -122,10 +122,14 @@
   }
 }
 
-.lasu-logo {
+.lasu-logo,
+.lasu-logo-lg {
   font-family: "NewYork", sans-serif !important;
-  font-size: 5rem;
+  font-size: 2rem;
   cursor: pointer;
+}
+.lasu-logo-lg {
+  font-size: 5rem;
 }
 
 @font-face {
