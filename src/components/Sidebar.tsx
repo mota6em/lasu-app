@@ -54,7 +54,7 @@ export function Sidebar({
           "bg-white dark:bg-[#121212] border-r",
           "flex flex-col justify-between",
           "transition-all duration-300",
-          "lg:w-56",
+          "lg:w-48",
           mobileOpen ? "w-56 translate-x-0" : "-translate-x-full w-56",
           "lg:translate-x-0",
           "px-4 lg:px-5 pt-1 lg:pt-8 py-6",
