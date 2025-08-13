@@ -70,9 +70,7 @@ export function Sidebar({
             LaSu
           </Link>
           <div className="lg:hidden border-b w-full pb-1">
-            <LogoAndMenuBtn
-              onMenuClick={() => setMobileOpen((mobileOpen) => !mobileOpen)}
-            />
+            <LogoAndMenuBtn onMenuClick={() => setMobileOpen(!mobileOpen)} />
           </div>
 
           <nav className="space-y-2 mt-5">
