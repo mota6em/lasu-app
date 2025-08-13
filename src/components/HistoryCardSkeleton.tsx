@@ -7,13 +7,13 @@ export function HistoryCardSkeleton() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <Skeleton className="h-4 w-24" /> {/* Date */}
-          <Skeleton className="h-6 w-12 rounded-full" /> {/* Mode chip */}
+          <Skeleton className="h-5 w-12 rounded-full" /> {/* Mode chip */}
         </div>
-        <Skeleton className="h-5 w-1/3 mt-2" /> {/* Source text */}
-        <Skeleton className="h-5 w-1/3 mt-2" /> {/* Source text */}
+        <Skeleton className="h-4 w-1/3 mt-2" /> {/* Source text */}
+        <Skeleton className="h-6 w-2/3 mt-0" /> {/* Source text */}
       </CardHeader>
       <CardContent className="space-y-7">
-        {[1, 2, 3, 4].map((_, i) => (
+        {[1, 2, 3].map((_, i) => (
           <div key={i} className="space-y-1">
             <Skeleton className="h-4 w-28" /> {/* Language name */}
             <Skeleton className="h-5 w-full rounded-md" /> {/* Translation */}

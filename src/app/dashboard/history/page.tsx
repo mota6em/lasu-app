@@ -91,7 +91,9 @@ export default function HistoryPage() {
   if (status === "loading" || (status === "authenticated" && isLoading)) {
     return (
       <>
-        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
+        <h1 className="text-2xl lg:text-3xl px-4 lg:ps-0 font-bold mb-1">
+          📚 Translation History
+        </h1>
         <ScrollArea className="h-screen p-6">
           <div className="space-y-5">
             {Array.from({ length: 10 }).map((_, i) => (
@@ -106,7 +108,9 @@ export default function HistoryPage() {
   if (isError) {
     return (
       <>
-        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
+        <h1 className="text-2xl lg:text-3xl px-4 lg:ps-0 font-bold mb-1">
+          📚 Translation History
+        </h1>
         <p className="text-red-500 text-sm my-5 ms-5">
           Error loading translation history. Please try again.
         </p>
@@ -116,7 +120,9 @@ export default function HistoryPage() {
   if (displayHistory.length === 0) {
     return (
       <>
-        <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
+        <h1 className="text-2xl lg:text-3xl px-4 lg:ps-0 font-bold mb-1">
+          📚 Translation History
+        </h1>
         <p className="text-muted-foreground text-sm my-5 ms-5">
           No translation history found, start a translation to see it here.
         </p>
@@ -151,18 +157,20 @@ export default function HistoryPage() {
           </AlertDescription>
         </Alert>
       )}
-      <h1 className="text-3xl font-bold mb-1">📚 Translation History</h1>
+      <h1 className="text-2xl lg:text-3xl px-4 lg:ps-0 font-bold mb-1">
+        📚 Translation History
+      </h1>
 
-      <ScrollArea className="h-screen p-6">
+      <ScrollArea className="h-screen px-3 py-6 lg:p-6">
         <div className="grid gap-6">
           {displayHistory.map((item) => (
             <Card
               key={item._id}
               className={cn(
-                "border border-slate-400 dark:border-zinc-700 bg-accent dark:bg-zinc-900 border-l-5 rounded-xl w-full"
+                "border border-slate-400 py-3 lg:py-4 dark:border-zinc-700 bg-accent dark:bg-zinc-900 border-l-5 rounded-xl w-full"
               )}
             >
-              <CardContent className="p-5 space-y-4">
+              <CardContent className="px-3 py-0 lg:p-5 space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="text-blue-950/90 dark:text-white/60 text-sm">
                     {new Date(item.createdAt).toLocaleString().slice(0, -3)}
