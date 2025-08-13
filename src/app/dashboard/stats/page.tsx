@@ -77,13 +77,25 @@ export default function StatsPage() {
 
   const isDark = resolvedTheme === "dark";
 
+  function useIsMobile() {
+    const [m, setM] = useState(false);
+    useEffect(() => {
+      const q = matchMedia("(max-width: 640px)");
+      const h = () => setM(q.matches);
+      h();
+      q.addEventListener("change", h);
+      return () => q.removeEventListener("change", h);
+    }, []);
+    return m;
+  }
+  const isMobile = useIsMobile();
   return (
-    <div className="px-6 py-8 max-w-6xl mx-auto space-y-10">
-      <h1 className="text-4xl font-extrabold text-center tracking-tight">
+    <div className="px-4 md:px-6 py-8 max-w-6xl mx-auto space-y-10">
+      <h1 className="text-2xl md:text-4xl font-extrabold text-center tracking-tight">
         📊 Your Language Stats
       </h1>
-      <div className="bg-white dark:bg-muted/20 p-6 rounded-xl shadow-sm border">
-        <h2 className="text-xl font-bold mb-4">
+      <div className="bg-white dark:bg-muted/20 px-2 py-4 md:p-6 rounded-xl shadow-sm border">
+        <h2 className="text-lg md:text-xl font-medium mb-4">
           📈 Daily Translation Activity
         </h2>
         {isLoading && <Skeleton className="h-72 w-full rounded-md" />}
@@ -91,12 +103,16 @@ export default function StatsPage() {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
               data={chartData}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              margin={
+                isMobile
+                  ? { top: 2, right: 2, left: 0, bottom: 0 }
+                  : { top: 10, right: 30, left: 0, bottom: 0 }
+              }
             >
               <Line
                 type="monotone"
                 dataKey="count"
-                stroke={isDark ? "#93C5FD" : "#4F46E5"} // lighter in dark
+                stroke={isDark ? "#93C5FD" : "#4F46E5"}
                 strokeWidth={2}
               />
               <CartesianGrid
@@ -105,10 +121,15 @@ export default function StatsPage() {
               />
               <XAxis
                 dataKey="date"
-                fontSize={12}
+                tick={{ fontSize: isMobile ? 10 : 12 }}
+                interval={isMobile ? "preserveStartEnd" : 0}
                 stroke={isDark ? "#aaa" : "#333"}
               />
-              <YAxis fontSize={12} stroke={isDark ? "#aaa" : "#333"} />
+              <YAxis
+                tick={{ fontSize: isMobile ? 10 : 12 }}
+                stroke={isDark ? "#aaa" : "#333"}
+                hide={isMobile}
+              />{" "}
               <Tooltip
                 contentStyle={{
                   backgroundColor: isDark ? "#1f2937" : "#fff", // bg-zinc-800
@@ -127,7 +148,7 @@ export default function StatsPage() {
         <h2 className="text-xl font-bold mb-4 -ml-2.5">🌟 Top Languages</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {isLoading
-            ? Array.from({ length: 5 }).map((_, i) => (
+            ? Array.from({ length: 3 }).map((_, i) => (
                 <Card
                   key={i}
                   className="bg-gradient-to-tr from-blue-100 via-white to-purple-100 dark:from-muted dark:via-muted/20 dark:to-muted/10"
@@ -143,7 +164,7 @@ export default function StatsPage() {
                   </CardContent>
                 </Card>
               ))
-            : topLangs.map(([lang, count]) => (
+            : topLangs.slice(0, 3).map(([lang, count]) => (
                 <Card
                   key={lang}
                   className="bg-gradient-to-tr from-blue-100 via-white to-purple-100 dark:from-muted dark:via-muted/20 dark:to-muted/10"
