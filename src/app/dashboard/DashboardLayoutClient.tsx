@@ -19,7 +19,7 @@ export default function DashboardLayoutClient({
       </div>
       <div className="flex-1 lg:ml-56 flex flex-col bg-white dark:bg-zinc-900">
         <Topbar onMenuClick={() => setMobileOpen(true)} />
-        <main className="flex-1 dark:bg-zinc-900 mt-6 px-5 bg-muted/50">
+        <main className="flex-1 dark:bg-zinc-900 mt-6 px-5 bg-white">
           {children}
         </main>
       </div>
