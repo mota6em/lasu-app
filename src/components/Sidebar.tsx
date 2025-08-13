@@ -29,7 +29,6 @@ export function Sidebar({
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
-  const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) =>
       e.key === "Escape" && setMobileOpen(false);
@@ -55,7 +54,7 @@ export function Sidebar({
           "bg-white dark:bg-[#121212] border-r",
           "flex flex-col justify-between",
           "transition-all duration-300",
-          collapsed ? "lg:w-16" : "lg:w-56",
+          "lg:w-16",
           mobileOpen ? "w-56 translate-x-0" : "-translate-x-full w-64",
           "lg:translate-x-0",
           "px-4 lg:px-5 pt-1 lg:pt-8 py-6",
@@ -71,7 +70,9 @@ export function Sidebar({
             LaSu
           </Link>
           <div className="lg:hidden border-b w-full pb-1">
-            <LogoAndMenuBtn onMenuClick={() => setMobileOpen(true)} />
+            <LogoAndMenuBtn
+              onMenuClick={() => setMobileOpen((mobileOpen) => !mobileOpen)}
+            />
           </div>
 
           <nav className="space-y-2 mt-5">
@@ -94,9 +95,7 @@ export function Sidebar({
                     }`}
                   >
                     {item.icon}
-                    <span className={collapsed ? "lg:hidden" : ""}>
-                      Settings
-                    </span>{" "}
+                    <span className={"lg:hidden"}>Settings</span>
                   </div>
                 );
               }
@@ -113,9 +112,7 @@ export function Sidebar({
                   onClick={() => setMobileOpen(false)}
                 >
                   {item.icon}
-                  <span className={collapsed ? "lg:hidden" : ""}>
-                    {item.label}
-                  </span>
+                  <span className={"lg:hidden"}>{item.label}</span>
                 </Link>
               );
             })}
@@ -157,7 +154,7 @@ export function Sidebar({
             className="flex items-center gap-2 text-sm cursor-pointer text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition mt-8"
           >
             <LogOut size={18} />
-            <span className={collapsed ? "lg:hidden" : ""}>Logout</span>{" "}
+            <span className={"lg:hidden"}>Logout</span>{" "}
           </button>
         )}
       </aside>
