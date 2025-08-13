@@ -3,6 +3,7 @@ import { useState } from "react";
 import SettingsLoader from "@/components/SettingsLoader";
 import { Sidebar } from "@/components/Sidebar";
 import { Topbar } from "@/components/Topbar";
+import Footer from "@/components/Footer";
 
 export default function DashboardLayoutClient({
   children,
@@ -22,6 +23,7 @@ export default function DashboardLayoutClient({
         <main className="flex-1 dark:bg-zinc-900 mt-6 px-0 md:px-3 lg:px-5 bg-white">
           {children}
         </main>
+        <Footer />
       </div>
     </div>
   );
