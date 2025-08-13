@@ -54,8 +54,8 @@ export function Sidebar({
           "bg-white dark:bg-[#121212] border-r",
           "flex flex-col justify-between",
           "transition-all duration-300",
-          "lg:w-16",
-          mobileOpen ? "w-56 translate-x-0" : "-translate-x-full w-64",
+          "lg:w-56",
+          mobileOpen ? "w-56 translate-x-0" : "-translate-x-full w-56",
           "lg:translate-x-0",
           "px-4 lg:px-5 pt-1 lg:pt-8 py-6",
         ].join(" ")}
@@ -95,7 +95,7 @@ export function Sidebar({
                     }`}
                   >
                     {item.icon}
-                    <span className={"lg:hidden"}>Settings</span>
+                    <span>Settings</span>
                   </div>
                 );
               }
@@ -112,7 +112,7 @@ export function Sidebar({
                   onClick={() => setMobileOpen(false)}
                 >
                   {item.icon}
-                  <span className={"lg:hidden"}>{item.label}</span>
+                  <span>{item.label}</span>
                 </Link>
               );
             })}
@@ -154,7 +154,7 @@ export function Sidebar({
             className="flex items-center gap-2 text-sm cursor-pointer text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition mt-8"
           >
             <LogOut size={18} />
-            <span className={"lg:hidden"}>Logout</span>{" "}
+            <span>Logout</span>{" "}
           </button>
         )}
       </aside>
