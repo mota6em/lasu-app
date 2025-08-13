@@ -24,7 +24,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         <LogoAndMenuBtn onMenuClick={onMenuClick} />
 
         {status === "loading" && (
-          <Skeleton className="h-6 mt-1 w-[275px] hidden md:block " />
+          <Skeleton className="  h-6 mt-1 w-[275px] hidden md:block lg:hidden " />
         )}
 
         {session && (
