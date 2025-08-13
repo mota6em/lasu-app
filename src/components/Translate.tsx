@@ -94,13 +94,13 @@ export function Translate() {
   };
 
   return (
-    <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-md w-full space-y-6 flex flex-row gap-x-5">
+    <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-md w-full space-y-6 flex flex-col lg:flex-row gap-x-5 ">
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleTranslate();
         }}
-        className="flex flex-col gap-4 flex-1 w-1/2"
+        className="flex flex-col gap-4 flex-1 w-full lg:w-1/2"
       >
         <Textarea
           placeholder="Enter your sentence..."
@@ -122,7 +122,7 @@ export function Translate() {
         </Button>
       </form>
 
-      <div className="flex flex-col w-1/2 ">
+      <div className="flex flex-col w-full lg:w-1/2 ">
         <div
           className="flex flex-row gap-x-0.5 items-center text-sm cursor-pointer hover:underline  w-fit"
           onClick={() => toggleSettingsDialog()}
