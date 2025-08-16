@@ -116,7 +116,7 @@ export function Sidebar({
             })}
 
             {status === "unauthenticated" && !session && (
-              <div className="group absolute bottom-10 left-5 w-45">
+              <div className="group absolute bottom-10 left-5 w-45 lg:w-38">
                 <div className="space-y-4 group">
                   <div className="flex flex-row gap-2 items-center ">
                     <img
@@ -129,9 +129,8 @@ export function Sidebar({
                       alt="Happy Owl"
                       className="w-10 h-10 hidden group-hover:block dark:bg-amber-500 rounded-xl"
                     />
-                    <p className="text-sm text-gray-500 dark:text-gray-50 ">
-                      You're not logged in. <br />
-                      Please log in to use our full features.
+                    <p className="text-xs text-gray-500 dark:text-gray-50 ">
+                      Please log in to use our full features & more.
                     </p>
                   </div>
                   <button

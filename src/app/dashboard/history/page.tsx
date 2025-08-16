@@ -141,21 +141,23 @@ export default function HistoryPage() {
   return (
     <>
       {!session && (
-        <Alert
-          variant="destructive"
-          className="mb-5 bg-red-100 dark:bg-red-300/10"
-        >
-          <AlertTitle className="flex items-center font-bold text-lg">
-            You're not logged in!
-          </AlertTitle>
-          <AlertDescription>
-            To save your translation history and access it anytime, please sign
-            in with your Google account.
-            <br />
-            It only takes a few seconds — and we'll remember your progress for
-            you 😊
-          </AlertDescription>
-        </Alert>
+        <div className="px-4 lg:px-0">
+          <Alert
+            variant="destructive"
+            className="mb-5   bg-red-100 dark:bg-red-300/10"
+          >
+            <AlertTitle className="flex items-center font-bold text-lg">
+              You're not logged in!
+            </AlertTitle>
+            <AlertDescription>
+              To save your translation history and access it anytime, please
+              sign in with your Google account.
+              <br />
+              It only takes a few seconds — and we'll remember your progress for
+              you 😊
+            </AlertDescription>
+          </Alert>
+        </div>
       )}
       <h1 className="text-2xl lg:text-3xl px-4 lg:ps-0 font-bold mb-1">
         📚 Translation History
