@@ -1,5 +1,7 @@
 import { getAllUsersWithTranslations } from "@/lib/db";
 import { sendWeeklySummary } from "@/lib/email";
+import Translation from "@/types/translation";
+import User from "@/types/user";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -15,7 +17,26 @@ export default async function handler(
     const users = await getAllUsersWithTranslations();
 
     for (const { user, translations } of users) {
-      await sendWeeklySummary(user, translations);
+      for (const { user, translations } of users) {
+        const typedUser = {
+          _id: user._id.toString(),
+          email: (user as any).email,
+          name: (user as any).name,
+          image: (user as any).image,
+          selectedLanguages: (user as any).selectedLanguages,
+          translationType: (user as any).translationType,
+          createdAt: (user as any).createdAt,
+        } as User;
+
+        const typedTranslations: Translation[] = translations.map((t) => ({
+          _id: t._id.toString(),
+          sourceText: (t as any).sourceText,
+          translationType: (t as any).translationType,
+          result: (t as any).result,
+          createdAt: (t as any).createdAt,
+        }));
+        await sendWeeklySummary(typedUser, typedTranslations);
+      }
     }
 
     res.status(200).json({ message: "Weekly summaries sent!" });
