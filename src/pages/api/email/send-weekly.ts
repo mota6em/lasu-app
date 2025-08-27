@@ -13,8 +13,7 @@ export default async function handler(
     return res.status(405).json({ message: "Method not allowed" });
   }
   const secret = process.env.CRON_SECRET;
-  const reqSecret = req.headers["cron-key"] || req.query.secret;
-
+  const reqSecret = req.headers["cron-key"];
   if (reqSecret !== secret) {
     return res.status(401).json({ message: "Unauthorized" });
   }
