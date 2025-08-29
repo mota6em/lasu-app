@@ -18,7 +18,7 @@ export default async function handler(
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const users = await getAllUsersWithTranslations();
+    const users = await getAllUsersWithTranslations("week");
 
     for (const { user, translations } of users) {
       const typedUser = {
