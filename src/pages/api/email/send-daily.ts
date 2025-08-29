@@ -1,5 +1,5 @@
 import { getAllUsersWithTranslations } from "@/lib/db";
-import { sendDailySummary } from "@/lib/email";
+import { sendSummary } from "@/lib/email";
 import Translation from "@/types/translation";
 import User from "@/types/user";
 
@@ -38,7 +38,7 @@ export default async function handler(
         result: (t as any).result,
         createdAt: (t as any).createdAt,
       }));
-      await sendDailySummary(typedUser, typedTranslations);
+      await sendSummary(typedUser, typedTranslations, "daily");
     }
 
     res.status(200).json({ message: "Daily summaries sent!" });
