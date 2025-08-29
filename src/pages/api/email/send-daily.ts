@@ -21,6 +21,7 @@ export default async function handler(
     const users = await getAllUsersWithTranslations("day");
 
     for (const { user, translations } of users) {
+      if(translations.length === 0) continue;
       const typedUser = {
         _id: user._id.toString(),
         email: (user as any).email,
