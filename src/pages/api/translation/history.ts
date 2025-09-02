@@ -15,7 +15,7 @@ export default async function handler(
   await connectToDB();
 
   // get language stats for Overview Cards
-  const { wantStats, page = "0", limit = "10" } = req.query;
+  const { wantStats, page = "0", limit = "10", filter = "all" } = req.query;
   if (wantStats) {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -81,8 +81,9 @@ export default async function handler(
   const pageNum = parseInt(page as string, 10);
   const limitNum = parseInt(limit as string, 10);
   const skip = pageNum * limitNum;
-
-  const history = await Translation.find({ userId: session.user.id })
+  const query: any = { userId };
+  if (filter !== "all") query.translationFilter = filter;
+  const history = await Translation.find({ query })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limitNum)
