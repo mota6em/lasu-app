@@ -8,6 +8,7 @@ interface ITranslation {
     example?: Record<string, string>;
   };
   translationType: string;
+  translationFilter: "word" | "phrase";
   createdAt: Date;
 }
 
@@ -22,7 +23,15 @@ const TranslationSchema = new mongoose.Schema({
     required: true,
   },
   translationType: { type: String, required: true },
+  translationFilter: { type: String, enum: ["word", "phrase"] },
   createdAt: { type: Date, default: Date.now },
+});
+
+//Set translation filter automatically
+TranslationSchema.pre("save", function (next) {
+  if (this.sourceText.includes(" ")) this.translationFilter = "phrase";
+  else this.translationFilter = "word";
+  next();
 });
 
 const Translation =
