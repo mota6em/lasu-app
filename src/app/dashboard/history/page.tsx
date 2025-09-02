@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { HistoryCardSkeleton } from "@/components/HistoryCardSkeleton";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -99,6 +100,12 @@ export default function HistoryPage() {
         <h1 className="text-2xl lg:text-3xl px-4 lg:ps-0 font-bold mb-1">
           📚 Translation History
         </h1>
+        <Skeleton className="h-5 w-32 mt-5 mb-2 ms-7" />
+        <div className="flex flex-row gap-2 ps-7">
+          <Skeleton className="h-9 w-15" />
+          <Skeleton className="h-9 w-15" />
+          <Skeleton className="h-9 w-15" />
+        </div>
         <ScrollArea className="h-screen p-6">
           <div className="space-y-5">
             {Array.from({ length: 10 }).map((_, i) => (
