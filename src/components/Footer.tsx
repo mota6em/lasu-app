@@ -81,7 +81,7 @@ export default function Footer() {
                 Contact
               </button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Contact us</DialogTitle>
                 <DialogDescription>
@@ -90,57 +90,19 @@ export default function Footer() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form
-                className="space-y-3"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  // TODO later - send email message
-                  alert(
-                    "Thanks! We'll get back to you within 2-3 business days."
-                  );
-                }}
-              >
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium">Name</label>
-                  <Input name="name" placeholder="Your name" required />
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium">Email</label>
-                  <Input
-                    type="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium">Message</label>
-                  <Textarea
-                    name="message"
-                    placeholder="Tell us how we can help…"
-                    className="min-h-[120px]"
-                    required
-                  />
-                </div>
-                <DialogFooter>
-                  <Button type="submit">Send message</Button>
-                </DialogFooter>
-              </form>
+              <div className="flex flex-col gap-4">
+                <Button asChild className="w-full">
+                  <a
+                    href="https://forms.gle/gNaxyuWNybqstX9ZA"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Fill out the form
+                  </a>
+                </Button>
 
-              <div className="pt-2 text-xs text-muted-foreground flex items-center gap-2">
-                Or email: <span className="font-medium">support@lasu.app</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-5 w-5"
-                  onClick={handleCopy}
-                  aria-label="Copy email"
-                >
-                  {copied ? (
-                    <Check className="h-2 w-2 text-green-500" />
-                  ) : (
-                    <Copy className="h-2 w-2" />
-                  )}
+                <Button asChild variant="outline" className="w-full">
+                  <a href="mailto:support@lasu.app">Send us an email</a>
                 </Button>
               </div>
             </DialogContent>
