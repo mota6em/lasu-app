@@ -20,6 +20,7 @@ const ITEMS_PER_PAGE = 10;
 export default function HistoryPage() {
   const [localHistory, setLocalHistory] = useState<Translation[]>([]);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "word" | "phrase">("all");
   const { data: session, status } = useSession();
   const queryClient = useQueryClient();
 
@@ -162,6 +163,26 @@ export default function HistoryPage() {
       <h1 className="text-2xl lg:text-3xl px-4 lg:ps-0 font-bold mb-1">
         📚 Translation History
       </h1>
+
+      <div className="px-0 mb-2 mt-5 ms-8">
+        <p className="text-sm text-muted-foreground">Filter translations:</p>
+      </div>
+      <div className="flex gap-2 px-0 my-1 mt-2 ms-8">
+        {["all", "word", "phrase"].map((f: string) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f as "all" | "word" | "phrase")}
+            className={cn(
+              "px-3 py-1 rounded-md border font-medium transition cursor-pointer",
+              filter === f
+                ? "bg-slate-900 text-white dark:bg-gray-600 dark:text-white hover:brightness-90"
+                : "bg-gray-100 text-gray-700 border-gray-300 dark:bg-zinc-800 dark:text-gray-300 dark:border-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white"
+            )}
+          >
+            {f === "all" ? "All" : f === "word" ? "Words" : "Phrases"}
+          </button>
+        ))}
+      </div>
 
       <ScrollArea className="h-screen px-3 py-6 lg:p-6">
         <div className="grid gap-6">
