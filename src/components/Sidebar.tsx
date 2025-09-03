@@ -5,11 +5,18 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { Home, History, BarChart, Settings, LogOut } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import TranslationSettingDialog from "./TranslationSettingDialog";
+import { LuBookOpen } from "react-icons/lu";
+
 import { useEffect, useState } from "react";
 import LogoAndMenuBtn from "./LogoAndMenuBtn";
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
+  {
+    label: "Practice Hub",
+    href: "/dashboard/practice",
+    icon: <LuBookOpen size={18} />,
+  },
   { label: "History", href: "/dashboard/history", icon: <History size={18} /> },
   { label: "Stats", href: "/dashboard/stats", icon: <BarChart size={18} /> },
   {
