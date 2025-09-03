@@ -1,22 +1,11 @@
 "use client";
-
 import { useEffect, useState } from "react";
-
 import { useSession } from "next-auth/react";
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { useTheme } from "next-themes";
 import Translation from "@/types/translation";
 import { OverviewCards } from "@/components/OverviewCards";
 import { Skeleton } from "@/components/ui/skeleton";
 import TopLangsSec from "@/components/TopLangsSec";
+import DailyTranslationsChart from "@/components/DailyTranslationsChart";
 
 type TopLangPair = [string, number];
 
@@ -73,9 +62,7 @@ export default function StatsPage() {
 
   const chartData = dailySeries.slice(-7);
 
-  const { resolvedTheme } = useTheme();
 
-  const isDark = resolvedTheme === "dark";
 
   function useIsMobile() {
     const [m, setM] = useState(false);
@@ -100,48 +87,7 @@ export default function StatsPage() {
         </h2>
         {isLoading && <Skeleton className="h-72 w-full rounded-md" />}
         {!isLoading && (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={chartData}
-              margin={
-                isMobile
-                  ? { top: 2, right: 2, left: 0, bottom: 0 }
-                  : { top: 10, right: 30, left: 0, bottom: 0 }
-              }
-            >
-              <Line
-                type="monotone"
-                dataKey="count"
-                stroke={isDark ? "#93C5FD" : "#4F46E5"}
-                strokeWidth={2}
-              />
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke={isDark ? "#444" : "#ccc"}
-              />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: isMobile ? 10 : 12 }}
-                interval={isMobile ? "preserveStartEnd" : 0}
-                stroke={isDark ? "#aaa" : "#333"}
-              />
-              <YAxis
-                tick={{ fontSize: isMobile ? 10 : 12 }}
-                stroke={isDark ? "#aaa" : "#333"}
-                hide={isMobile}
-              />{" "}
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: isDark ? "#1f2937" : "#fff", // bg-zinc-800
-                  border: "none",
-                  borderRadius: 8,
-                  fontSize: 12,
-                  color: isDark ? "#fff" : "#000",
-                }}
-                labelStyle={{ color: isDark ? "#ccc" : "#333" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <DailyTranslationsChart chartData={chartData} isMobile={isMobile} />
         )}
       </div>
       <TopLangsSec isLoading={isLoading} topLangs={topLangs} />
