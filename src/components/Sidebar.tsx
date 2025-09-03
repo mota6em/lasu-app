@@ -69,6 +69,10 @@ export function Sidebar({
           >
             LaSu
           </Link>
+          <span className="lasu-logo-text hidden lg:block text-md w-full newyork text-center5 border-b pb-1">
+            Your AI <span className="font-bold text-yellow-600">La</span>nguage{" "}
+            <span className="font-bold text-yellow-600">Su</span>pport
+          </span>
           <div className="lg:hidden border-b w-full pb-1">
             <LogoAndMenuBtn onMenuClick={() => setMobileOpen(!mobileOpen)} />
           </div>

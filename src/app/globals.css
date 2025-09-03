@@ -132,6 +132,10 @@
   font-size: 5rem;
 }
 
+.newyork {
+  font-family: "NewYork", sans-serif !important;
+}
+
 @font-face {
   font-family: "NewYork";
   src: url("../../public/fonts/BlackDeamondRegular-3l2LX.ttf")
