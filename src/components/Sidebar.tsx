@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { Home, History, BarChart, Settings, LogOut } from "lucide-react";
+import { Home, History, BarChart, Settings, LogOut, Globe } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import TranslationSettingDialog from "./TranslationSettingDialog";
 import { LuBookOpen } from "react-icons/lu";
@@ -12,6 +12,12 @@ import LogoAndMenuBtn from "./LogoAndMenuBtn";
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
+  {
+    label: "Community",
+    href: "/dashboard/community",
+    icon: <Globe size={18} />,  
+  },
+
   {
     label: "Practice Hub",
     href: "/dashboard/practice",
