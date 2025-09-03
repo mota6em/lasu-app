@@ -9,14 +9,21 @@ import {
 } from "recharts";
 import { useTheme } from "next-themes";
 
-const DailyTranslationsChart = ({ chartData, isMobile }) => {
+interface DailyTranslationsChartProps {
+  chartData: { date: string; count: number }[];
+  isMobile: boolean;
+}
+
+const DailyTranslationsChart = ({
+  chartData,
+  isMobile,
+}: DailyTranslationsChartProps) => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart
         data={chartData}
-        ss
         margin={
           isMobile
             ? { top: 2, right: 2, left: 0, bottom: 0 }

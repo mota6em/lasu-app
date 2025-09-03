@@ -1,7 +1,12 @@
 import { availableLanguages } from "@/lib/languages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "./ui/skeleton";
-const TopLangsSec = ({ topLangs, isLoading }) => {
+interface TopLangsSecProps {
+  topLangs: [string, number][];
+  isLoading: boolean;
+}
+
+const TopLangsSec = ({ topLangs, isLoading }: TopLangsSecProps) => {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4 -ml-2.5">🌟 Top Languages</h2>
