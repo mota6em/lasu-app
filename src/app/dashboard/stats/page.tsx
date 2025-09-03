@@ -71,7 +71,7 @@ export default function StatsPage() {
     fetchData();
   }, [session, status]);
 
-  const chartData = dailySeries;
+  const chartData = dailySeries.slice(-7);
 
   const { resolvedTheme } = useTheme();
 
@@ -96,7 +96,7 @@ export default function StatsPage() {
       </h1>
       <div className="bg-white dark:bg-muted/20 px-2 py-4 md:p-6 rounded-xl shadow-sm border">
         <h2 className="text-lg md:text-xl font-medium mb-4">
-          📈 Daily Translation Activity
+          📈 Your daily translation activity over the last week
         </h2>
         {isLoading && <Skeleton className="h-72 w-full rounded-md" />}
         {!isLoading && (
