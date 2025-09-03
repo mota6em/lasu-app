@@ -6,6 +6,7 @@ import { OverviewCards } from "@/components/OverviewCards";
 import { Skeleton } from "@/components/ui/skeleton";
 import TopLangsSec from "@/components/TopLangsSec";
 import DailyTranslationsChart from "@/components/DailyTranslationsChart";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 type TopLangPair = [string, number];
 
@@ -62,19 +63,6 @@ export default function StatsPage() {
 
   const chartData = dailySeries.slice(-7);
 
-
-
-  function useIsMobile() {
-    const [m, setM] = useState(false);
-    useEffect(() => {
-      const q = matchMedia("(max-width: 640px)");
-      const h = () => setM(q.matches);
-      h();
-      q.addEventListener("change", h);
-      return () => q.removeEventListener("change", h);
-    }, []);
-    return m;
-  }
   const isMobile = useIsMobile();
   return (
     <div className="px-4 md:px-6 py-8 max-w-6xl mx-auto space-y-10">
