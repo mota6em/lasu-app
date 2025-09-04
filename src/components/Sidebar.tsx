@@ -15,7 +15,7 @@ const menu = [
   {
     label: "Community",
     href: "/dashboard/community",
-    icon: <Globe size={18} />,  
+    icon: <Globe size={18} />,
   },
 
   {
@@ -70,7 +70,7 @@ export function Sidebar({
           "lg:w-48",
           mobileOpen ? "w-56 translate-x-0" : "-translate-x-full w-56",
           "lg:translate-x-0",
-          "px-4 lg:px-5 pt-1 lg:pt-8 py-6",
+          "px-4 lg:px-5 pt-1 lg:pt-7 py-6",
         ].join(" ")}
       >
         <div>
@@ -133,7 +133,7 @@ export function Sidebar({
             })}
 
             {status === "unauthenticated" && !session && (
-              <div className="group absolute bottom-10 left-5 w-45 lg:w-38">
+              <div className="group left-5 w-45 lg:w-38">
                 <div className="space-y-4 group">
                   <div className="flex flex-row gap-2 items-center ">
                     <img
