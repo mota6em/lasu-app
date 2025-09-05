@@ -11,12 +11,14 @@ import {
 import { FaStar, FaFire, FaUsers } from "react-icons/fa";
 export default function page() {
   return (
-    <section className="bg-gradient-to-r from-purple-800 to-indigo-500 dark:from-purple-950 dark:to-indigo-800 text-white py-16 mx-1 lg:mx-0 px-6 rounded-2xl shadow-lg">
+    <section className="bg-gradient-to-r from-purple-800 to-indigo-500 dark:from-purple-950 dark:to-indigo-800 text-white py-6 md:py-16 mx-3 md:mx-1 lg:mx-0 px-3 md:px-6 rounded-2xl shadow-lg">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex-1 space-y-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold">
+        <div className="flex-1 space-y-4 ">
+          <h1 className="text-3xl md:text-5xl font-extrabold">
             Welcome to the{" "}
-            <span className="text-yellow-400 newyork text-7xl">LaSu</span>{" "}
+            <span className="text-yellow-400 newyork text-5xl md:text-7xl">
+              LaSu
+            </span>{" "}
             Community
           </h1>
           <p className="text-lg md:text-xl text-white/90">
@@ -24,19 +26,7 @@ export default function page() {
             Track your streaks, earn XP, and see trending words!
           </p>
 
-          <div className="flex gap-3 mt-4">
-            <Button className="bg-white text-purple-600 hover:bg-white/90 shadow-md">
-              Join Now
-            </Button>
-            <Button
-              variant="outline"
-              className="border-white text-black dark:text-white hover:bg-white/90 hover:dark:bg-white/10"
-            >
-              Explore
-            </Button>
-          </div>
-
-          <div className="flex gap-4 mt-6">
+          <div className="flex items-center justify-center flex-wrap gap-4 mt-6">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -98,7 +88,18 @@ export default function page() {
                 </li>
               </ul>
             </CardContent>
-          </Card>
+          </Card>{" "}
+          <div className="flex ms-4 gap-5 mt-4 items-center justify-start">
+            <Button className="bg-white text-purple-600 hover:bg-white/90 shadow-md">
+              Join Now
+            </Button>
+            <Button
+              variant="outline"
+              className="border-white text-black dark:text-white hover:bg-white/90 hover:dark:bg-white/10"
+            >
+              Explore
+            </Button>
+          </div>
         </div>
       </div>
     </section>
