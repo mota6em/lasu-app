@@ -18,12 +18,35 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSession } from "next-auth/react";
 
 const JoinCommModal = () => {
   const [agreed, setAgreed] = useState(false);
   const [showName, setShowName] = useState(true);
-  const [showPic, setShowPic] = useState(true);
+  const [showPicture, setShowPicture] = useState(true);
   const [shareTranslations, setShareTranslations] = useState(true);
+
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
+
+  const joinCommunity = async () => {
+    if (!session) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/community/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ showName, showPicture, shareTranslations }),
+      });
+      const data = await res.json();
+      console.log(data);
+      alert(data.message); //temp for testing
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog>
@@ -34,7 +57,11 @@ const JoinCommModal = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg bg-[#161616]">
         <DialogHeader>
-          <DialogTitle className="text-yellow-100">Welcome to <span className="text-yellow-400 newyork text-4xl">LaSu</span> Community!</DialogTitle>
+          <DialogTitle className="text-yellow-100">
+            Welcome to{" "}
+            <span className="text-yellow-400 newyork text-4xl">LaSu</span>{" "}
+            Community!
+          </DialogTitle>
           <DialogDescription>
             Please review our terms and choose your privacy preferences.
           </DialogDescription>
@@ -46,25 +73,26 @@ const JoinCommModal = () => {
             phrases.
           </p>
 
-          <div className="flex items-center justify-between">
+          <div
+            onClick={() => setShowName(!showName)}
+            className="flex items-center justify-between"
+          >
             <span>Show your name in the community?</span>
-            <Switch
-              checked={showName}
-              onCheckedChange={setShowName}
-              className="cursor-pointer"
-            />
+            <Switch checked={showName} className="cursor-pointer" />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div
+            onClick={() => setShowPicture(!showPicture)}
+            className="flex items-center justify-between"
+          >
             <span>Show your profile picture?</span>
-            <Switch
-              checked={showPic}
-              onCheckedChange={setShowPic}
-              className="cursor-pointer"
-            />
+            <Switch checked={showPicture} className="cursor-pointer" />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div
+            onClick={() => setShareTranslations(!shareTranslations)}
+            className="flex items-center justify-between"
+          >
             <Tooltip>
               <TooltipTrigger>
                 <span>
@@ -82,11 +110,7 @@ const JoinCommModal = () => {
                 </span>
               </TooltipContent>
             </Tooltip>
-            <Switch
-              checked={shareTranslations}
-              onCheckedChange={setShareTranslations}
-              className="cursor-pointer"
-            />
+            <Switch checked={shareTranslations} className="cursor-pointer" />
           </div>
           <div
             className="flex items-center gap-2 justify-end cursor-pointer"
@@ -102,10 +126,11 @@ const JoinCommModal = () => {
 
         <DialogFooter>
           <Button
-            disabled={!agreed}
+            disabled={!agreed || loading}
             className="bg-purple-600 text-white hover:bg-purple-700"
+            onClick={joinCommunity}
           >
-            Enter Community
+            {loading ? "Joining..." : "Enter Community"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/tooltip";
 import JoinCommModal from "@/components/JoinCommModal";
 import { FaStar, FaFire, FaUsers } from "react-icons/fa";
+import { useSession, signIn } from "next-auth/react";
 
 const JoinCommHero = () => {
+  const { data: session } = useSession();
   return (
     <section className="bg-gradient-to-r from-purple-800 to-indigo-500 dark:from-purple-950 dark:to-indigo-800 text-white py-6 md:py-16 mx-3 md:mx-1 lg:mx-0 px-3 md:px-6 rounded-2xl shadow-lg">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
@@ -91,7 +93,26 @@ const JoinCommHero = () => {
               </ul>
             </CardContent>
           </Card>
-          <JoinCommModal />
+          {session ? (
+            <JoinCommModal />
+          ) : (
+            <div className="flex items-center justify-start">
+              <div className="flex flex-col items-start">
+                <span className="text-red-500 dark:text-red-300">
+                  You are not logged in!
+                </span>{" "}
+                <span className="text-gray-200">
+                  Log in to join the community
+                </span>
+              </div>
+              <Button
+                onClick={() => signIn("google")}
+                className="bg-white mt-4 ms-3 text-purple-600 hover:bg-white/90 shadow-md animate-bounce"
+              >
+                Log In
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>
