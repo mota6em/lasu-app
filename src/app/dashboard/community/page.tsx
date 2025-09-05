@@ -22,8 +22,8 @@ export default function page() {
             Community
           </h1>
           <p className="text-lg md:text-xl text-white/90">
-            Connect, share, and grow with language lovers around the world.
-            Track your streaks, earn XP, and see trending words!
+            Check out what fellow learners are translating, learn with them and
+            boost your XP as you go!
           </p>
 
           <div className="flex items-center justify-center flex-wrap gap-4 mt-6">
@@ -88,18 +88,10 @@ export default function page() {
                 </li>
               </ul>
             </CardContent>
-          </Card>{" "}
-          <div className="flex ms-4 gap-5 mt-4 items-center justify-start">
-            <Button className="bg-white text-purple-600 hover:bg-white/90 shadow-md">
-              Join Now
-            </Button>
-            <Button
-              variant="outline"
-              className="border-white text-black dark:text-white hover:bg-white/90 hover:dark:bg-white/10"
-            >
-              Explore
-            </Button>
-          </div>
+          </Card>
+          <Button className="bg-white mt-4 animate-bounce ms-2 text-purple-600 hover:bg-white/90 shadow-md">
+            Join Now
+          </Button>
         </div>
       </div>
     </section>
