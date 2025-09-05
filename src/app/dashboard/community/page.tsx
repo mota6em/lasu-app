@@ -4,6 +4,7 @@ import CommunityUser from "@/models/communityUser";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import CommHero from "@/components/CommHero";
+import TopLearners from "@/components/TopLearners";
 export default async function page() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return <JoinCommHero />;
@@ -14,5 +15,10 @@ export default async function page() {
   if (!member) {
     return <JoinCommHero />;
   }
-  return <CommHero user={session.user} />;
+  return (
+    <>
+      <CommHero userName={session.user.name || "Anonymous"} />
+      <TopLearners />
+    </>
+  );
 }
