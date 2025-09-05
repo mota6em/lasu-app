@@ -3,7 +3,7 @@ import { connectToDB } from "@/lib/mongodb";
 import CommunityUser from "@/models/communityUser";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
-
+import CommHero from "@/components/CommHero";
 export default async function page() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return <JoinCommHero />;
@@ -14,5 +14,5 @@ export default async function page() {
   if (!member) {
     return <JoinCommHero />;
   }
-  return <div>Community</div>;
+  return <CommHero user={session.user} />;
 }
