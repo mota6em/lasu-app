@@ -2,6 +2,8 @@
 
 import { FaMedal, FaClock, FaCalendarAlt, FaTrophy } from "react-icons/fa";
 import Image from "next/image";
+import { useState } from "react";
+import { FaStar, FaTimes } from "react-icons/fa";
 
 interface Learner {
   id: string;
@@ -103,7 +105,11 @@ const TopLearnersSection = () => {
     </div>
   );
 
-  const renderSection = (title: string, icon: JSX.Element, data: Learner[]) => (
+  const renderSection = (
+    title: string,
+    icon: React.ReactNode,
+    data: Learner[]
+  ) => (
     <div className="flex-1">
       <h3 className="flex items-center gap-2 font-bold mb-2 text-lg">
         {icon} {title}
@@ -111,31 +117,52 @@ const TopLearnersSection = () => {
       <div>{data.map((learner, idx) => renderLearner(learner, idx + 1))}</div>
     </div>
   );
-
+  const [showTable, setShowTable] = useState(false);
   return (
-    <div className="mt-8 mx-2 md:mx-0 p-6 bg-purple-700/5 rounded-2xl shadow-lg text-white">
-      <div className="flex flex-col lg:flex-row lg:flex-nowrap flex-wrap gap-6">
-        {renderSection("Top Today", <FaClock />, topDay)}
-        {renderSection("Top This Month", <FaCalendarAlt />, topMonth)}
-        {renderSection("Top All Time", <FaTrophy />, topAllTime)}
+    <>
+      <div className="flex justify-center">
+        <button
+          onClick={() => setShowTable(!showTable)}
+          className="bg-gradient-to-r text-sm from-purple-600/20 to-yellow-500/20 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center gap-2 hover:rounded-xl"
+        >
+          {showTable ? (
+            <>
+              <FaTimes className="text-yellow-300" /> Hide Leaderboard
+            </>
+          ) : (
+            <>
+              <FaStar className="text-yellow-300 animate-pulse px-0" />
+              Show Leaderboard
+            </>
+          )}
+        </button>
       </div>
+      {showTable && (
+        <div className="mt-8 mx-2 md:mx-0 p-6 bg-purple-700/5 rounded-2xl shadow-lg text-white">
+          <div className="flex flex-col lg:flex-row lg:flex-nowrap flex-wrap gap-6">
+            {renderSection("Top Today", <FaClock />, topDay)}
+            {renderSection("Top This Month", <FaCalendarAlt />, topMonth)}
+            {renderSection("Top All Time", <FaTrophy />, topAllTime)}
+          </div>
 
-      <div className="mt-6 p-4 bg-purple-700/15 rounded-lg text-center">
-        <p className="font-semibold mb-2">Your Rank</p>
-        <div className="flex justify-center gap-6 text-sm text-gray-300">
-          <span>
-            Day: <span className="text-yellow-400">{userRank.day}</span>
-          </span>
-          <span>
-            Month: <span className="text-yellow-400">{userRank.month}</span>
-          </span>
-          <span>
-            All Time:{" "}
-            <span className="text-yellow-400">{userRank.allTime}</span>
-          </span>
+          <div className="mt-6 p-4 bg-purple-700/15 rounded-lg text-center">
+            <p className="font-semibold mb-2">Your Rank</p>
+            <div className="flex justify-center gap-6 text-sm text-gray-300">
+              <span>
+                Day: <span className="text-yellow-400">{userRank.day}</span>
+              </span>
+              <span>
+                Month: <span className="text-yellow-400">{userRank.month}</span>
+              </span>
+              <span>
+                All Time:{" "}
+                <span className="text-yellow-400">{userRank.allTime}</span>
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
