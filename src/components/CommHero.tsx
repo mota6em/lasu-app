@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 
-export default function CommHero({ user }) {
+export default function CommHero({ userName }: { userName: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -10,7 +10,7 @@ export default function CommHero({ user }) {
       className="p-6 text-center flex flex-col justify-center items-center"
     >
       <h1 className="text-4xl font-bold text-yellow-600">
-        Welcome back, {user.name.split(" ")[0]}! 🎉
+        Welcome back, {userName.split(" ")[0]}! 🎉
       </h1>
       <p className="text-lg text-gray-500">
         Here is what your mates are learning. Join the fun!
