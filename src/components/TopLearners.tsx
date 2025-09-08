@@ -120,7 +120,13 @@ const TopLearnersSection = () => {
   const [showTable, setShowTable] = useState(false);
   return (
     <>
-      <div className="flex justify-center">
+      <div className="flex items-center flex-col justify-center gap-2">
+        <span className="text-xs text-gray-400">
+          Your Ranks: <span className="text-yellow-400">Today:</span>{" "}
+          {userRank.day} / <span className="text-yellow-400">This Month:</span>{" "}
+          {userRank.month} / <span className="text-yellow-400">All Time:</span>{" "}
+          {userRank.allTime}
+        </span>
         <button
           onClick={() => setShowTable(!showTable)}
           className="bg-gradient-to-r text-sm from-purple-600/20 to-yellow-500/20 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center gap-2 hover:rounded-xl"
