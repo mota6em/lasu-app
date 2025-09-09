@@ -6,6 +6,8 @@ import { getServerSession } from "next-auth";
 import CommHero from "@/components/CommHero";
 import TopLearners from "@/components/TopLearners";
 import CommunityLiveTranslations from "@/components/CommunityLiveTranslations";
+import ExpandableList from "@/components/ExpandableList";
+import LangsWordsChart from "@/components/LangsWordsChart";
 export default async function page() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return <JoinCommHero />;
@@ -21,6 +23,8 @@ export default async function page() {
       <CommHero userName={session.user.name || "Anonymous"} />
       <TopLearners />
       <CommunityLiveTranslations />
+      <LangsWordsChart />
+  
     </>
   );
 }
