@@ -12,6 +12,9 @@ export const CommunityUserSchema = new Schema({
   lastActive: { type: Date, default: Date.now },
   rank: { type: Number, default: 0 },
   level: { type: Number, default: 0 },
+  dailyTranslations: { type: Number, default: 0 },
+  monthlyTranslations: { type: Number, default: 0 },
+  allTimeTranslations: { type: Number, default: 0 },
 });
 
 const CommunityUser =

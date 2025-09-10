@@ -11,6 +11,9 @@ interface CommunityUser {
   lastActive: Date;
   rank: number;
   level: number;
+  dailyTranslations: number;
+  monthlyTranslations: number;
+  allTimeTranslations: number;
 }
 
 export default CommunityUser;
