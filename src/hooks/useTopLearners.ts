@@ -1,17 +1,10 @@
 "use client";
+import { Learner } from "@/components/TopLearners";
 import { useEffect, useState } from "react";
 
 type Period = "daily" | "monthly" | "allTime";
 
-interface Learner {
-  id: string;
-  name: string;
-  avatarUrl?: string;
-  xp: number;
-  wordsLearned: number;
-  showName: boolean;
-  showPicture: boolean;
-}
+
 
 export function useTopLearners(period: Period) {
   const [learners, setLearners] = useState<Learner[]>([]);

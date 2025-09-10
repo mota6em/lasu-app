@@ -12,13 +12,14 @@ import Image from "next/image";
 import { useState } from "react";
 import { useTopLearners } from "@/hooks/useTopLearners";
 
-interface Learner {
-  _id: string;
+export interface Learner {
+  id: string;
   name: string;
   Image?: string;
   xp: number;
   showName?: boolean;
   showPicture?: boolean;
+  totalTranslations?: number;
 }
 
 const TopLearnersSection = () => {
@@ -36,7 +37,7 @@ const TopLearnersSection = () => {
 
   const renderLearner = (learner: Learner, rank: number) => (
     <div
-      key={learner._id.slice(-5)}
+      key={learner.id.slice(-5)}
       className="flex items-center gap-3 p-2 bg-purple-800/10 rounded-lg mb-2 hover:bg-purple-700/20 transition"
     >
       {learner.showPicture ? (
