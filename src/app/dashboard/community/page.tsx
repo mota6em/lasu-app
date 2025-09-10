@@ -20,11 +20,13 @@ export default async function page() {
   }
   return (
     <>
-      <CommHero userName={session.user.name || "Anonymous"} />
+      <CommHero
+        userName={session.user.name || "Anonymous"}
+        userId={session.user.id}
+      />
       <TopLearners />
       <CommunityLiveTranslations />
       <LangsWordsChart />
-  
     </>
   );
 }
