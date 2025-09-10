@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, models } from "mongoose";
-const CommunityUserSchema = new Schema({
+export const CommunityUserSchema = new Schema({
   userId: { type: String, required: true, unique: true },
   joinedAt: { type: Date, default: Date.now },
   showName: { type: Boolean, default: true },
