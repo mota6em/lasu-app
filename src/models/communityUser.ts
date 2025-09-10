@@ -1,5 +1,4 @@
 import mongoose, { Schema, model, models } from "mongoose";
-
 const CommunityUserSchema = new Schema({
   userId: { type: String, required: true, unique: true },
   joinedAt: { type: Date, default: Date.now },
@@ -12,6 +11,7 @@ const CommunityUserSchema = new Schema({
   badges: { type: [String], default: [] },
   lastActive: { type: Date, default: Date.now },
   rank: { type: Number, default: 0 },
+  level: { type: Number, default: 0 },
 });
 
 const CommunityUser =
