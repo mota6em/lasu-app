@@ -1,89 +1,48 @@
 "use client";
 
-import { FaMedal, FaClock, FaCalendarAlt, FaTrophy } from "react-icons/fa";
+import {
+  FaMedal,
+  FaClock,
+  FaCalendarAlt,
+  FaTrophy,
+  FaStar,
+  FaTimes,
+} from "react-icons/fa";
 import Image from "next/image";
 import { useState } from "react";
-import { FaStar, FaTimes } from "react-icons/fa";
+import { useTopLearners } from "@/hooks/useTopLearners";
 
 interface Learner {
-  id: string;
+  _id: string;
   name: string;
-  avatarUrl: string;
+  Image?: string;
   xp: number;
-  wordsLearned: number;
-  showName: boolean;
-  showPicture: boolean;
+  showName?: boolean;
+  showPicture?: boolean;
 }
 
 const TopLearnersSection = () => {
-  // Mock data
-  const topDay: Learner[] = [
-    {
-      id: "1",
-      name: "Alice",
-      avatarUrl: "/",
-      xp: 50,
-      wordsLearned: 10,
-      showName: true,
-      showPicture: false,
-    },
-    {
-      id: "2",
-      name: "Bob",
-      avatarUrl: "/",
-      xp: 45,
-      wordsLearned: 9,
-      showName: true,
-      showPicture: false,
-    },
-    {
-      id: "3",
-      name: "Charlie",
-      avatarUrl: "/",
-      xp: 40,
-      wordsLearned: 8,
-      showName: false,
-      showPicture: false,
-    },
-    {
-      id: "4",
-      name: "Diana",
-      avatarUrl: "/",
-      xp: 38,
-      wordsLearned: 7,
-      showName: true,
-      showPicture: false,
-    },
-    {
-      id: "5",
-      name: "Eve",
-      avatarUrl: "/",
-      xp: 35,
-      wordsLearned: 6,
-      showName: true,
-      showPicture: false,
-    },
-  ];
+  const { learners: topDay, loading: loadingDay } = useTopLearners("daily");
+  console.log("topDay", topDay);
+  const { learners: topMonth, loading: loadingMonth } =
+    useTopLearners("monthly");
+  console.log("topMonth", topMonth);
+  const { learners: topAllTime, loading: loadingAll } =
+    useTopLearners("allTime");
+  console.log("topAllTime", topAllTime);
+  const userRank = { day: 7, month: 12, allTime: 60 };
 
-  const topMonth: Learner[] = topDay; // for simplicity
-  const topAllTime: Learner[] = topDay; // for simplicity
-
-  // Mock user rank
-  const userRank = {
-    day: 7,
-    month: 12,
-    allTime: 30,
-  };
+  const [showTable, setShowTable] = useState(false);
 
   const renderLearner = (learner: Learner, rank: number) => (
     <div
-      key={learner.id}
-      className="flex items-center gap-3 p-2 bg-purple-800/10 rounded-lg mb-2"
+      key={learner._id.slice(-5)}
+      className="flex items-center gap-3 p-2 bg-purple-800/10 rounded-lg mb-2 hover:bg-purple-700/20 transition"
     >
       {learner.showPicture ? (
         <Image
-          src={learner.avatarUrl}
-          alt={learner.name}
+          src={learner.Image || "/imgs/userIcon.jpg"}
+          alt="User Avatar"
           width={40}
           height={40}
           className="rounded-full"
@@ -94,11 +53,11 @@ const TopLearnersSection = () => {
         </div>
       )}
       <div className="flex-1">
-        <p className="font-semibold text-sm">
-          {learner.showName ? learner.name : "Anonymous"}
-        </p>
+        <h4 className="font-bold text-sm">
+          {learner.showName ? learner.name : "Anonymous champion"}
+        </h4>
         <p className="text-xs text-gray-300">
-          {learner.wordsLearned} words, {learner.xp} XP
+          {learner.totalTranslations ?? 0} translations, {learner.xp} XP
         </p>
       </div>
       <span className="font-bold text-yellow-400">{rank}</span>
@@ -108,19 +67,24 @@ const TopLearnersSection = () => {
   const renderSection = (
     title: string,
     icon: React.ReactNode,
-    data: Learner[]
+    data: Learner[],
+    loading: boolean
   ) => (
     <div className="flex-1">
       <h3 className="flex items-center gap-2 font-bold mb-2 text-lg">
         {icon} {title}
       </h3>
-      <div>{data.map((learner, idx) => renderLearner(learner, idx + 1))}</div>
+      {loading ? (
+        <p className="text-gray-400">Loading...</p>
+      ) : (
+        <div>{data.map((learner, idx) => renderLearner(learner, idx + 1))}</div>
+      )}
     </div>
   );
-  const [showTable, setShowTable] = useState(false);
+
   return (
     <>
-      <div className="flex items-center flex-col justify-center gap-2">
+      <div className="flex flex-col items-center gap-2">
         <span className="text-xs text-gray-400">
           Your Ranks: <span className="text-yellow-400">Today:</span>{" "}
           {userRank.day} / <span className="text-yellow-400">This Month:</span>{" "}
@@ -129,7 +93,7 @@ const TopLearnersSection = () => {
         </span>
         <button
           onClick={() => setShowTable(!showTable)}
-          className="bg-gradient-to-r text-sm from-purple-600/20 to-yellow-500/20 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center gap-2 hover:rounded-xl"
+          className="bg-gradient-to-r text-sm from-purple-600/20 to-yellow-500/20 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
         >
           {showTable ? (
             <>
@@ -137,34 +101,29 @@ const TopLearnersSection = () => {
             </>
           ) : (
             <>
-              <FaStar className="text-yellow-300 animate-pulse px-0" />
-              Show Leaderboard
+              <FaStar className="text-yellow-300 animate-pulse" /> Show
+              Leaderboard
             </>
           )}
         </button>
       </div>
-      {showTable && (
-        <div className="mt-8 mx-2 md:mx-0 p-6 bg-purple-700/5 rounded-2xl shadow-lg text-white">
-          <div className="flex flex-col lg:flex-row lg:flex-nowrap flex-wrap gap-6">
-            {renderSection("Top Today", <FaClock />, topDay)}
-            {renderSection("Top This Month", <FaCalendarAlt />, topMonth)}
-            {renderSection("Top All Time", <FaTrophy />, topAllTime)}
-          </div>
 
-          <div className="mt-6 p-4 bg-purple-700/15 rounded-lg text-center">
-            <p className="font-semibold mb-2">Your Rank</p>
-            <div className="flex justify-center gap-6 text-sm text-gray-300">
-              <span>
-                Day: <span className="text-yellow-400">{userRank.day}</span>
-              </span>
-              <span>
-                Month: <span className="text-yellow-400">{userRank.month}</span>
-              </span>
-              <span>
-                All Time:{" "}
-                <span className="text-yellow-400">{userRank.allTime}</span>
-              </span>
-            </div>
+      {showTable && (
+        <div className="mt-6 mx-2 md:mx-0 p-6 bg-purple-700/5 rounded-2xl shadow-lg text-white">
+          <div className="flex flex-col lg:flex-row gap-6">
+            {renderSection("Top Today", <FaClock />, topDay, loadingDay)}
+            {renderSection(
+              "Top This Month",
+              <FaCalendarAlt />,
+              topMonth,
+              loadingMonth
+            )}
+            {renderSection(
+              "Top All Time",
+              <FaTrophy />,
+              topAllTime,
+              loadingAll
+            )}
           </div>
         </div>
       )}

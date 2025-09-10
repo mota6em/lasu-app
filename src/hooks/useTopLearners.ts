@@ -3,18 +3,54 @@ import { useEffect, useState } from "react";
 
 type Period = "daily" | "monthly" | "allTime";
 
+interface Learner {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  xp: number;
+  wordsLearned: number;
+  showName: boolean;
+  showPicture: boolean;
+}
+
 export function useTopLearners(period: Period) {
-  const [learners, setLearners] = useState<any[]>([]);
+  const [learners, setLearners] = useState<Learner[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchLearners() {
       setLoading(true);
-      const res = await fetch(`/api/community/top-learners?period=${period}`);
-      const data = await res.json();
-      setLearners(data);
-      setLoading(false);
+      try {
+        const res = await fetch(
+          `/api/community/users/top-learners?period=${period}`
+        );
+        const topUsers: any[] = await res.json();
+
+        const learnersWithInfo: Learner[] = await Promise.all(
+          topUsers.map(async (u) => {
+            const userRes = await fetch(`/api/users/${u.userId}`);
+            const userData = await userRes.json();
+
+            return {
+              id: u.userId,
+              name: userData.name || "Anonymous",
+              Image: userData.image || "/imgs/userIcon.jpg",
+              xp: u.xp || 0,
+              totalTranslations: u[period + "Translations"]! || 0,
+              showName: u.showName ?? true,
+              showPicture: u.showPicture ?? true,
+            };
+          })
+        );
+
+        setLearners(learnersWithInfo);
+      } catch (err) {
+        console.error("Failed to fetch top learners:", err);
+      } finally {
+        setLoading(false);
+      }
     }
+
     fetchLearners();
   }, [period]);
 
