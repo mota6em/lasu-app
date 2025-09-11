@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, Star } from "lucide-react";
 
 interface ExpandableListProps {
   title: string;
-  items: string[];
+  items: { word: string; count: number }[];
   limit?: number;
   max?: number;
 }
@@ -21,46 +21,31 @@ export default function ExpandableList({
   const visibleItems = expanded ? items.slice(0, max) : items.slice(0, limit);
 
   return (
-    <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-neutral-800 p-5 bg-white dark:bg-neutral-900 hover:shadow-xl transition-all">
+    <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-neutral-800 p-5 bg-white dark:bg-neutral-900 hover:shadow-xl transition-all md:w-3/12">
       <h3 className="text-lg font-bold flex items-center gap-2 mb-4">
         <Star className="w-5 h-5 text-yellow-500" />
         {title}
       </h3>
 
-      <ul className="space-y-2">
-        {visibleItems.map((item, idx) => (
+      <ul className="space-y-2 overflow-y-scroll h-50">
+        {items.map((item, idx) => (
           <li
             key={idx}
             className="flex items-center justify-between rounded-lg px-3 py-2 bg-gray-50 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 transition"
           >
-            <span className="text-sm font-medium">{item}</span>
+            <span className="text-sm font-medium">
+              {item.word.slice(0, 1).toUpperCase() + item.word.slice(1)}{" "}
+              <span className="text-xs font-medium p-1 text-yellow-500">
+                x{item.count}
+              </span>
+            </span>
+
             <span className="text-xs text-gray-500 dark:text-gray-400">
               #{idx + 1}
             </span>
           </li>
         ))}
       </ul>
-
-      {items.length > limit && (
-        <div className="mt-4 flex justify-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1 text-sm"
-            onClick={() => setExpanded(!expanded)}
-          >
-            {expanded ? (
-              <>
-                See less <ChevronUp className="w-4 h-4" />
-              </>
-            ) : (
-              <>
-                See more <ChevronDown className="w-4 h-4" />
-              </>
-            )}
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
