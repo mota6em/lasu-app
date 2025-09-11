@@ -6,11 +6,19 @@ const LangsWordsChart = () => {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch("/api/community/stats")
-      .then((res) => res.json())
-      .then((data) => setStats(data))
-      .catch(console.error);
+    const fetchStats = () => {
+      fetch("/api/community/stats")
+        .then((res) => res.json())
+        .then((data) => setStats(data))
+        .catch(console.error);
+    };
+
+    fetchStats(); // initial fetch
+
+    const interval = setInterval(fetchStats, 60000); //refresh every 1 min
+    return () => clearInterval(interval);
   }, []);
+
   if (!stats) {
     return <p className="text-center mt-10">Loading stats...</p>;
   }
