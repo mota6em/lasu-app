@@ -59,6 +59,9 @@ export function Translate() {
       console.log("save to db", {
         sourceText: text,
         result: apiResult || {},
+        userId: session?.user?.id,
+        userName: session?.user?.name,
+        userImage: session?.user?.image,
         translationType,
       });
       if (session) {
@@ -71,6 +74,23 @@ export function Translate() {
             translationType,
           }),
         });
+        if (!text.trim().includes(" ")) {
+          await fetch("/api/community/live", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: session?.user?.id,
+              userName:
+                session?.user?.name ||
+                session?.user?.email?.split("@")[0] ||
+                "Anonymous",
+              sourceText: text,
+              userImage: session?.user?.image,
+              translationType,
+              result: apiResult,
+            }),
+          });
+        }
       } else {
         console.log("save to local storage");
         try {
