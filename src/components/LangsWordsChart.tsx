@@ -2,8 +2,20 @@
 import React, { useEffect, useState } from "react";
 import ExpandableList from "./ExpandableList";
 import { FiTrendingUp } from "react-icons/fi";
+
+interface StatItem {
+  _id: string;
+  count: number;
+}
+
+interface Stats {
+  daily: { words: StatItem[]; languages: StatItem[] };
+  monthly: { words: StatItem[]; languages: StatItem[] };
+  allTime: { words: StatItem[]; languages: StatItem[] };
+}
+
 const LangsWordsChart = () => {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
     const fetchStats = () => {
