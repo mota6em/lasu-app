@@ -5,6 +5,24 @@ import { FaVolumeUp, FaSpinner } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FaChartLine } from "react-icons/fa";
+import { useEffect } from "react";
+import Image from "next/image";
+
+interface TranslationResult {
+  translations: Record<string, string>;
+  example: Record<string, string>;
+}
+
+interface CommunityTranslation {
+  userId: string;
+  userName: string;
+  userImage: string;
+  sourceText: string;
+  translationType: string;
+  translationFilter: string;
+  result: TranslationResult;
+  createdAt: string | Date;
+}
 
 export default function CommunityTranslations() {
   const [selectedLangs, setSelectedLangs] = useState<Record<string, string>>(
@@ -16,142 +34,24 @@ export default function CommunityTranslations() {
     setSelectedLangs((prev) => ({ ...prev, [cardId]: lang }));
   };
 
-  //mock translations data for testing
-  const translations = [
-    {
-      userId: "user1",
-      sourceText: "Hello",
-      translationType: "Direct",
-      translationFilter: "word",
-      result: {
-        translations: {
-          Hungarian: "Szia",
-          Arabic: "مرحبا",
-          French: "Bonjour",
-        },
-        example: {
-          Hungarian: "Szia, hogy vagy?",
-          Arabic: "مرحبا، كيف حالك؟",
-          French: "Bonjour, comment allez-vous?",
-        },
-      },
-      createdAt: new Date("2025-09-08T08:00:00"),
-    },
-    {
-      userId: "user2",
-      sourceText: "Adventure",
-      translationType: "Direct",
-      translationFilter: "word",
-      result: {
-        translations: {
-          Hungarian: "Kaland",
-          Arabic: "مغامرة",
-          French: "Aventure",
-        },
-        example: {
-          Hungarian: "Egy izgalmas kaland vár ránk.",
-          Arabic: "هذه مغامرة مثيرة.",
-          French: "Quelle aventure extraordinaire!",
-        },
-      },
-      createdAt: new Date("2025-09-08T08:05:00"),
-    },
-    {
-      userId: "user3",
-      sourceText: "Wisdom",
-      translationType: "Contextual",
-      translationFilter: "word",
-      result: {
-        translations: {
-          Hungarian: "Bölcsesség",
-          Arabic: "حكمة",
-          French: "Sagesse",
-        },
-        example: {
-          Hungarian: "A bölcsesség az évekkel jön.",
-          Arabic: "الحكمة تأتي مع التجربة.",
-          French: "La sagesse vient avec l'âge.",
-        },
-      },
-      createdAt: new Date("2025-09-08T08:10:00"),
-    },
-    {
-      userId: "user4",
-      sourceText: "Serendipity",
-      translationType: "Contextual",
-      translationFilter: "word",
-      result: {
-        translations: {
-          Hungarian: "Szerencsés véletlen",
-          Arabic: "صدفة سعيدة",
-          French: "Sérendipité",
-        },
-        example: {
-          Hungarian: "Ez egy szerencsés véletlen volt.",
-          Arabic: "كانت صدفة سعيدة أن التقينا.",
-          French: "C'était de la sérendipité pure.",
-        },
-      },
-      createdAt: new Date("2025-09-08T08:15:00"),
-    },
-    {
-      userId: "user5",
-      sourceText: "Courage",
-      translationType: "Direct",
-      translationFilter: "word",
-      result: {
-        translations: {
-          Hungarian: "Bátorság",
-          Arabic: "شجاعة",
-          French: "Courage",
-        },
-        example: {
-          Hungarian: "Mutass bátorságot!",
-          Arabic: "أظهر شجاعتك!",
-          French: "Montre du courage!",
-        },
-      },
-      createdAt: new Date("2025-09-08T08:20:00"),
-    },
-    {
-      userId: "user6",
-      sourceText: "Harmony",
-      translationType: "Contextual",
-      translationFilter: "word",
-      result: {
-        translations: {
-          Hungarian: "Harmónia",
-          Arabic: "انسجام",
-          French: "Harmonie",
-        },
-        example: {
-          Hungarian: "Az élet harmóniája boldogságot hoz.",
-          Arabic: "انسجام الحياة يجلب السعادة.",
-          French: "L'harmonie de la vie apporte le bonheur.",
-        },
-      },
-      createdAt: new Date("2025-09-08T08:25:00"),
-    },
-    {
-      userId: "user7",
-      sourceText: "Creativity",
-      translationType: "Direct",
-      translationFilter: "word",
-      result: {
-        translations: {
-          Hungarian: "Kreativitás",
-          Arabic: "إبداع",
-          French: "Créativité",
-        },
-        example: {
-          Hungarian: "Mutasd meg a kreativitásod!",
-          Arabic: "أظهر إبداعك!",
-          French: "Montre ta créativité!",
-        },
-      },
-      createdAt: new Date("2025-09-08T08:30:00"),
-    },
-  ];
+  const [translations, setTranslations] = useState<CommunityTranslation[]>([]);
+
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      try {
+        const res = await fetch("/api/community/live");
+        const data = await res.json();
+        setTranslations(data);
+        console.log("translations data", data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchTranslations(); // initial fetch
+    const interval = setInterval(fetchTranslations, 5000); // every 5s
+    return () => clearInterval(interval);
+  }, []);
 
   const speakText = (text: string, lang: string, cardId: string) => {
     if ("speechSynthesis" in window) {
@@ -186,7 +86,6 @@ export default function CommunityTranslations() {
             langs[0];
           const translation = t.result.translations[selectedLang];
           const example = t.result.example[selectedLang];
-
           return (
             <div
               key={idx}
@@ -195,14 +94,23 @@ export default function CommunityTranslations() {
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-foreground">
-                    {t.sourceText}
+                    {t.sourceText[0].toUpperCase() + t.sourceText.slice(1)}
                   </h3>
                   <p className="text-xs text-muted-foreground">
                     {t.translationType} • {t.translationFilter}
                   </p>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  By: <span className=" font-semibold ">{t.userId}</span>
+                <div className="flex flex-row gap-x-1 items-center justify-center text-xs text-muted-foreground">
+                  <Image
+                    src={t.userImage ?? "/imgs/userIcon.jpg"}
+                    alt="User Avatar"
+                    width={20}
+                    height={20}
+                    className="rounded-full"
+                  />
+                  <span className=" font-semibold ">
+                    {t.userName! || "Anonymous"}
+                  </span>
                 </div>
               </div>
 
