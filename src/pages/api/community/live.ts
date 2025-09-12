@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDB } from "@/lib/mongodb";
 import LiveTranslation from "@/models/liveTranslations";
+import { User } from "@/models/user";
+import { addXPtoUser } from "@/lib/commUserStatus";
 
 export default async function handler(
   req: NextApiRequest,
@@ -36,6 +38,8 @@ export default async function handler(
         });
       }
 
+      await addXPtoUser(newTrans.userId, newTrans.sourceText.length * 2);
+      
       return res.status(201).json(newTrans);
     } catch (err) {
       console.error(err);
