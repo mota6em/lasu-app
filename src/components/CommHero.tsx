@@ -37,7 +37,14 @@ export default function CommHero({
         <div className=" p-3 rounded-xl flex-1 shadow-md">
           <h3 className="text-yellow-400 text-md font-bold">Level</h3>
           <p className="text-white text-xl font-extrabold">
-            <CountUp start={1} end={mounted ? stats.level : 0} duration={2} />
+            <CountUp start={0} end={mounted ? stats.level : 0} duration={2} />
+          </p>
+        </div>
+        <div className="p-3 rounded-xl flex-1 shadow-md">
+          <h3 className="text-yellow-400 text-md font-bold">Streak</h3>
+          <p className="text-white text-xl font-extrabold">
+            <CountUp start={0} end={mounted ? stats.streak : 0} duration={2} />{" "}
+            days
           </p>
         </div>
       </div>
