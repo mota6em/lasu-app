@@ -7,6 +7,10 @@ export async function addXPtoUser(userId: string, xpGained: number) {
     return;
   }
 
+  user.dailyTranslations += 1;
+  user.monthlyTranslations += 1;
+  user.allTimeTranslations += 1;
+
   user.xp += xpGained;
 
   user.level = getLevelFromXP(user.xp);
