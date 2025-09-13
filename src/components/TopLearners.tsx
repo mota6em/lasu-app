@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { useTopLearners } from "@/hooks/useTopLearners";
+import { useUserRanks } from "@/hooks/useUserRanks";
 
 export interface Learner {
   id: string;
@@ -22,7 +23,7 @@ export interface Learner {
   totalTranslations?: number;
 }
 
-const TopLearnersSection = () => {
+const TopLearnersSection = ({ userId }: { userId: string }) => {
   const { learners: topDay, loading: loadingDay } = useTopLearners("daily");
   console.log("topDay", topDay);
   const { learners: topMonth, loading: loadingMonth } =
@@ -31,8 +32,9 @@ const TopLearnersSection = () => {
   const { learners: topAllTime, loading: loadingAll } =
     useTopLearners("allTime");
   console.log("topAllTime", topAllTime);
-  const userRank = { day: 7, month: 12, allTime: 60 };
 
+  const { userRanks, isLoading } = useUserRanks(userId);
+  console.log("userRanks", userRanks);
   const [showTable, setShowTable] = useState(false);
 
   const renderLearner = (learner: Learner, rank: number) => (
@@ -88,9 +90,11 @@ const TopLearnersSection = () => {
       <div className="flex flex-col items-center gap-2">
         <span className="text-xs text-gray-400">
           Your Ranks: <span className="text-yellow-400">Today:</span>{" "}
-          {userRank.day} / <span className="text-yellow-400">This Month:</span>{" "}
-          {userRank.month} / <span className="text-yellow-400">All Time:</span>{" "}
-          {userRank.allTime}
+          {isLoading ? "-" : userRanks.daily} /{" "}
+          <span className="text-yellow-400">This Month:</span>{" "}
+          {isLoading ? "-" : userRanks.monthly} /{" "}
+          <span className="text-yellow-400">All Time:</span>{" "}
+          {isLoading ? "-" : userRanks.allTime}
         </span>
         <button
           onClick={() => setShowTable(!showTable)}

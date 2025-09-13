@@ -24,7 +24,7 @@ export default async function page() {
         userName={session.user.name || "Anonymous"}
         userId={session.user.id}
       />
-      <TopLearners />
+      <TopLearners userId={session.user.id} />
       <CommunityLiveTranslations />
       <LangsWordsChart />
     </>
