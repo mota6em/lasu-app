@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ExpandableListProps {
   title: string;
@@ -27,7 +28,19 @@ export default function ExpandableList({
         {title}
       </h3>
 
-      <ul className="space-y-2 overflow-y-scroll h-50">
+      <ul
+        className={cn(
+          "space-y-2 h-50",
+          items.length >= 5 && "overflow-y-scroll"
+        )}
+      >
+        {items.length === 0 && (
+          <li className="flex items-center justify-between rounded-lg px-3 py-2 bg-yellow-500 dark:bg-yellow-700 hover:bg-gray-100 dark:hover:bg-neutral-700 transition">
+            <span className="text-sm font-medium">
+              No results yet, yours can be the first!
+            </span>
+          </li>
+        )}
         {items.map((item, idx) => (
           <li
             key={idx}
