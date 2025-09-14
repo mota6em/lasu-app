@@ -71,7 +71,7 @@ export default function CommunityTranslations() {
 
   return (
     <div className="mt-6 space-y-6 px-2 lg:px-4">
-      <h2 className="text-2xl font-bold flex items-center gap-2 dark:text-white">
+      <h2 className="text-2xl font-bold flex items-center gap-2 dark:text-white animate-pulse">
         <FaChartLine /> Live Community Translations
         <Badge variant="secondary">{translations.length}</Badge>
       </h2>
@@ -89,7 +89,7 @@ export default function CommunityTranslations() {
           return (
             <div
               key={idx}
-              className="relative  p-4 border rounded-xl shadow hover:shadow-lg bg-purple-950/5 dark:bg-purple-700/10 transition"
+              className="relative  p-4 border rounded-xl shadow hover:shadow-lg bg-blue-950/5 dark:bg-blue-950/10 transition"
             >
               <div className="mb-3 flex items-center justify-between">
                 <div>

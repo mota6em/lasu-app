@@ -89,25 +89,30 @@ const TopLearnersSection = ({ userId }: { userId: string }) => {
     <>
       <div className="flex flex-col items-center gap-2">
         <span className="text-xs text-gray-400">
-          Your Ranks: <span className="text-yellow-400">Today:</span>{" "}
-          {isLoading ? "-" : userRanks.daily} /{" "}
-          <span className="text-yellow-400">This Month:</span>{" "}
-          {isLoading ? "-" : userRanks.monthly} /{" "}
-          <span className="text-yellow-400">All Time:</span>{" "}
-          {isLoading ? "-" : userRanks.allTime}
+          Your Ranks:{" "}
+          <span className="text-yellow-700 dark:text-yellow-400">Today:</span>{" "}
+          {isLoading ? "-" : userRanks.daily ?? "-"} /{" "}
+          <span className="text-yellow-700 dark:text-yellow-400">
+            This Month:
+          </span>{" "}
+          {isLoading ? "-" : userRanks.monthly ?? "-"} /{" "}
+          <span className="text-yellow-700 dark:text-yellow-400">
+            All Time:
+          </span>{" "}
+          {isLoading ? "-" : userRanks.allTime ?? "-"}
         </span>
         <button
           onClick={() => setShowTable(!showTable)}
-          className="bg-gradient-to-r text-sm from-purple-600/20 to-yellow-500/20 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
+          className="bg-gradient-to-r text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
         >
           {showTable ? (
             <>
-              <FaTimes className="text-yellow-300" /> Hide Leaderboard
+              <FaTimes className="dark:text-yellow-300" /> Hide Leaderboard
             </>
           ) : (
             <>
-              <FaStar className="text-yellow-300 animate-pulse" /> Show
-              Leaderboard
+              <FaStar className="text-yellow-300 animate-pulse" size={20} />{" "}
+              Show Leaderboard
             </>
           )}
         </button>
