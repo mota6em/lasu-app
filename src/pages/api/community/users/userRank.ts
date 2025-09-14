@@ -1,6 +1,6 @@
 import { connectToDB } from "@/lib/mongodb";
 import CommunityUser from "@/models/communityUser";
-import type { NextApiRequest, NextApiResponse } from "next"; 
+import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,31 +18,28 @@ export default async function handler(
       return res.status(400).json({ message: "Missing userId" });
     }
 
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const user = await CommunityUser.findOne({ userId });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    const allUsers = await CommunityUser.find().sort({ xp: -1 });
-    const dailyUsers = await CommunityUser.find({
-      lastActive: { $gte: startOfDay },
-    }).sort({ xp: -1 });
-    const monthlyUsers = await CommunityUser.find({
-      lastActive: { $gte: startOfMonth },
-    }).sort({ xp: -1 });
+    const dailyRank =
+      (await CommunityUser.countDocuments({
+        dailyTranslations: { $gt: user.dailyTranslations },
+      })) + 1;
 
-    const getRank = (arr: typeof allUsers) => {
-      const idx = arr.findIndex((u) => u.userId.toString() === userId);
-      return idx === -1 ? null : idx + 1;
-    };
+    const monthlyRank =
+      (await CommunityUser.countDocuments({
+        monthlyTranslations: { $gt: user.monthlyTranslations },
+      })) + 1;
+
+    const allTimeRank =
+      (await CommunityUser.countDocuments({
+        allTimeTranslations: { $gt: user.allTimeTranslations },
+      })) + 1;
 
     return res.status(200).json({
-      daily: getRank(dailyUsers),
-      monthly: getRank(monthlyUsers),
-      allTime: getRank(allUsers),
+      daily: dailyRank,
+      monthly: monthlyRank,
+      allTime: allTimeRank,
     });
   } catch (err) {
     console.error(err);
