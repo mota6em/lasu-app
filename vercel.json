@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/community/users/resetCounters",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}
