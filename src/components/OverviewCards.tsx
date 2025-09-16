@@ -92,7 +92,7 @@ export function OverviewCards() {
 
   return (
     <div className="flex flex-col gap-y-5">
-      <h2 className="text-2xl font-semibold mt-2 -mb-2 -ml-2.5">📃Overview</h2>
+      <h2 className="text-2xl font-semibold mt-2 -mb-2">📃Overview</h2>
       {showSkeleton ? (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[0, 1, 2].map((i) => (
