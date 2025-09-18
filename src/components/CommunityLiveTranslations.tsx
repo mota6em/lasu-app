@@ -35,22 +35,29 @@ export default function CommunityTranslations() {
   };
 
   const [translations, setTranslations] = useState<CommunityTranslation[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   useEffect(() => {
+    let firstLoad = true;
+
     const fetchTranslations = async () => {
       try {
-        setIsLoading(true);
+        if (firstLoad) setIsLoading(true);
+
         const res = await fetch("/api/community/live");
         const data = await res.json();
         setTranslations(data);
-        setIsLoading(false);
+
+        if (firstLoad) setIsLoading(false);
+        firstLoad = false;
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching translations:", err);
+        if (firstLoad) setIsLoading(false);
+        firstLoad = false;
       }
     };
 
     fetchTranslations(); // initial fetch
-    const interval = setInterval(fetchTranslations, 5000); // every 5s
+    const interval = setInterval(fetchTranslations, 15000); // every 15s
     return () => clearInterval(interval);
   }, []);
 
