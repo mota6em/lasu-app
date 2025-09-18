@@ -3,6 +3,7 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import { MdOutlineCelebration } from "react-icons/md";
+import { Skeleton } from "./ui/skeleton";
 
 export default function CommHero({
   userName,
@@ -37,26 +38,42 @@ export default function CommHero({
           <h3 className="text-yellow-700 dark:text-yellow-400 text-md font-bold">
             XP
           </h3>
-          <p className="text-yellow-950 dark:text-white text-xl font-extrabold">
-            <CountUp start={0} end={mounted ? stats.xp : 0} duration={2} />
-          </p>
+          <div className="text-yellow-950 dark:text-white flex items-center justify-center text-xl font-extrabold">
+            {loading ? (
+              <Skeleton className="h-6 w-6 rounded-md flex items-center mt-1" />
+            ) : (
+              <CountUp start={0} end={mounted ? stats.xp : 0} duration={1} />
+            )}{" "}
+          </div>
         </div>
         <div className=" p-3 rounded-xl flex-1 shadow-md">
           <h3 className="text-yellow-700 dark:text-yellow-400 text-md font-bold">
             Level
           </h3>
-          <p className="text-yellow-950 dark:text-white text-xl font-extrabold">
-            <CountUp start={0} end={mounted ? stats.level : 0} duration={2} />
-          </p>
+          <div className="text-yellow-950 flex items-center justify-center dark:text-white text-xl font-extrabold">
+            {loading ? (
+              <Skeleton className="h-6 w-6 rounded-md flex items-center mt-1" />
+            ) : (
+              <CountUp start={0} end={mounted ? stats.level : 0} duration={1} />
+            )}
+          </div>
         </div>
         <div className="p-3 rounded-xl flex-1 shadow-md">
           <h3 className="text-yellow-700 dark:text-yellow-400 text-md font-bold">
             Streak
           </h3>
-          <p className="text-yellow-950 dark:text-white text-xl font-extrabold">
-            <CountUp start={0} end={mounted ? stats.streak : 0} duration={2} />{" "}
+          <div className="text-yellow-950 flex items-center justify-center gap-x-2 dark:text-white text-xl font-extrabold">
+            {loading ? (
+              <Skeleton className="h-6 w-6 rounded-md flex items-center mt-1" />
+            ) : (
+              <CountUp
+                start={0}
+                end={mounted ? stats.streak : 0}
+                duration={1}
+              />
+            )}{" "}
             days
-          </p>
+          </div>
         </div>
       </div>
     </div>
