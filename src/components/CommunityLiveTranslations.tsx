@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaVolumeUp, FaSpinner } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +36,9 @@ export default function CommunityTranslations() {
 
   const [translations, setTranslations] = useState<CommunityTranslation[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [newCards, setNewCards] = useState<Set<string>>(new Set());
+  const seenCardIds = useRef<Set<string>>(new Set());
+
   useEffect(() => {
     let firstLoad = true;
 
@@ -44,20 +47,46 @@ export default function CommunityTranslations() {
         if (firstLoad) setIsLoading(true);
 
         const res = await fetch("/api/community/live");
-        const data = await res.json();
+        const data: CommunityTranslation[] = await res.json();
+
+        const currentIds = new Set(
+          data.map((t) => t.userId.toString() + t.sourceText)
+        );
+
+        const newIds = Array.from(currentIds).filter(
+          (id) => !seenCardIds.current.has(id)
+        );
+
+        if (newIds.length > 0) {
+          setNewCards((prev) => {
+            const updated = new Set([...prev, ...newIds]);
+            return updated;
+          });
+
+          setTimeout(() => {
+            setNewCards((prev) => {
+              const copy = new Set(prev);
+              newIds.forEach((id) => copy.delete(id));
+              return copy;
+            });
+          }, 3500);
+        }
+
+        seenCardIds.current = new Set([...seenCardIds.current, ...currentIds]);
+
         setTranslations(data);
 
         if (firstLoad) setIsLoading(false);
         firstLoad = false;
       } catch (err) {
-        console.error("Error fetching translations:", err);
+        console.error(err);
         if (firstLoad) setIsLoading(false);
         firstLoad = false;
       }
     };
 
     fetchTranslations(); // initial fetch
-    const interval = setInterval(fetchTranslations, 15000); // every 15s
+    const interval = setInterval(fetchTranslations, 10000); // every 10s
     return () => clearInterval(interval);
   }, []);
 
@@ -130,7 +159,12 @@ export default function CommunityTranslations() {
             return (
               <div
                 key={idx}
-                className="relative  p-4 border rounded-xl shadow hover:shadow-lg bg-blue-950/5 dark:bg-blue-950/10 transition"
+                className={`relative p-4 border rounded-xl shadow hover:shadow-lg transition
+                    ${
+                      newCards.has(t.userId.toString() + t.sourceText)
+                        ? "border-yellow-700 dark:border-yellow-400 shadow-lg animate-pulse"
+                        : "bg-blue-950/5 dark:bg-blue-950/10"
+                    }`}
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div>
