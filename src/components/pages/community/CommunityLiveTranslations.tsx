@@ -204,7 +204,7 @@ export default function CommunityTranslations() {
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">
+                    <span className="font-semibold text-yellow-700 dark:text-yellow-500/80">
                       {selectedLang}
                     </span>
                     <Button
@@ -225,7 +225,7 @@ export default function CommunityTranslations() {
 
                   <div className="text-lg font-bold">{translation}</div>
                   {example && (
-                    <div className="text-sm text-muted-foreground border-l-4 border-green-400 pl-2">
+                    <div className="text-sm text-muted-foreground border-l-4  dark:border-yellow-400 border-yellow-600 pl-2">
                       "{example}"
                     </div>
                   )}

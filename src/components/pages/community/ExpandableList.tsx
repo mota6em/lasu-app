@@ -35,7 +35,7 @@ export default function ExpandableList({
         )}
       >
         {items.length === 0 && (
-          <li className="flex items-center justify-between rounded-lg px-3 py-2 bg-yellow-500 dark:bg-yellow-700 hover:bg-gray-100 dark:hover:bg-neutral-700 transition">
+          <li className="flex items-center justify-between rounded-lg px-3 py-2 bg-gray-500 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 transition">
             <span className="text-sm font-medium">
               No results yet, yours can be the first!
             </span>
