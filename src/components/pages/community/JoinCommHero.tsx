@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import JoinCommModal from "@/components/JoinCommModal";
+import JoinCommModal from "@/components/pages/community/JoinCommModal";
 import { FaStar, FaFire, FaUsers } from "react-icons/fa";
 import { useSession, signIn } from "next-auth/react";
 

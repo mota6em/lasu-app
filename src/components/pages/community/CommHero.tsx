@@ -3,7 +3,7 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { useEffect, useState } from "react";
 import { MdOutlineCelebration } from "react-icons/md";
 
-import StatCard from "./pages/community/StatCard";
+import StatCard from "./StatCard";
 
 export default function CommHero({
   userName,

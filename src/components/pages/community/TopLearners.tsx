@@ -8,8 +8,8 @@ import {
 } from "react-icons/fa";
 import { useState } from "react";
 import { useTopLearners } from "@/hooks/useTopLearners";
-import RenderSection from "./pages/community/RenderSection";
-import UserRanks from "./pages/community/UserRanks";
+import RenderSection from "./RenderSection";
+import UserRanks from "./UserRanks";
 
 const TopLearnersSection = ({ userId }: { userId: string }) => {
   const { learners: topDay, loading: loadingDay } = useTopLearners("daily");
