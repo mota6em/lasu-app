@@ -1,106 +1,28 @@
 "use client";
-
 import {
-  FaMedal,
   FaClock,
   FaCalendarAlt,
   FaTrophy,
   FaStar,
   FaTimes,
 } from "react-icons/fa";
-import Image from "next/image";
 import { useState } from "react";
 import { useTopLearners } from "@/hooks/useTopLearners";
-import { useUserRanks } from "@/hooks/useUserRanks";
-
-export interface Learner {
-  id: string;
-  name: string;
-  Image?: string;
-  xp: number;
-  showName?: boolean;
-  showPicture?: boolean;
-  totalTranslations?: number;
-}
+import RenderSection from "./pages/community/RenderSection";
+import UserRanks from "./pages/community/UserRanks";
 
 const TopLearnersSection = ({ userId }: { userId: string }) => {
   const { learners: topDay, loading: loadingDay } = useTopLearners("daily");
-  console.log("topDay", topDay);
   const { learners: topMonth, loading: loadingMonth } =
     useTopLearners("monthly");
-  console.log("topMonth", topMonth);
   const { learners: topAllTime, loading: loadingAll } =
     useTopLearners("allTime");
-  console.log("topAllTime", topAllTime);
-
-  const { userRanks, isLoading } = useUserRanks(userId);
-  console.log("userRanks", userRanks);
   const [showTable, setShowTable] = useState(false);
-
-  const renderLearner = (learner: Learner, rank: number) => (
-    <div
-      key={learner.id.slice(-5)}
-      className="flex items-center gap-3 p-2 bg-purple-800/10 rounded-lg mb-2 hover:bg-purple-700/20 transition"
-    >
-      {learner.showPicture ? (
-        <Image
-          src={learner.Image || "/imgs/userIcon.jpg"}
-          alt="User Avatar"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-      ) : (
-        <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-          <FaMedal className="text-white" />
-        </div>
-      )}
-      <div className="flex-1">
-        <h4 className="font-bold text-sm">
-          {learner.showName ? learner.name : "Anonymous champion"}
-        </h4>
-        <p className="text-xs text-gray-300">
-          {learner.totalTranslations ?? 0} translations, {learner.xp} XP
-        </p>
-      </div>
-      <span className="font-bold text-yellow-400">{rank}</span>
-    </div>
-  );
-
-  const renderSection = (
-    title: string,
-    icon: React.ReactNode,
-    data: Learner[],
-    loading: boolean
-  ) => (
-    <div className="flex-1">
-      <h3 className="flex items-center gap-2 font-bold mb-2 text-lg">
-        {icon} {title}
-      </h3>
-      {loading ? (
-        <p className="text-gray-400">Loading...</p>
-      ) : (
-        <div>{data.map((learner, idx) => renderLearner(learner, idx + 1))}</div>
-      )}
-    </div>
-  );
 
   return (
     <>
       <div className="flex flex-col items-center gap-2">
-        <span className="text-xs text-gray-400">
-          Your Ranks:{" "}
-          <span className="text-yellow-700 dark:text-yellow-400">Today:</span>{" "}
-          {isLoading ? "-" : userRanks.daily ?? "-"} /{" "}
-          <span className="text-yellow-700 dark:text-yellow-400">
-            This Month:
-          </span>{" "}
-          {isLoading ? "-" : userRanks.monthly ?? "-"} /{" "}
-          <span className="text-yellow-700 dark:text-yellow-400">
-            All Time:
-          </span>{" "}
-          {isLoading ? "-" : userRanks.allTime ?? "-"}
-        </span>
+        <UserRanks userId={userId} />
         <button
           onClick={() => setShowTable(!showTable)}
           className="bg-gradient-to-r text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
@@ -121,14 +43,14 @@ const TopLearnersSection = ({ userId }: { userId: string }) => {
       {showTable && (
         <div className="mt-6 mx-2 md:mx-0 p-6 bg-purple-700/5 rounded-2xl shadow-lg text-white">
           <div className="flex flex-col lg:flex-row gap-6">
-            {renderSection("Top Today", <FaClock />, topDay, loadingDay)}
-            {renderSection(
+            {RenderSection("Top Today", <FaClock />, topDay, loadingDay)}
+            {RenderSection(
               "Top This Month",
               <FaCalendarAlt />,
               topMonth,
               loadingMonth
             )}
-            {renderSection(
+            {RenderSection(
               "Top All Time",
               <FaTrophy />,
               topAllTime,
