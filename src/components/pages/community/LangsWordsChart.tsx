@@ -32,8 +32,14 @@ const LangsWordsChart = () => {
   }, []);
 
   if (!stats) {
-    return <p className="text-center mt-10">Loading stats...</p>;
+    return (
+      <div className="flex flex-row gap-x-2 items-center justify-center mt-10 font-bold animate-pulse">
+        <p>Loading words and languages stats</p>
+        <span className="loading loading-dots loading-md"></span>
+      </div>
+    );
   }
+
   return (
     <div className="flex flex-col items-center justify-center my-10 gap-y-8">
       <div className="w-full">
