@@ -1,5 +1,5 @@
 "use client";
-import { Learner } from "@/components/pages/community/TopLearners";
+import { Learner } from "@/types/learner";
 import { useEffect, useState } from "react";
 
 type Period = "daily" | "monthly" | "allTime";

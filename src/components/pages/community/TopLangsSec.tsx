@@ -1,6 +1,6 @@
 import { availableLanguages } from "@/lib/languages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 interface TopLangsSecProps {
   topLangs: [string, number][];
   isLoading: boolean;
