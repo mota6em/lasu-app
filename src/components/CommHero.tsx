@@ -1,9 +1,9 @@
 "use client";
 import { useUserStats } from "@/hooks/useUserStats";
 import { useEffect, useState } from "react";
-import CountUp from "react-countup";
 import { MdOutlineCelebration } from "react-icons/md";
-import { Skeleton } from "./ui/skeleton";
+
+import StatCard from "./pages/community/StatCard";
 
 export default function CommHero({
   userName,
@@ -34,47 +34,18 @@ export default function CommHero({
         </span>
       </p>
       <div className="flex w-md justify-center gap-6 mt-6 text-center">
-        <div className=" p-3 rounded-xl flex-1 shadow-md">
-          <h3 className="text-yellow-700 dark:text-yellow-400 text-md font-bold">
-            XP
-          </h3>
-          <div className="text-yellow-950 dark:text-white flex items-center justify-center text-xl font-extrabold">
-            {loading ? (
-              <Skeleton className="h-6 w-6 rounded-md flex items-center mt-1" />
-            ) : (
-              <CountUp start={0} end={mounted ? stats.xp : 0} duration={1} />
-            )}{" "}
-          </div>
-        </div>
-        <div className=" p-3 rounded-xl flex-1 shadow-md">
-          <h3 className="text-yellow-700 dark:text-yellow-400 text-md font-bold">
-            Level
-          </h3>
-          <div className="text-yellow-950 flex items-center justify-center dark:text-white text-xl font-extrabold">
-            {loading ? (
-              <Skeleton className="h-6 w-6 rounded-md flex items-center mt-1" />
-            ) : (
-              <CountUp start={0} end={mounted ? stats.level : 0} duration={1} />
-            )}
-          </div>
-        </div>
-        <div className="p-3 rounded-xl flex-1 shadow-md">
-          <h3 className="text-yellow-700 dark:text-yellow-400 text-md font-bold">
-            Streak
-          </h3>
-          <div className="text-yellow-950 flex items-center justify-center gap-x-2 dark:text-white text-xl font-extrabold">
-            {loading ? (
-              <Skeleton className="h-6 w-6 rounded-md flex items-center mt-1" />
-            ) : (
-              <CountUp
-                start={0}
-                end={mounted ? stats.streak : 0}
-                duration={1}
-              />
-            )}{" "}
-            days
-          </div>
-        </div>
+        <StatCard title="XP" value={mounted ? stats.xp : 0} loading={loading} />
+        <StatCard
+          title="Level"
+          value={mounted ? stats.level : 0}
+          loading={loading}
+        />
+        <StatCard
+          title="Streak"
+          value={mounted ? stats.streak : 0}
+          loading={loading}
+          suffix="days"
+        />
       </div>
     </div>
   );
