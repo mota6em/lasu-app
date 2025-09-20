@@ -41,7 +41,7 @@ const TopLearnersSection = ({ userId }: { userId: string }) => {
       </div>
 
       {showTable && (
-        <div className="mt-6 mx-2 md:mx-0 p-6 bg-purple-700/5 rounded-2xl shadow-lg text-white">
+        <div className="mt-6 mx-2 md:mx-0 p-6 bg-gray-100 dark:bg-purple-900/5 rounded-2xl shadow-lg text-black dark:text-white">
           <div className="flex flex-col lg:flex-row gap-6">
             {RenderSection("Top Today", <FaClock />, topDay, loadingDay)}
             {RenderSection(
