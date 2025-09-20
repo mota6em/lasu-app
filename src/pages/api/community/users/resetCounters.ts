@@ -11,10 +11,13 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
-  
+
   // AUTH CHECK
   const authHeader = req.headers.authorization;
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (
+    !authHeader ||
+    authHeader !== `Bearer ${process.env.RESET_COUNTERS_CRON_SECRET}`
+  ) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
