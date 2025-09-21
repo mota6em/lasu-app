@@ -8,7 +8,7 @@ import TranslationSettingDialog from "./pages/settings/TranslationSettingDialog"
 import { LuBookOpen } from "react-icons/lu";
 
 import { useEffect, useState } from "react";
-import LogoAndMenuBtn from "./LogoAndMenuBtn";
+import LogoAndMenuBtn from "./topbar/LogoAndMenuBtn";
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
