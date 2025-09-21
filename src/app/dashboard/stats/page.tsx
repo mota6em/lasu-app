@@ -1,7 +1,7 @@
 "use client";
-import { OverviewCards } from "@/components/OverviewCards";
+import { OverviewCards } from "@/components/pages/home/OverviewCards";
 import { Skeleton } from "@/components/ui/skeleton";
-import TopLangsSec from "@/components/pages/community/TopLangsSec";  
+import TopLangsSec from "@/components/pages/community/TopLangsSec";
 import DailyTranslationsChart from "@/components/DailyTranslationsChart";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useStatsData } from "@/hooks/useStatsData";

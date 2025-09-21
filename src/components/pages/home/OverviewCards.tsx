@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Translation from "@/types/translation";
 import { availableLanguages } from "@/lib/languages";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 interface Card {
   title: string;

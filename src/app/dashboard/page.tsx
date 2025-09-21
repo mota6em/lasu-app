@@ -1,5 +1,5 @@
-import { OverviewCards } from "@/components/OverviewCards";
-import { Translate } from "@/components/Translate";
+import { OverviewCards } from "@/components/pages/home/OverviewCards";
+import { Translate } from "@/components/pages/home/Translate";
 
 export default function DashboardPage() {
   return (
