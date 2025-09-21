@@ -12,7 +12,7 @@ import {
 import { CiSettings } from "react-icons/ci";
 import Language from "@/types/language";
 import { useTranslateStore } from "@/store/useTranslateStore";
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import saveSettings from "@/store/saveSettings";
 import { useSession } from "next-auth/react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";

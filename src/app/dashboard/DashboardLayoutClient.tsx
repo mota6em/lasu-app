@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import SettingsLoader from "@/components/SettingsLoader";
+import SettingsLoader from "@/components/pages/settings/SettingsLoader";
 import { Sidebar } from "@/components/Sidebar";
 import { Topbar } from "@/components/Topbar";
 import Footer from "@/components/Footer";

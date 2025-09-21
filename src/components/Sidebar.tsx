@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Home, History, BarChart, Settings, LogOut, Globe } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
-import TranslationSettingDialog from "./TranslationSettingDialog";
+import TranslationSettingDialog from "./pages/settings/TranslationSettingDialog";
 import { LuBookOpen } from "react-icons/lu";
 
 import { useEffect, useState } from "react";
