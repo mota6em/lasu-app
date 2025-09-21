@@ -3,7 +3,7 @@ import { useState } from "react";
 import SettingsLoader from "@/components/pages/settings/SettingsLoader";
 import { Sidebar } from "@/components/Sidebar";
 import { Topbar } from "@/components/Topbar";
-import Footer from "@/components/Footer";
+import Footer from "@/components/fixedComponents/Footer";
 
 export default function DashboardLayoutClient({
   children,
