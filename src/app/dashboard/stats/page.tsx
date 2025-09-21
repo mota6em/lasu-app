@@ -2,7 +2,7 @@
 import { OverviewCards } from "@/components/pages/home/OverviewCards";
 import { Skeleton } from "@/components/ui/skeleton";
 import TopLangsSec from "@/components/pages/community/TopLangsSec";
-import DailyTranslationsChart from "@/components/DailyTranslationsChart";
+import DailyTranslationsChart from "@/components/pages/stats/DailyTranslationsChart";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useStatsData } from "@/hooks/useStatsData";
 
