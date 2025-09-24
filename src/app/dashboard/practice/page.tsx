@@ -7,7 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, Languages } from "lucide-react";
 import { LuTimer } from "react-icons/lu";
 import { MdNavigateNext } from "react-icons/md";
-
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 const PracticePage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 ">
@@ -57,6 +64,25 @@ const PracticePage = () => {
                   I don't remember
                 </Button>
               </div>
+            </div>
+          </div>
+          <div className="absolute -top-30 right-4 flex justify-end">
+            <div className="flex items-center gap-2 text-yellow-500">
+              <Select>
+                <SelectTrigger className="w-[142px] cursor-pointer">
+                  <SelectValue placeholder="Choose a mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="recall" className="cursor-pointer">
+                      Recall
+                    </SelectItem>
+                    <SelectItem value="writing" className="cursor-pointer">
+                      Writing Practice
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="w-full flex justify-end">
