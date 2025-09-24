@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import SettingsLoader from "@/components/pages/settings/SettingsLoader";
-import { Sidebar } from "@/components/Sidebar";
-import { Topbar } from "@/components/Topbar";
+import { Sidebar } from "@/components/fixedComponents/Sidebar";
 import Footer from "@/components/fixedComponents/Footer";
+import Topbar from "@/components/topbar/Topbar";
 
 export default function DashboardLayoutClient({
   children,
