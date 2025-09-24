@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -15,7 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 const PracticePage = () => {
+  const [selectedMode, setSelectedMode] = useState("recall");
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 ">
       <div className="mb-8 text-center">
@@ -55,20 +57,34 @@ const PracticePage = () => {
               </span>
             </div>
 
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-center gap-2">
-                <Button className=" bg-lime-600 hover:bg-green-600 text-white">
-                  I remember this word
-                </Button>
-                <Button className=" bg-red-500 hover:bg-red-600 text-white">
-                  I don't remember
-                </Button>
+            {selectedMode === "writing" && (
+              <div className="flex flex-col gap-3">
+                <Input
+                  placeholder={`Type the correct translation...`}
+                  className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-blue-500 transition"
+                />
+                <p className="text-sm text-gray-500 italic">
+                  Press <kbd>Enter</kbd> when you're done ✍️
+                </p>
               </div>
-            </div>
+            )}
+
+            {selectedMode === "recall" && (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-center gap-2">
+                  <Button className=" bg-lime-600 hover:bg-green-600 text-white">
+                    I remember this word
+                  </Button>
+                  <Button className=" bg-red-500 hover:bg-red-600 text-white">
+                    I don't remember
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
           <div className="absolute -top-30 right-4 flex justify-end">
             <div className="flex items-center gap-2 text-yellow-500">
-              <Select>
+              <Select value={selectedMode} onValueChange={setSelectedMode}>
                 <SelectTrigger className="w-[142px] cursor-pointer">
                   <SelectValue placeholder="Choose a mode" />
                 </SelectTrigger>
