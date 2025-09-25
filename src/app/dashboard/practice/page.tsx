@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -16,8 +16,41 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { usePracticeWords } from "@/hooks/usePracticeWords";
 const PracticePage = () => {
   const [selectedMode, setSelectedMode] = useState("recall");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [timer, setTimer] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(timer);
+  const [showResult, setShowResult] = useState(true);
+
+  const { data: practiceWords, isLoading } = usePracticeWords();
+  const currentWord = practiceWords?.[currentIndex];
+  console.log("currentWord", practiceWords);
+  const handleNext = () => {
+    if (practiceWords && currentIndex < practiceWords.length - 1) {
+      setCurrentIndex((i) => i + 1);
+    }
+    setShowResult(false);
+  };
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setShowResult(true);
+    }
+  }, [timeLeft]);
+
+  useEffect(() => {
+    setTimeLeft(timer);
+  }, [currentIndex]);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft((t) => t - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 ">
       <div className="mb-8 text-center">
@@ -34,10 +67,15 @@ const PracticePage = () => {
       <Card className="w-full max-w-3xl shadow-xl rounded-2xl border-0 bg-violet-900/50 backdrop-blur-sm">
         <CardHeader className="flex flex-col items-center">
           <CardTitle className="text-4xl font-bold text-violet-50">
-            WORD
+            {currentWord ? (
+              currentWord.sourceText
+            ) : (
+              <span className="animate-pulse">Loading...</span>
+            )}
           </CardTitle>
+
           <Badge className="mt-2 bg-violet-900/0 text-4xl flex items-center text-amber-400">
-            <LuTimer className="!w-6 !h-6" /> 15s
+            <LuTimer className="!w-6 !h-6" /> {timeLeft}s
           </Badge>
         </CardHeader>
 
@@ -57,6 +95,17 @@ const PracticePage = () => {
               </span>
             </div>
 
+            <div className="flex flex-row items-center justify-center gap-x-5">
+              <h3>Result: </h3>
+              {!showResult && (
+                <div className="h-8 w-40 blur-sm bg-violet-400 my-2"></div>
+              )}
+              {showResult && (
+                <div className="h-8 w-35 -ml-3 flex items-center justify-center bg-violet-700 rounded-xl font-bold my-2">
+                  I'm the result
+                </div>
+              )}
+            </div>
             {selectedMode === "writing" && (
               <div className="flex flex-col gap-3">
                 <Input
@@ -102,7 +151,10 @@ const PracticePage = () => {
             </div>
           </div>
           <div className="w-full flex justify-end">
-            <Badge className="bg-transparent text-md text-yellow-500 cursor-pointer flex items-center gap-1">
+            <Badge
+              onClick={handleNext}
+              className="bg-transparent text-md text-yellow-500 cursor-pointer flex items-center gap-1"
+            >
               Next Word
               <MdNavigateNext className="!w-10 !h-10" />
             </Badge>
@@ -114,8 +166,16 @@ const PracticePage = () => {
         <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-1">
           <Languages className="w-4 h-4 text-indigo-500" /> Today's Practice
         </h3>
-        <Progress value={45} />
-        <p className="mt-2 text-sm text-gray-400">9 / 25 words practiced</p>
+        <Progress
+          value={
+            practiceWords && practiceWords.length > 0
+              ? (currentIndex / practiceWords.length) * 100
+              : 0
+          }
+        />
+        <p className="mt-2 text-sm text-gray-400">
+          {currentIndex + 1} / {practiceWords?.length || 0} words practiced
+        </p>
       </div>
     </div>
   );
