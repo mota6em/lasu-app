@@ -112,7 +112,7 @@ const PracticePage = () => {
               </div>
             )}
             {selectedMode === "writing" && (
-              <div className="flex flex-col gap-3 items-center justify-center">
+              <div className="flex flex-col gap-3 items-center justify-center my-6">
                 <div className="flex flex-wrap gap-4 justify-center w-12/12">
                   {currentWord &&
                     Object.entries(currentWord.result.translations).map(
@@ -132,7 +132,7 @@ const PracticePage = () => {
                       )
                     )}
                 </div>
-                <Button className=" bg-lime-600 hover:bg-green-600 text-white">
+                <Button className=" bg-lime-600 hover:bg-green-600 text-white mt-3">
                   Check my answers
                 </Button>
               </div>
