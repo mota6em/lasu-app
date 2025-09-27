@@ -62,12 +62,11 @@ const PracticePage = () => {
           Sharpen your memory, one word at a time ✨
         </p>
       </div>
-
       <Card className="w-full max-w-3xl shadow-xl rounded-2xl border-0 bg-violet-900/50 backdrop-blur-sm">
         <CardHeader className="flex flex-col items-center">
           <CardTitle className="text-4xl font-bold text-violet-50">
             {currentWord ? (
-              currentWord.sourceText
+              currentWord.sourceText.toUpperCase()
             ) : (
               <span className="animate-pulse">Loading...</span>
             )}
@@ -80,37 +79,54 @@ const PracticePage = () => {
 
         <CardContent className="flex flex-col items-center gap-6 relative">
           <div className="flex flex-col items-center gap-4">
-            <div className="flex flex-row items-center justify-center gap-x-5">
-              <h3>Result: </h3>
-              {!showResult && (
-                <div className="h-18 ml-10 w-105 blur-sm bg-violet-400 my-2 flex  justify-center border-l-2"></div>
-              )}
-              {showResult && (
-                <div className="flex flex-wrap gap-4 justify-center border-l-2 w-8/12">
+            {selectedMode === "recall" && (
+              <div className="flex flex-row items-center justify-center gap-x-5">
+                <h3>Result: </h3>
+                {!showResult && (
+                  <div className="h-18 ml-10 w-105 blur-sm bg-violet-400 my-2 flex  justify-center border-l-2"></div>
+                )}
+                {showResult && (
+                  <div className="flex flex-wrap gap-4 justify-center border-l-2 w-8/12">
+                    {currentWord &&
+                      Object.entries(currentWord.result.translations).map(
+                        ([lang, translation]) => (
+                          <Badge
+                            key={lang}
+                            className="bg-violet-900/0 text-md text-amber-400 flex items-start w-[45%]"
+                          >
+                            <span className="font-semibold text-white text-start">
+                              {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                            </span>{" "}
+                            : {translation}
+                          </Badge>
+                        )
+                      )}
+                  </div>
+                )}
+              </div>
+            )}
+            {selectedMode === "writing" && (
+              <div className="flex flex-col gap-3 items-center justify-center">
+                <div className="flex flex-wrap gap-4 justify-center w-12/12">
                   {currentWord &&
                     Object.entries(currentWord.result.translations).map(
                       ([lang, translation]) => (
-                        <Badge
+                        <div
                           key={lang}
-                          className="bg-violet-900/0 text-md text-amber-400 flex items-start w-[45%]"
+                          className="bg-violet-900/0 text-md text-amber-400 flex items-start w-[45%] gap-x-2"
                         >
                           <span className="font-semibold text-white text-start">
-                            {lang.charAt(0).toUpperCase() + lang.slice(1)}
-                          </span>{" "}
-                          : {translation}
-                        </Badge>
+                            {lang.charAt(0).toUpperCase() + lang.slice(1)}:
+                          </span>
+                          <Input
+                            placeholder={`Type the meaning in ${lang}...`}
+                            className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-blue-500 transition"
+                          />
+                        </div>
                       )
                     )}
                 </div>
-              )}
-            </div>
-            {selectedMode === "writing" && (
-              <div className="flex flex-col gap-3">
-                <Input
-                  placeholder={`Type the correct translation...`}
-                  className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-blue-500 transition"
-                />
-                <p className="text-sm text-gray-500 italic">
+                <p className="text-sm text-gray-500 italic animate-pulse">
                   Press <kbd>Enter</kbd> when you're done ✍️
                 </p>
               </div>
