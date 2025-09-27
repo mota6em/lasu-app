@@ -23,6 +23,12 @@ const PracticePage = () => {
   const [timer, setTimer] = useState(15);
   const [timeLeft, setTimeLeft] = useState(timer);
   const [showResult, setShowResult] = useState(true);
+  const [stats, setStats] = useState<{ remembered: number; forgotten: number }>(
+    {
+      remembered: 0,
+      forgotten: 0,
+    }
+  );
 
   const { data: practiceWords, isLoading } = usePracticeWords();
   const currentWord = practiceWords?.[currentIndex];
@@ -32,6 +38,17 @@ const PracticePage = () => {
     }
     setShowResult(false);
   };
+  const handleRecall = (remembered: boolean) => {
+    if (!practiceWords || !currentWord) return;
+
+    setStats((prev) => ({
+      remembered: prev.remembered + (remembered ? 1 : 0),
+      forgotten: prev.forgotten + (!remembered ? 1 : 0),
+    }));
+
+    handleNext();
+  };
+
   useEffect(() => {
     setTimeLeft(timer);
   }, [currentIndex, timer]);
@@ -139,14 +156,30 @@ const PracticePage = () => {
             )}
 
             {selectedMode === "recall" && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-x-3">
                 <div className="flex items-center justify-center gap-2">
-                  <Button className=" bg-lime-600 hover:bg-green-600 text-white">
-                    I remember this word
-                  </Button>
-                  <Button className=" bg-red-500 hover:bg-red-600 text-white">
-                    I don't remember
-                  </Button>
+                  <div>
+                    <Button
+                      onClick={() => handleRecall(true)}
+                      className="bg-lime-600 hover:bg-green-600 text-white"
+                    >
+                      I remember this word
+                    </Button>
+                    <div className="text-green-600 mt-0.5 text-sm">
+                      Remembered: {stats.remembered}
+                    </div>
+                  </div>
+                  <div>
+                    <Button
+                      onClick={() => handleRecall(false)}
+                      className="bg-red-500 hover:bg-red-600 text-white"
+                    >
+                      I don't remember
+                    </Button>
+                    <div className="text-red-600 mt-0.5 text-sm">
+                      Forgotten: {stats.forgotten}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -213,6 +246,7 @@ const PracticePage = () => {
               </Select>
             </div>
           </div>
+
           <div className="w-full flex justify-end">
             <Badge
               onClick={handleNext}
