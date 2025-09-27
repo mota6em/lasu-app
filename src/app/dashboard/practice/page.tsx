@@ -147,7 +147,7 @@ const PracticePage = () => {
               </div>
             )}
           </div>
-          <div className="absolute -top-30 right-4 flex justify-end">
+          <div className={`absolute -top-19 ${selectedMode === "recall" && "-top-30"} right-4 flex justify-end`}>
             <div className="flex items-center gap-2 text-yellow-500">
               <Select value={selectedMode} onValueChange={setSelectedMode}>
                 <SelectTrigger className="w-[142px] cursor-pointer">
