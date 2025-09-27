@@ -72,9 +72,11 @@ const PracticePage = () => {
             )}
           </CardTitle>
 
-          <Badge className="mt-2 bg-violet-900/0 text-4xl flex items-center text-amber-400">
-            <LuTimer className="!w-6 !h-6" /> {timeLeft}s
-          </Badge>
+          {selectedMode === "recall" && (
+            <Badge className="mt-2 bg-violet-900/0 text-4xl flex items-center text-amber-400">
+              <LuTimer className="!w-6 !h-6" /> {timeLeft}s
+            </Badge>
+          )}
         </CardHeader>
 
         <CardContent className="flex flex-col items-center gap-6 relative">
