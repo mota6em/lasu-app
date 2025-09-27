@@ -26,7 +26,6 @@ const PracticePage = () => {
 
   const { data: practiceWords, isLoading } = usePracticeWords();
   const currentWord = practiceWords?.[currentIndex];
-  console.log("currentWord", practiceWords);
   const handleNext = () => {
     if (practiceWords && currentIndex < practiceWords.length - 1) {
       setCurrentIndex((i) => i + 1);
@@ -81,28 +80,27 @@ const PracticePage = () => {
 
         <CardContent className="flex flex-col items-center gap-6 relative">
           <div className="flex flex-col items-center gap-4">
-            <div className="flex gap-4 justify-center">
-              <Badge className="bg-violet-900/5 text-yellow-400 hover:text-yellow-500 cursor-pointer">
-                Next Lang
-                <MdNavigateNext className="!w-6 !h-6" />
-              </Badge>
-              <span className="text-lg font-medium text-violet-300">EN</span>
-              <span className="text-lg font-medium text-violet-300/40 blur-[1px]">
-                AR
-              </span>
-              <span className="text-lg font-medium text-violet-300/40 blur-[2px]">
-                HU
-              </span>
-            </div>
-
             <div className="flex flex-row items-center justify-center gap-x-5">
               <h3>Result: </h3>
               {!showResult && (
-                <div className="h-8 w-40 blur-sm bg-violet-400 my-2"></div>
+                <div className="h-18 ml-10 w-105 blur-sm bg-violet-400 my-2 flex  justify-center border-l-2"></div>
               )}
               {showResult && (
-                <div className="h-8 w-35 -ml-3 flex items-center justify-center bg-violet-700 rounded-xl font-bold my-2">
-                  I'm the result
+                <div className="flex flex-wrap gap-4 justify-center border-l-2 w-8/12">
+                  {currentWord &&
+                    Object.entries(currentWord.result.translations).map(
+                      ([lang, translation]) => (
+                        <Badge
+                          key={lang}
+                          className="bg-violet-900/0 text-md text-amber-400 flex items-start w-[45%]"
+                        >
+                          <span className="font-semibold text-white text-start">
+                            {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                          </span>{" "}
+                          : {translation}
+                        </Badge>
+                      )
+                    )}
                 </div>
               )}
             </div>
