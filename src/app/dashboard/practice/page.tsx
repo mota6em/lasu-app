@@ -20,7 +20,7 @@ import { usePracticeWords } from "@/hooks/usePracticeWords";
 const PracticePage = () => {
   const [selectedMode, setSelectedMode] = useState("recall");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [timer, setTimer] = useState(5);
+  const [timer, setTimer] = useState(15);
   const [timeLeft, setTimeLeft] = useState(timer);
   const [showResult, setShowResult] = useState(true);
 
@@ -32,6 +32,9 @@ const PracticePage = () => {
     }
     setShowResult(false);
   };
+  useEffect(() => {
+    setTimeLeft(timer);
+  }, [currentIndex, timer]);
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -164,6 +167,45 @@ const PracticePage = () => {
                     </SelectItem>
                     <SelectItem value="writing" className="cursor-pointer">
                       Writing Practice
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div
+            className={`absolute -top-9 ${
+              selectedMode === "recall" && "-top-20"
+            } right-4 flex justify-end`}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-white/50">Timer:</span>
+              <Select
+                value={timer.toString()}
+                onValueChange={(val) => setTimer(parseInt(val))}
+              >
+                <SelectTrigger className="w-[80px] cursor-pointer">
+                  <SelectValue placeholder="Timer" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="5" className="cursor-pointer">
+                      5s
+                    </SelectItem>
+                    <SelectItem value="10" className="cursor-pointer">
+                      10s
+                    </SelectItem>
+                    <SelectItem value="15" className="cursor-pointer">
+                      15s
+                    </SelectItem>
+                    <SelectItem value="30" className="cursor-pointer">
+                      30s
+                    </SelectItem>
+                    <SelectItem value="45" className="cursor-pointer">
+                      45s
+                    </SelectItem>
+                    <SelectItem value="60" className="cursor-pointer">
+                      60s
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>
