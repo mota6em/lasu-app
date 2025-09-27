@@ -128,9 +128,9 @@ const PracticePage = () => {
                       )
                     )}
                 </div>
-                <p className="text-sm text-gray-500 italic animate-pulse">
-                  Press <kbd>Enter</kbd> when you're done ✍️
-                </p>
+                <Button className=" bg-lime-600 hover:bg-green-600 text-white">
+                  Check my answers
+                </Button>
               </div>
             )}
 
@@ -147,7 +147,11 @@ const PracticePage = () => {
               </div>
             )}
           </div>
-          <div className={`absolute -top-19 ${selectedMode === "recall" && "-top-30"} right-4 flex justify-end`}>
+          <div
+            className={`absolute -top-19 ${
+              selectedMode === "recall" && "-top-30"
+            } right-4 flex justify-end`}
+          >
             <div className="flex items-center gap-2 text-yellow-500">
               <Select value={selectedMode} onValueChange={setSelectedMode}>
                 <SelectTrigger className="w-[142px] cursor-pointer">
