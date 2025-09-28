@@ -209,7 +209,12 @@ const PracticePage = () => {
             } right-4 flex justify-end`}
           >
             <div className="flex items-center gap-2 text-yellow-500">
-              <Select value={selectedMode} onValueChange={setSelectedMode}>
+              <Select
+                value={selectedMode}
+                onValueChange={(value) =>
+                  setSelectedMode(value as "recall" | "writing")
+                }
+              >
                 <SelectTrigger className="w-[142px] cursor-pointer">
                   <SelectValue placeholder="Choose a mode" />
                 </SelectTrigger>
