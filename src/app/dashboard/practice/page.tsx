@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, Languages } from "lucide-react";
 import { LuTimer } from "react-icons/lu";
 import { MdNavigateNext } from "react-icons/md";
+import { IoMdCheckmark } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
+
 import {
   Select,
   SelectContent,
@@ -22,13 +25,14 @@ const PracticePage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timer, setTimer] = useState(15);
   const [timeLeft, setTimeLeft] = useState(timer);
-  const [showResult, setShowResult] = useState(true);
+  const [showResult, setShowResult] = useState(false);
   const [stats, setStats] = useState<{ remembered: number; forgotten: number }>(
     {
       remembered: 0,
       forgotten: 0,
     }
   );
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const { data: practiceWords, isLoading } = usePracticeWords();
   const currentWord = practiceWords?.[currentIndex];
@@ -37,6 +41,7 @@ const PracticePage = () => {
       setCurrentIndex((i) => i + 1);
     }
     setShowResult(false);
+    setAnswers({});
   };
   const handleRecall = (remembered: boolean) => {
     if (!practiceWords || !currentWord) return;
@@ -143,21 +148,36 @@ const PracticePage = () => {
                           </span>
                           <div>
                             <Input
+                              value={answers[lang] || ""}
+                              onChange={(e) =>
+                                setAnswers((prev) => ({
+                                  ...prev,
+                                  [lang]: e.target.value,
+                                }))
+                              }
                               placeholder={`Type the meaning in ${lang}...`}
                               className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-blue-500 transition"
                             />
-                            <p className="flex items-center gap-x-2">
-                              <span className="text-gray-400">
-                                The correct answer is:
-                              </span>
-                              {translation}
-                            </p>
+                            {showResult && (
+                              <p className="flex items-center gap-x-2 mt-1">
+                                {answers[lang]?.trim().toLowerCase() ===
+                                translation.trim().toLowerCase() ? (
+                                  <IoMdCheckmark className="w-6 h-6 text-green-500" />
+                                ) : (
+                                  <IoClose className="w-6 h-6 text-red-500" />
+                                )}
+                                {translation}
+                              </p>
+                            )}
                           </div>
                         </div>
                       )
                     )}
                 </div>
-                <Button className=" bg-lime-600 hover:bg-green-600 text-white mt-3">
+                <Button
+                  className=" bg-lime-600 hover:bg-green-600 text-white mt-3"
+                  onClick={() => setShowResult(true)}
+                >
                   Check my answers
                 </Button>
               </div>
@@ -220,7 +240,11 @@ const PracticePage = () => {
               selectedMode === "recall" && "-top-20"
             } right-4 flex justify-end`}
           >
-            <div className="flex items-center gap-2 mb-4">
+            <div
+              className={`${
+                selectedMode === "writing" && "hidden"
+              } flex items-center gap-2 mb-4`}
+            >
               <span className="text-white/50">Timer:</span>
               <Select
                 value={timer.toString()}
