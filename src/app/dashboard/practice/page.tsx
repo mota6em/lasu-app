@@ -2,13 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
- import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { Brain } from "lucide-react";
 import { LuTimer } from "react-icons/lu";
 import { MdNavigateNext } from "react-icons/md";
 import { IoMdCheckmark } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
-
 import {
   Select,
   SelectContent,
@@ -18,42 +17,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { usePracticeWords } from "@/hooks/usePracticeWords";
 import { ProgressStats } from "@/components/pages/practice/ProgressStats";
+import { usePracticeSession } from "@/hooks/usePracticeSession";
+
 const PracticePage = () => {
-  const [selectedMode, setSelectedMode] = useState("recall");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [timer, setTimer] = useState(15);
-  const [timeLeft, setTimeLeft] = useState(timer);
-  const [showResult, setShowResult] = useState(false);
-  const [stats, setStats] = useState<{ remembered: number; forgotten: number }>(
-    {
-      remembered: 0,
-      forgotten: 0,
-    }
-  );
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const {
+    selectedMode,
+    setSelectedMode,
+    currentIndex,
+    setCurrentIndex,
+    timer,
+    setTimer,
+    timeLeft,
+    setTimeLeft,
+    showResult,
+    setShowResult,
+    stats,
+    setStats,
+    answers,
+    setAnswers,
+    practiceWords,
+    isLoading,
+    currentWord,
+    handleNext,
+    handleRecall,
+  } = usePracticeSession("recall");
 
-  const { data: practiceWords, isLoading } = usePracticeWords();
-  const currentWord = practiceWords?.[currentIndex];
-  const handleNext = () => {
-    if (practiceWords && currentIndex < practiceWords.length - 1) {
-      setCurrentIndex((i) => i + 1);
-    }
-    setShowResult(false);
-    setAnswers({});
-  };
-  const handleRecall = (remembered: boolean) => {
-    if (!practiceWords || !currentWord) return;
-
-    setStats((prev) => ({
-      remembered: prev.remembered + (remembered ? 1 : 0),
-      forgotten: prev.forgotten + (!remembered ? 1 : 0),
-    }));
-
-    handleNext();
-  };
-
+  // useEffects
   useEffect(() => {
     setTimeLeft(timer);
   }, [currentIndex, timer]);
@@ -75,6 +65,7 @@ const PracticePage = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, [timeLeft]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 ">
       <div className="mb-8 text-center">
