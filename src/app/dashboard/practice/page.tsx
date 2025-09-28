@@ -59,7 +59,7 @@ const PracticePage = () => {
   }, [currentIndex, timer]);
 
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (timeLeft === 0 && selectedMode === "recall") {
       setShowResult(true);
     }
   }, [timeLeft]);
