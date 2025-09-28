@@ -141,10 +141,18 @@ const PracticePage = () => {
                           <span className="font-semibold text-white text-start">
                             {lang.charAt(0).toUpperCase() + lang.slice(1)}:
                           </span>
-                          <Input
-                            placeholder={`Type the meaning in ${lang}...`}
-                            className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-blue-500 transition"
-                          />
+                          <div>
+                            <Input
+                              placeholder={`Type the meaning in ${lang}...`}
+                              className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-blue-500 transition"
+                            />
+                            <p className="flex items-center gap-x-2">
+                              <span className="text-gray-400">
+                                The correct answer is:
+                              </span>
+                              {translation}
+                            </p>
+                          </div>
                         </div>
                       )
                     )}
