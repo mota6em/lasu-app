@@ -2,9 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Brain, Languages } from "lucide-react";
+ import { Badge } from "@/components/ui/badge";
+import { Brain } from "lucide-react";
 import { LuTimer } from "react-icons/lu";
 import { MdNavigateNext } from "react-icons/md";
 import { IoMdCheckmark } from "react-icons/io";
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { usePracticeWords } from "@/hooks/usePracticeWords";
+import { ProgressStats } from "@/components/pages/practice/ProgressStats";
 const PracticePage = () => {
   const [selectedMode, setSelectedMode] = useState("recall");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -290,22 +290,10 @@ const PracticePage = () => {
           </div>
         </CardContent>
       </Card>
-
-      <div className="mt-8 w-full max-w-md bg-violet-950 rounded-xl shadow p-4">
-        <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-1">
-          <Languages className="w-4 h-4 text-indigo-500" /> Today's Practice
-        </h3>
-        <Progress
-          value={
-            practiceWords && practiceWords.length > 0
-              ? (currentIndex / practiceWords.length) * 100
-              : 0
-          }
-        />
-        <p className="mt-2 text-sm text-gray-400">
-          {currentIndex + 1} / {practiceWords?.length || 0} words practiced
-        </p>
-      </div>
+      <ProgressStats
+        currentIndex={currentIndex}
+        total={practiceWords?.length || 0}
+      />
     </div>
   );
 };
