@@ -57,7 +57,7 @@ const PracticeCard = () => {
   }, [currentIndex]);
 
   useEffect(() => {
-    if (timeLeft <= 0) return;
+    if (timeLeft <= 1) return;
     const timer = setInterval(() => {
       setTimeLeft((t) => t - 1);
     }, 1000);
