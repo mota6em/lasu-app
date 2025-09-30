@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { Brain } from "lucide-react";
 import PracticeCard from "@/components/pages/practice/PracticeCard";
+import { ProgressStats } from "@/components/pages/practice/ProgressStats";
 
 const PracticePage = () => {
   return (
