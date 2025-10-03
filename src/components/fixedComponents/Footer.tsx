@@ -33,20 +33,6 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} LaSu. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground">
-            Developed by{" "}
-            <a
-              href="https://motasem.info"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary text-yellow-800 dark:text-yellow-400"
-            >
-              @
-              <span className="border-b border-yellow-600 transition-colors">
-                motasem
-              </span>
-            </a>
-          </p>
         </div>
         <div className="flex gap-6 text-sm">
           {/* About dialog */}
