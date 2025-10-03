@@ -1,11 +1,13 @@
- import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePracticeWords } from "@/hooks/usePracticeWords";
+import { usePracticeStore } from "@/store/usePracticeStore";
 
 export function usePracticeSession(
   defaultMode: "recall" | "writing" = "recall"
 ) {
+  const { currentIndex, setCurrentIndex, totalWords, setTotalWords } =
+    usePracticeStore();
   const [selectedMode, setSelectedMode] = useState(defaultMode);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [timer, setTimer] = useState(15);
   const [timeLeft, setTimeLeft] = useState(timer);
   const [showResult, setShowResult] = useState(false);
@@ -15,9 +17,13 @@ export function usePracticeSession(
   const { data: practiceWords, isLoading } = usePracticeWords();
   const currentWord = practiceWords?.[currentIndex];
 
+  useEffect(() => {
+    if (practiceWords) setTotalWords(practiceWords.length);
+  }, [practiceWords]);
+
   const handleNext = () => {
     if (practiceWords && currentIndex < practiceWords.length - 1) {
-      setCurrentIndex((i) => i + 1);
+      setCurrentIndex(currentIndex + 1);
     }
     setShowResult(false);
     setAnswers({});
@@ -67,6 +73,7 @@ export function usePracticeSession(
     practiceWords,
     isLoading,
     currentWord,
+    totalWords,
     // handlers
     handleNext,
     handleRecall,

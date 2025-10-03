@@ -18,7 +18,7 @@ const PracticePage = () => {
         </p>
       </div>
       <PracticeCard />
-      <ProgressStats currentIndex={7} total={70} />
+      <ProgressStats />
     </div>
   );
 };
