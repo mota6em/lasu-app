@@ -41,7 +41,6 @@ const PracticeCard = () => {
     handleRecall,
   } = usePracticeSession("recall");
 
-  // useEffects
   useEffect(() => {
     setTimeLeft(timer);
   }, [currentIndex, timer]);
@@ -50,13 +49,6 @@ const PracticeCard = () => {
     if (timeLeft === 0 && selectedMode === "recall") {
       setShowResult(true);
     }
-  }, [timeLeft]);
-
-  useEffect(() => {
-    setTimeLeft(timer);
-  }, [currentIndex]);
-
-  useEffect(() => {
     if (timeLeft <= 1) return;
     const timer = setInterval(() => {
       setTimeLeft((t) => t - 1);
