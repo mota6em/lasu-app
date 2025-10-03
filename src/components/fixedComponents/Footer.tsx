@@ -28,11 +28,26 @@ export default function Footer() {
   };
   return (
     <footer className="border-t bg-white dark:bg-[#1212125d] text-foreground mt-10">
-      <div className="container mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} LaSu. All rights reserved.
-        </p>
-
+      <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex flex-col items-start">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} LaSu. All rights reserved.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Developed by{" "}
+            <a
+              href="https://motasem.info"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary text-yellow-800 dark:text-yellow-400"
+            >
+              @
+              <span className="border-b border-yellow-600 transition-colors">
+                motasem
+              </span>
+            </a>
+          </p>
+        </div>
         <div className="flex gap-6 text-sm">
           {/* About dialog */}
           <Dialog>
