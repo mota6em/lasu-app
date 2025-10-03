@@ -80,13 +80,13 @@ const PracticeCard = () => {
             <div className="flex flex-row items-center justify-center gap-x-5">
               <h3>Result: </h3>
 
-              <div className="flex flex-wrap gap-4 justify-center border-l-2 w-8/12">
+              <div className="flex-wrap grid grid-cols-2 gap-x-6 gap-4 justify-center border-l-2 pl-4 w-full">
                 {currentWord &&
                   Object.entries(currentWord.result.translations).map(
                     ([lang, translation]) => (
                       <Badge
                         key={lang}
-                        className="bg-violet-900/0 text-md text-amber-400 flex items-start w-[45%]"
+                        className="bg-violet-900/0 text-md text-amber-400 flex items-start"
                       >
                         <span className="font-semibold text-white text-start">
                           {lang.charAt(0).toUpperCase() + lang.slice(1)}
