@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { IoCodeSlashOutline } from "react-icons/io5";
 export default function Footer() {
   const [copied, setCopied] = useState(false);
 
@@ -46,26 +47,44 @@ export default function Footer() {
               <DialogHeader>
                 <DialogTitle>About LaSu</DialogTitle>
                 <DialogDescription>
-                  Learn as you surf — AI-powered translations that feel natural
-                  and stick.
+                  LaSu - Your AI Language Support Extension & Web App
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-3 text-sm text-muted-foreground">
                 <p>
-                  LaSu helps you learn languages directly on the web. Select
-                  text anywhere to get context-aware translations, real-life
-                  examples, and quick explanations.
+                  LaSu is a Chrome extension combined with a web application
+                  designed to support language learners directly in their
+                  browsing flow.
                 </p>
                 <ul className="list-disc pl-5 space-y-1">
-                  <li>Smart single-word & sentence translation</li>
-                  <li>History with spaced-repetition reminders</li>
-                  <li>Practice/Test mode built from your own browsing</li>
-                  <li>Multi-language support, daily stats, and streaks</li>
+                  <li>Context-aware translations with real-life examples</li>
+                  <li>
+                    Personalized translation history with spaced-repetition
+                    reminders
+                  </li>
+                  <li>Settings for preferred languages and translation type</li>
+                  <li>Dashboard with stats, streaks, and test/practice mode</li>
+                  <li>Authentication and cloud storage with MongoDB</li>
                 </ul>
                 <p>
-                  Built with Next.js + TypeScript. The goal: make learning
-                  effortless and continuous, not another chore.
+                  Technologies used: Chrome Extension APIs, Next.js, TypeScript,
+                  Zustand, MongoDB. The goal is to make learning effortless,
+                  continuous, and integrated into daily browsing.
                 </p>
+              </div>
+              <div className="text-sm mt-1 text-muted-foreground gap-x-0.5 w-full flex justify-start items-start flex-row">
+                <IoCodeSlashOutline size={18} className="mt-0.5" /> by{" "}
+                <a
+                  href="https://motasem.info"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary text-yellow-800 dark:text-yellow-600"
+                >
+                  @
+                  <span className="border-b border-yellow-600 transition-colors">
+                    motasem
+                  </span>
+                </a>
               </div>
               <DialogFooter>
                 <DialogClose asChild>
