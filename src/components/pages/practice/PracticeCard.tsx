@@ -144,7 +144,7 @@ const PracticeCard = () => {
               <div className="flex flex-row items-center justify-center gap-x-5">
                 <h3>Result: </h3>
 
-                <div className="flex-wrap grid md:grid-cols-2 gap-x-6 gap-4 justify-center border-l-2 pl-4 w-full">
+                <div className="flex-wrap grid md:grid-cols-2 gap-x-6 md:gap-x-12 gap-4 justify-center border-l-2 pl-4 w-full">
                   {currentWord &&
                     Object.entries(currentWord.result.translations).map(
                       ([lang, translation]) => (
@@ -219,7 +219,7 @@ const PracticeCard = () => {
 
             {selectedMode === "recall" && (
               <div className="flex flex-col gap-x-3">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2  lg:gap-x-8">
                   <div>
                     <Button
                       onClick={() => handleRecall(true)}
