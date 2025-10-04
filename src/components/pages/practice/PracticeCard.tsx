@@ -58,7 +58,7 @@ const PracticeCard = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex w-full items-center mb-2 px-4 justify-between">
+      <div className="flex w-full items-center mb-2 md:px-4 justify-between">
         <div className="flex items-center gap-2">
           <span className="text-yellow-500">Mode:</span>
           <Select
@@ -121,9 +121,9 @@ const PracticeCard = () => {
           </Select>
         </div>
       </div>
-      <Card className="w-full md:w-xl lg:w-3xl shadow-xl rounded-2xl border-0 bg-violet-900/50 backdrop-blur-sm">
+      <Card className=" w-xs md:w-xl lg:w-3xl shadow-xl rounded-2xl border-0 bg-violet-900/50 backdrop-blur-sm">
         <CardHeader className="flex flex-row items-center justify-center">
-          <CardTitle className="text-4xl font-bold text-violet-50">
+          <CardTitle className="text-xl md:text-4xl font-bold text-violet-50">
             {currentWord ? (
               currentWord.sourceText.toUpperCase()
             ) : (
@@ -132,7 +132,7 @@ const PracticeCard = () => {
           </CardTitle>
 
           {selectedMode === "recall" && (
-            <Badge className="bg-violet-900/0 text-4xl flex items-center text-amber-400">
+            <Badge className="bg-violet-900/0 text-xl md:text-4xl flex items-center text-amber-400">
               <LuTimer className="!w-6 !h-6" /> {timeLeft}s
             </Badge>
           )}
@@ -217,7 +217,7 @@ const PracticeCard = () => {
               </div>
             )}
 
-            {selectedMode === "recall" && (
+            {/* {selectedMode === "recall" && (
               <div className="flex flex-col gap-x-3">
                 <div className="flex items-center justify-center gap-2  lg:gap-x-8">
                   <div>
@@ -244,16 +244,16 @@ const PracticeCard = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
 
-          <div className="w-full flex justify-end">
+          <div className="w-full flex justify-end -mr-10 md:-mr-0">
             <Badge
               onClick={handleNext}
-              className="bg-transparent text-md text-yellow-500 cursor-pointer flex items-center gap-1"
+              className="bg-transparent text-sm md:text-md text-yellow-500 cursor-pointer flex items-center gap-0.5 md:gap-1"
             >
               Next Word
-              <MdNavigateNext className="!w-10 !h-10" />
+              <MdNavigateNext className="md:!w-10 !w-6 !h-6 md:!h-10" />
             </Badge>
           </div>
         </CardContent>
