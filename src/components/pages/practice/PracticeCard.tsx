@@ -217,7 +217,7 @@ const PracticeCard = () => {
               </div>
             )}
 
-            {/* {selectedMode === "recall" && (
+            {selectedMode === "recall" && (
               <div className="flex flex-col gap-x-3">
                 <div className="flex items-center justify-center gap-2  lg:gap-x-8">
                   <div>
@@ -244,7 +244,7 @@ const PracticeCard = () => {
                   </div>
                 </div>
               </div>
-            )} */}
+            )}
           </div>
 
           <div className="w-full flex justify-end -mr-10 md:-mr-0">
