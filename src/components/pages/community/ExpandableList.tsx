@@ -22,7 +22,7 @@ export default function ExpandableList({
   const visibleItems = expanded ? items.slice(0, max) : items.slice(0, limit);
 
   return (
-    <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-neutral-800 p-5 bg-white dark:bg-neutral-900 hover:shadow-xl transition-all md:w-3/12">
+    <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-neutral-800 p-5 bg-white dark:bg-neutral-900 hover:shadow-xl transition-all w-[350px] md:w-3/12">
       <h3 className="text-lg font-bold flex items-center gap-2 mb-4">
         <Star className="w-5 h-5 text-yellow-500" />
         {title}
@@ -30,7 +30,8 @@ export default function ExpandableList({
 
       <ul
         className={cn(
-          "space-y-2 h-50",
+          `space-y-2 h-50 !w-full`,
+          items.length === 0 && "h-10",
           items.length >= 5 && "overflow-y-scroll"
         )}
       >
@@ -44,7 +45,7 @@ export default function ExpandableList({
         {items.map((item, idx) => (
           <li
             key={idx}
-            className="flex items-center justify-between rounded-lg px-3 py-2 bg-gray-50 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 transition"
+            className="flex items-center justify-between  rounded-lg px-3 py-2 bg-gray-50 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 transition"
           >
             <span className="text-sm font-medium">
               {item.word.slice(0, 1).toUpperCase() + item.word.slice(1)}{" "}

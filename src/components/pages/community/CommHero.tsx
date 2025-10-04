@@ -33,7 +33,7 @@ export default function CommHero({
           join the fun!
         </span>
       </p>
-      <div className="flex w-md justify-center gap-6 mt-6 text-center">
+      <div className="flex justify-center gap-6 mt-6 text-center">
         <StatCard title="XP" value={mounted ? stats.xp : 0} loading={loading} />
         <StatCard
           title="Level"

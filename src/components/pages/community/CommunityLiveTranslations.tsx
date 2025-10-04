@@ -108,7 +108,7 @@ export default function CommunityTranslations() {
 
   return (
     <div className="mt-6 space-y-6 px-2 lg:px-4">
-      <h2 className="text-2xl font-bold flex items-center gap-2 dark:text-white animate-pulse">
+      <h2 className="text-xl md:text-2xl font-bold flex items-center justify-center gap-2 dark:text-white animate-pulse">
         <FaChartLine /> Live Community Translations
         <Badge variant="secondary">{translations.length}</Badge>
       </h2>
@@ -146,7 +146,7 @@ export default function CommunityTranslations() {
         </div>
       )}
       {!isLoading && translations.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[400px] overflow-y-scroll">
+        <div className="grid grid-cols-1 px-5 md:px-0 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[400px] overflow-y-scroll">
           {translations.map((t, idx) => {
             const langs = Object.keys(
               t.result.translations

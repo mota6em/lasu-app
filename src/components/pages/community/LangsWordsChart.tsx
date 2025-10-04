@@ -48,7 +48,7 @@ const LangsWordsChart = () => {
           Top used Words
           <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1 -ms-1" />
         </h2>
-        <div className="flex flex-col md:flex-row flex-wrap gap-4 items-start justify-center">
+        <div className="flex flex-col md:flex-row flex-wrap gap-4 items-center md:items-start justify-center">
           <ExpandableList
             title="Today"
             items={stats.daily.words.map((w: any) => ({
@@ -78,7 +78,7 @@ const LangsWordsChart = () => {
           Top used Languages
           <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1 -ms-1" />
         </h2>
-        <div className="flex flex-col md:flex-row flex-wrap gap-4 items-start justify-center">
+        <div className="flex flex-col w-full md:flex-row flex-wrap gap-4 items-center md:items-start justify-center">
           <ExpandableList
             title="Today"
             items={stats.daily.languages.map((l: any) => ({
