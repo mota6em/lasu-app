@@ -4,10 +4,8 @@ import CommunityUser from "@/models/communityUser";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import CommHero from "@/components/pages/community/CommHero";
-import TopLearners from "@/components/pages/community/TopLearners";
 import CommunityLiveTranslations from "@/components/pages/community/CommunityLiveTranslations";
-import ExpandableList from "@/components/pages/community/ExpandableList";
-import LangsWordsChart from "@/components/pages/community/LangsWordsChart";
+import CommTopStats from "@/components/pages/community/CommTopStats";
 export default async function page() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return <JoinCommHero />;
@@ -24,9 +22,8 @@ export default async function page() {
         userName={session.user.name || "Anonymous"}
         userId={session.user.id}
       />
-      <TopLearners userId={session.user.id} />
+      <CommTopStats userId={session.user.id} />
       <CommunityLiveTranslations />
-      <LangsWordsChart />
     </>
   );
 }
