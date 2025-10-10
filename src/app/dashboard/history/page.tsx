@@ -10,6 +10,7 @@ import { useInView } from "react-intersection-observer";
 import HistoryFilter from "@/components/pages/history/HistoryFilter";
 import HistoryCard from "@/components/pages/history/HistoryCard";
 import AuthAlert from "@/components/pages/history/AuthAlert";
+import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -144,22 +145,21 @@ export default function HistoryPage() {
         </div>
       )}
       {!(status === "loading" || (status === "authenticated" && isLoading)) && (
-        <ScrollArea className="h-screen px-3 py-6 lg:p-6">
-          <div className="grid gap-6">
-            {displayHistory.map((item) => (
-              <HistoryCard key={item._id} item={item} onDelete={handleDelete} />
-            ))}
-            {isFetchingNextPage && (
-              <div className="space-y-5">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <HistoryCardSkeleton key={`loading-${i}`} />
-                ))}
-              </div>
-            )}
-            <div ref={loadMoreRef} className="h-6" />
-          </div>
-        </ScrollArea>
+        <div className="grid gap-6">
+          {displayHistory.map((item) => (
+            <HistoryCard key={item._id} item={item} onDelete={handleDelete} />
+          ))}
+          {isFetchingNextPage && (
+            <div className="space-y-5">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <HistoryCardSkeleton key={`loading-${i}`} />
+              ))}
+            </div>
+          )}
+          <div ref={loadMoreRef} className="h-6" />
+        </div>
       )}
+      <ScrollToTop />
     </>
   );
 }
