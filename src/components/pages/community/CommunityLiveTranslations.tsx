@@ -146,7 +146,7 @@ export default function CommunityTranslations() {
         </div>
       )}
       {!isLoading && translations.length > 0 && (
-        <div className="grid grid-cols-1 px-5 md:px-0 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[400px] overflow-y-scroll">
+        <div className="grid grid-cols-1 px-5 md:px-0 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {translations.map((t, idx) => {
             const langs = Object.keys(
               t.result.translations
