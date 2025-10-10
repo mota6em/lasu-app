@@ -67,14 +67,14 @@ const CommTopStats = ({ userId }: { userId: string }) => {
       {/*from TopLearners Component */}
       <div className="flex flex-col items-center gap-2">
         <UserRanks userId={userId} />
-        <div className="flex items-center gap-2">
+        <div className="grid md:grid-cols-3 items-center gap-2">
           <button
             onClick={() => {
               setShowTopLearnersTable(!showTopLearnersTable);
               setShowTopWordsTable(false);
               setShowTopLangsTable(false);
             }}
-            className="bg-gradient-to-r text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
+            className="bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
           >
             {showTopLearnersTable ? (
               <>
@@ -93,7 +93,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
               setShowTopWordsTable(!showTopWordsTable);
               setShowTopLangsTable(false);
             }}
-            className="bg-gradient-to-r text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
+            className="bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
           >
             {showTopWordsTable ? (
               <>
@@ -102,7 +102,10 @@ const CommTopStats = ({ userId }: { userId: string }) => {
               </>
             ) : (
               <>
-                <MessageSquareText className="text-yellow-300 animate-pulse" size={20} />{" "}
+                <MessageSquareText
+                  className="text-yellow-300 animate-pulse"
+                  size={20}
+                />{" "}
                 Top Translated Words
               </>
             )}
@@ -113,7 +116,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
               setShowTopWordsTable(false);
               setShowTopLangsTable(!showTopLangsTable);
             }}
-            className="bg-gradient-to-r text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
+            className="bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
           >
             {showTopLangsTable ? (
               <>
@@ -131,9 +134,9 @@ const CommTopStats = ({ userId }: { userId: string }) => {
       </div>
       {/*from LangsWordsChart component */}
 
-      <div className="flex flex-col items-center justify-center my-10 gap-y-8">
+      <div className="flex flex-col items-center justify-center gap-y-8">
         {showTopWordsTable && (
-          <div className="w-full">
+          <div className="w-full my-5">
             <h2 className="text-2xl font-bold text-center mb-5 flex items-center justify-center gap-x-2 ">
               <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1" />
               Top used Words
@@ -165,7 +168,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           </div>
         )}
         {showTopLangsTable && (
-          <div className="w-full">
+          <div className="w-full my-5">
             <h2 className="text-2xl font-bold text-center mb-5 flex items-center justify-center gap-x-2 ">
               <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1" />
               Top used Languages
