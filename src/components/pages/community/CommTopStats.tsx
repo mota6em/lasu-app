@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import ExpandableList from "./ExpandableList";
 import { FiTrendingUp } from "react-icons/fi";
 import { Brain, MessageSquareText, Globe } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
   //from TopLearners component
@@ -55,9 +56,25 @@ const CommTopStats = ({ userId }: { userId: string }) => {
 
   if (!stats) {
     return (
-      <div className="flex flex-row gap-x-2 items-center justify-center mt-10 font-bold animate-pulse">
-        <p>Loading..</p>
-        <span className="loading loading-dots loading-md"></span>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-xs text-gray-400">
+          Your Ranks:
+          <span className="text-yellow-700 dark:text-yellow-400">Today:</span>
+          {" - "}/
+          <span className="text-yellow-700 dark:text-yellow-400">
+            This Month:
+          </span>
+          {" - "}/
+          <span className="text-yellow-700 dark:text-yellow-400">
+            All Time:
+          </span>
+          {" - "}
+        </span>
+        <div className="grid md:grid-cols-3 items-center justify-center gap-2">
+          <Skeleton className="h-6 w-46" />
+          <Skeleton className="h-6 w-46" />
+          <Skeleton className="h-6 w-46" />
+        </div>
       </div>
     );
   }

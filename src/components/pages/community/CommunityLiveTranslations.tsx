@@ -113,7 +113,7 @@ export default function CommunityTranslations() {
         <Badge variant="secondary">{translations.length}</Badge>
       </h2>
       {(isLoading || translations.length === 0) && (
-        <div className="px-5 justify-center items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="px-3 justify-center items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div className="relative p-4 border rounded-xl shadow animate-pulse bg-gray-200 dark:bg-neutral-800/20">
               <div className="mb-3 flex items-center justify-between">
@@ -146,7 +146,7 @@ export default function CommunityTranslations() {
         </div>
       )}
       {!isLoading && translations.length > 0 && (
-        <div className="grid grid-cols-1 px-5 md:px-0 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 px-3 md:px-0 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {translations.map((t, idx) => {
             const langs = Object.keys(
               t.result.translations
