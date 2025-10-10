@@ -35,7 +35,7 @@ export function usePracticeSession(
       remembered: prev.remembered + (remembered ? 1 : 0),
       forgotten: prev.forgotten + (!remembered ? 1 : 0),
     }));
-    handleNext();
+    setShowResult(true);
   };
 
   useEffect(() => {

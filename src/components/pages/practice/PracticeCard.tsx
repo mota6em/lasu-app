@@ -23,7 +23,6 @@ const PracticeCard = () => {
     selectedMode,
     setSelectedMode,
     currentIndex,
-    setCurrentIndex,
     timer,
     setTimer,
     timeLeft,
@@ -31,11 +30,8 @@ const PracticeCard = () => {
     showResult,
     setShowResult,
     stats,
-    setStats,
     answers,
     setAnswers,
-    practiceWords,
-    isLoading,
     currentWord,
     handleNext,
     handleRecall,
@@ -60,7 +56,7 @@ const PracticeCard = () => {
     <div className="flex flex-col">
       <div className="flex w-full items-center mb-2 md:px-4 justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-yellow-500">Mode:</span>
+          <span className="text-yellow-800 dark:text-yellow-500">Mode:</span>
           <Select
             value={selectedMode}
             onValueChange={(value) =>
@@ -88,7 +84,7 @@ const PracticeCard = () => {
             selectedMode === "writing" && "hidden"
           } flex items-center gap-2`}
         >
-          <span className="text-yellow-500">Timer:</span>
+          <span className="text-yellow-800 dark:text-yellow-500">Timer:</span>
           <Select
             value={timer.toString()}
             onValueChange={(val) => setTimer(parseInt(val))}
@@ -121,8 +117,8 @@ const PracticeCard = () => {
           </Select>
         </div>
       </div>
-      <Card className=" w-xs md:w-xl lg:w-3xl shadow-xl rounded-2xl border-0 bg-violet-900/50 backdrop-blur-sm">
-        <CardHeader className="flex flex-row items-center justify-center">
+      <Card className="w-xs py-1 md:w-xl lg:w-3xl shadow-xl rounded-2xl border-0 bg-sky-900 dark:bg-indigo-900/50 backdrop-blur-sm">
+        <CardHeader className="flex mt-5 flex-row items-center justify-center">
           <CardTitle className="text-xl md:text-4xl font-bold text-violet-50">
             {currentWord ? (
               currentWord.sourceText.toUpperCase()
@@ -142,7 +138,9 @@ const PracticeCard = () => {
           <div className="flex flex-col items-center gap-4">
             {selectedMode === "recall" && (
               <div className="flex flex-row items-center justify-center gap-x-5">
-                <h3>Result: </h3>
+                <h3 className="text-md md:text-lg text-white font-semibold">
+                  Result:{" "}
+                </h3>
 
                 <div className="flex-wrap grid md:grid-cols-2 gap-x-6 md:gap-x-12 gap-4 justify-center border-l-2 pl-4 w-full">
                   {currentWord &&
@@ -159,7 +157,7 @@ const PracticeCard = () => {
                           {showResult ? (
                             translation
                           ) : (
-                            <div className="h-4 w-20 blur-sm bg-violet-400 ml-2"></div>
+                            <div className="h-4 w-20 blur-xs bg-violet-300 dark:bg-violet-400 ml-2"></div>
                           )}
                         </Badge>
                       )
@@ -218,36 +216,34 @@ const PracticeCard = () => {
             )}
 
             {selectedMode === "recall" && (
-              <div className="flex flex-col gap-x-3">
-                <div className="flex items-center justify-center gap-2 gap-x-6  lg:gap-x-8">
-                  <div>
-                    <Button
-                      onClick={() => handleRecall(true)}
-                      className="bg-lime-600 hover:bg-green-600 text-white"
-                    >
-                      I remember
-                    </Button>
-                    <div className="text-green-600 mt-0.5 text-sm">
-                      Remembered: {stats.remembered}
-                    </div>
-                  </div>
-                  <div>
-                    <Button
-                      onClick={() => handleRecall(false)}
-                      className="bg-red-500 hover:bg-red-600 text-white"
-                    >
-                      I don't
-                    </Button>
-                    <div className="text-red-600 mt-0.5 text-sm">
-                      Forgotten: {stats.forgotten}
-                    </div>
-                  </div>
-                </div>
+              <div className="flex flex-col gap-3 w-full">
+                <Button
+                  onClick={() => handleRecall(true)}
+                  className="bg-lime-500 dark:bg-lime-600 w-full dark:hover:bg-green-600 hover:bg-green-500 text-white"
+                >
+                  I remember
+                </Button>
+                <Button
+                  onClick={() => handleRecall(false)}
+                  className="bg-red-500 w-full hover:bg-red-600 text-white"
+                >
+                  I don't
+                </Button>
               </div>
             )}
           </div>
 
-          <div className="w-full flex justify-end -mr-10 md:-mr-0">
+          <div className="w-full flex gap-x-4 !-mt-5 justify-end -mr-10 md:-mr-5">
+            <div className="flex gap-x-2 flex-row items-center justify-center">
+              <div className= "text-green-300 dark:text-green-600 mt-0.5 flex gap-x-2 text-sm w-full">
+                <span>Remembered: </span>
+                <span>{stats.remembered}</span>
+              </div>
+              <div className="text-red-300 dark:text-red-600 flex gap-x-2 w-full mt-0.5 text-sm">
+                <span>Forgotten:</span>
+                <span>{stats.forgotten}</span>
+              </div>
+            </div>
             <Badge
               onClick={handleNext}
               className="bg-transparent text-sm md:text-md text-yellow-500 cursor-pointer flex items-center gap-0.5 md:gap-1"
