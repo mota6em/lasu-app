@@ -137,32 +137,26 @@ const PracticeCard = () => {
         <CardContent className="flex flex-col items-center gap-6 relative">
           <div className="flex flex-col items-center gap-4">
             {selectedMode === "recall" && (
-              <div className="flex flex-row items-center justify-center gap-x-5">
-                <h3 className="text-md md:text-lg text-white font-semibold">
-                  Result:{" "}
-                </h3>
-
-                <div className="flex-wrap grid md:grid-cols-2 gap-x-6 md:gap-x-12 gap-4 justify-center border-l-2 pl-4 w-full">
-                  {currentWord &&
-                    Object.entries(currentWord.result.translations).map(
-                      ([lang, translation]) => (
-                        <Badge
-                          key={lang}
-                          className="bg-violet-900/0 text-md text-amber-400 flex items-start"
-                        >
-                          <span className="font-semibold text-white text-start">
-                            {lang.charAt(0).toUpperCase() + lang.slice(1)}
-                          </span>{" "}
-                          :{" "}
-                          {showResult ? (
-                            translation
-                          ) : (
-                            <div className="h-4 w-20 blur-xs bg-violet-300 dark:bg-violet-400 ml-2"></div>
-                          )}
-                        </Badge>
-                      )
-                    )}
-                </div>
+              <div className="flex-wrap grid md:grid-cols-2 gap-x-6 md:gap-x-12 gap-4 justify-center w-full">
+                {currentWord &&
+                  Object.entries(currentWord.result.translations).map(
+                    ([lang, translation]) => (
+                      <Badge
+                        key={lang}
+                        className="bg-violet-900/0 text-md text-amber-400 flex items-start"
+                      >
+                        <span className="font-semibold text-white text-start">
+                          {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                        </span>{" "}
+                        :{" "}
+                        {showResult ? (
+                          translation
+                        ) : (
+                          <div className="h-4 w-20 blur-xs bg-violet-300 dark:bg-violet-400 ml-2"></div>
+                        )}
+                      </Badge>
+                    )
+                  )}
               </div>
             )}
             {selectedMode === "writing" && (
@@ -233,13 +227,13 @@ const PracticeCard = () => {
             )}
           </div>
 
-          <div className="w-full flex gap-x-4 !-mt-5 justify-end -mr-10 md:-mr-5">
+          <div className="w-full flex gap-x-3 md:gap-x-4 !-mt-5 justify-end -mr-10 md:-mr-5">
             <div className="flex gap-x-2 flex-row items-center justify-center">
-              <div className= "text-green-300 dark:text-green-600 mt-0.5 flex gap-x-2 text-sm w-full">
+              <div className="text-green-300 dark:text-green-600 mt-0.5 flex gap-x-2 text-xs md:text-sm w-full">
                 <span>Remembered: </span>
                 <span>{stats.remembered}</span>
               </div>
-              <div className="text-red-300 dark:text-red-600 flex gap-x-2 w-full mt-0.5 text-sm">
+              <div className="text-red-300 dark:text-red-600 flex gap-x-2 w-full mt-0.5 text-xs md:text-sm">
                 <span>Forgotten:</span>
                 <span>{stats.forgotten}</span>
               </div>
