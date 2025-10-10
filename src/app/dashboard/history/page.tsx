@@ -11,6 +11,7 @@ import HistoryFilter from "@/components/pages/history/HistoryFilter";
 import HistoryCard from "@/components/pages/history/HistoryCard";
 import AuthAlert from "@/components/pages/history/AuthAlert";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -120,13 +121,11 @@ export default function HistoryPage() {
 
       {(status === "loading" || (status === "authenticated" && isLoading)) && (
         <>
-          <ScrollArea className="h-screen p-6">
-            <div className="space-y-5">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <HistoryCardSkeleton key={i} />
-              ))}
-            </div>
-          </ScrollArea>
+          <div className="grid md:grid-cols-2 gap-6 px-3 py-3 md:py-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <HistoryCardSkeleton key={i} />
+            ))}
+          </div>
         </>
       )}
       {displayHistory.length === 0 && status !== "loading" && (
@@ -150,10 +149,13 @@ export default function HistoryPage() {
             <HistoryCard key={item._id} item={item} onDelete={handleDelete} />
           ))}
           {isFetchingNextPage && (
-            <div className="space-y-5">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <HistoryCardSkeleton key={`loading-${i}`} />
-              ))}
+            <div className="flex items-center md:items-end w-full justify-center">
+              <span className="loading loading-dots loading-xl"></span>
+            </div>
+          )}
+          {isFetchingNextPage && (
+            <div className="hidden md:flex items-center md:items-end w-full justify-center">
+              <span className="loading loading-dots loading-xl"></span>
             </div>
           )}
           <div ref={loadMoreRef} className="h-6" />
