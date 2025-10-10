@@ -20,10 +20,10 @@ const HistoryCard = ({ item, onDelete }: HistoryCardProps) => {
   return (
     <Card
       className={cn(
-        "border border-slate-400 py-3 lg:py-4 dark:border-zinc-700 bg-accent dark:bg-zinc-900 border-l-5 rounded-xl w-full"
+        "border-yellow-900 py-0 dark:border-yellow-700 bg-accent rounded-xl dark:bg-zinc-900 border-l-2 border-b-2 border-y-0 border-r-0  w-full"
       )}
     >
-      <CardContent className="px-3 py-0 lg:p-5 space-y-4">
+      <CardContent className="px-3 py-2 lg:px-5 lg:py-2 space-y-4">
         <div className="flex justify-between items-center">
           <div className="text-blue-950/90 dark:text-white/60 text-sm">
             {new Date(item.createdAt).toLocaleString().slice(0, -3)}
@@ -40,7 +40,7 @@ const HistoryCard = ({ item, onDelete }: HistoryCardProps) => {
 
         <div>
           <p className="text-muted-foreground text-sm mb-1">Source Text:</p>
-          <p className="text-lg font-semibold">{item.sourceText}</p>
+          <p className="text-md font-semibold">{item.sourceText}</p>
         </div>
 
         <div className="grid gap-3 bg-accent dark:bg-zinc-900">
