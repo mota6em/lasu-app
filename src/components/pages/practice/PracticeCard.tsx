@@ -219,13 +219,13 @@ const PracticeCard = () => {
 
             {selectedMode === "recall" && (
               <div className="flex flex-col gap-x-3">
-                <div className="flex items-center justify-center gap-2  lg:gap-x-8">
+                <div className="flex items-center justify-center gap-2 gap-x-6  lg:gap-x-8">
                   <div>
                     <Button
                       onClick={() => handleRecall(true)}
                       className="bg-lime-600 hover:bg-green-600 text-white"
                     >
-                      I remember this word
+                      I remember
                     </Button>
                     <div className="text-green-600 mt-0.5 text-sm">
                       Remembered: {stats.remembered}
@@ -236,7 +236,7 @@ const PracticeCard = () => {
                       onClick={() => handleRecall(false)}
                       className="bg-red-500 hover:bg-red-600 text-white"
                     >
-                      I don't remember
+                      I don't
                     </Button>
                     <div className="text-red-600 mt-0.5 text-sm">
                       Forgotten: {stats.forgotten}
