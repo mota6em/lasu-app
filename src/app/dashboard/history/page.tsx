@@ -145,7 +145,7 @@ export default function HistoryPage() {
         </div>
       )}
       {!(status === "loading" || (status === "authenticated" && isLoading)) && (
-        <div className="grid md:grid-cols-2 gap-6 px-3 py-5">
+        <div className="grid md:grid-cols-2 gap-6 px-3 py-3 md:py-5">
           {displayHistory.map((item) => (
             <HistoryCard key={item._id} item={item} onDelete={handleDelete} />
           ))}
