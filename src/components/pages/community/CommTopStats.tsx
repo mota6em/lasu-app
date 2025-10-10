@@ -12,6 +12,7 @@ import UserRanks from "./UserRanks";
 import React, { useEffect, useState } from "react";
 import ExpandableList from "./ExpandableList";
 import { FiTrendingUp } from "react-icons/fi";
+import { Brain, MessageSquareText, Globe } from "lucide-react";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
   //from TopLearners component
@@ -66,7 +67,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
       {/*from TopLearners Component */}
       <div className="flex flex-col items-center gap-2">
         <UserRanks userId={userId} />
-        <div>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => {
               setShowTopLearnersTable(!showTopLearnersTable);
@@ -82,7 +83,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
             ) : (
               <>
                 <FaStar className="text-yellow-300 animate-pulse" size={20} />{" "}
-                Show Leaderboard
+                Leaderboard
               </>
             )}
           </button>
@@ -101,8 +102,8 @@ const CommTopStats = ({ userId }: { userId: string }) => {
               </>
             ) : (
               <>
-                <FaStar className="text-yellow-300 animate-pulse" size={20} />{" "}
-                Show Top Translated Words
+                <MessageSquareText className="text-yellow-300 animate-pulse" size={20} />{" "}
+                Top Translated Words
               </>
             )}
           </button>
@@ -121,8 +122,8 @@ const CommTopStats = ({ userId }: { userId: string }) => {
               </>
             ) : (
               <>
-                <FaStar className="text-yellow-300 animate-pulse" size={20} />{" "}
-                Show Top Translated Languages
+                <Globe className="text-yellow-300 animate-pulse" size={20} />{" "}
+                Top Translated Langs
               </>
             )}
           </button>
