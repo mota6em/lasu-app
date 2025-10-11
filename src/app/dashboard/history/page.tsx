@@ -12,6 +12,7 @@ import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
 import useTranslationHistory from "@/hooks/useTranslationHistory";
 import HistoryEmptyState from "@/components/pages/history/HistoryEmptyState";
 import HistorySkeletonGrid from "@/components/pages/history/HistorySkeletonGrid";
+import HistoryGrid from "@/components/pages/history/HistoryGrid";
 
 export default function HistoryPage() {
   const [filter, setFilter] = useState<"all" | "word" | "phrase">("all");
@@ -57,22 +58,12 @@ export default function HistoryPage() {
         <HistoryEmptyState />
       )}
       {!(status === "loading" || (status === "authenticated" && isLoading)) && (
-        <div className="grid md:grid-cols-2 gap-6 px-3 py-3 md:py-5">
-          {displayHistory.map((item) => (
-            <HistoryCard key={item._id} item={item} onDelete={handleDelete} />
-          ))}
-          {isFetchingNextPage && (
-            <div className="flex items-center md:items-end w-full justify-center">
-              <span className="loading loading-dots loading-xl"></span>
-            </div>
-          )}
-          {isFetchingNextPage && (
-            <div className="hidden md:flex items-center md:items-end w-full justify-center">
-              <span className="loading loading-dots loading-xl"></span>
-            </div>
-          )}
-          <div ref={loadMoreRef} className="h-6" />
-        </div>
+        <HistoryGrid
+          displayHistory={displayHistory}
+          isFetchingNextPage={isFetchingNextPage}
+          loadMoreRef={loadMoreRef}
+          onDelete={handleDelete}
+        />
       )}
       <ScrollToTop />
     </>
