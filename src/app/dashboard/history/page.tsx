@@ -1,7 +1,5 @@
 "use client";
-
 import { useEffect, useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import Translation from "@/types/translation";
 import { useSession } from "next-auth/react";
 import { HistoryCardSkeleton } from "@/components/pages/history/HistoryCardSkeleton";
@@ -11,88 +9,19 @@ import HistoryFilter from "@/components/pages/history/HistoryFilter";
 import HistoryCard from "@/components/pages/history/HistoryCard";
 import AuthAlert from "@/components/pages/history/AuthAlert";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
-import { Skeleton } from "@/components/ui/skeleton";
-
-const ITEMS_PER_PAGE = 10;
+import useTranslationHistory from "@/hooks/useTranslationHistory";
 
 export default function HistoryPage() {
-  const [localHistory, setLocalHistory] = useState<Translation[]>([]);
   const [filter, setFilter] = useState<"all" | "word" | "phrase">("all");
-  const { data: session, status } = useSession();
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    queryClient.resetQueries({ queryKey: ["translation-history", filter] });
-  }, [filter, queryClient]);
-
-  const { ref: loadMoreRef, inView } = useInView({
-    rootMargin: "200px 0px",
-    triggerOnce: false,
-  });
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      const local = localStorage.getItem("lasu-history");
-      if (local) {
-        const parsed = JSON.parse(local);
-        if (Array.isArray(parsed)) setLocalHistory(parsed);
-      }
-    }
-  }, [status]);
-
   const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    displayHistory,
     isLoading,
     isError,
-  } = useInfiniteQuery({
-    queryKey: ["translation-history", filter],
-    queryFn: async ({ pageParam = 0 }) => {
-      const res = await fetch(
-        `/api/translation/history?page=${pageParam}&limit=${ITEMS_PER_PAGE}&filter=${filter}`
-      );
-      if (!res.ok) throw new Error("Failed to fetch history");
-      return res.json();
-    },
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length === ITEMS_PER_PAGE ? allPages.length : undefined;
-    },
-    enabled: status === "authenticated",
-    initialPageParam: 0,
-  });
-  const history = data?.pages.flatMap((page) => page) || [];
-  const filteredLocalHistory =
-    filter === "all"
-      ? localHistory
-      : localHistory.filter((item) => item.translationType === filter);
-  const displayHistory =
-    status === "authenticated" ? history : filteredLocalHistory;
-
-  const handleDelete = async (itemId: string) => {
-    if (status === "authenticated") {
-      await fetch(`/api/translation/history/${itemId}`, {
-        method: "DELETE",
-      });
-      queryClient.invalidateQueries({ queryKey: ["translation-history"] });
-    } else {
-      const updatedHistory = localHistory.filter((i) => i._id !== itemId);
-      setLocalHistory(updatedHistory);
-      localStorage.setItem("lasu-history", JSON.stringify(updatedHistory));
-    }
-  };
-
-  useEffect(() => {
-    if (
-      status === "authenticated" &&
-      inView &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, status]);
+    isFetchingNextPage,
+    loadMoreRef,
+    handleDelete,
+  } = useTranslationHistory(filter);
+  const { data: session, status } = useSession();
 
   if (isError) {
     return (
