@@ -10,6 +10,7 @@ import HistoryCard from "@/components/pages/history/HistoryCard";
 import AuthAlert from "@/components/pages/history/AuthAlert";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
 import useTranslationHistory from "@/hooks/useTranslationHistory";
+import HistoryEmptyState from "@/components/pages/history/HistoryEmptyState";
 
 export default function HistoryPage() {
   const [filter, setFilter] = useState<"all" | "word" | "phrase">("all");
@@ -58,19 +59,7 @@ export default function HistoryPage() {
         </>
       )}
       {displayHistory.length === 0 && status !== "loading" && (
-        <div className="px-4 py-10 w-full justify-center items-center flex flex-col">
-          <p className="text-muted-foreground text-sm my-5 ms-x">
-            No translation history found, start a translation to see it here.
-          </p>
-          <button
-            className="btn btn-primary mx-5"
-            onClick={() => {
-              window.location.href = "/dashboard";
-            }}
-          >
-            Start a translation
-          </button>
-        </div>
+        <HistoryEmptyState />
       )}
       {!(status === "loading" || (status === "authenticated" && isLoading)) && (
         <div className="grid md:grid-cols-2 gap-6 px-3 py-3 md:py-5">
