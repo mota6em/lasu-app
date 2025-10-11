@@ -10,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
+import { IoLanguage } from "react-icons/io5";
 import { useTranslateStore } from "@/store/useTranslateStore";
 import { CiSettings } from "react-icons/ci";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
@@ -136,9 +136,10 @@ export function Translate() {
       >
         {/* Label row */}
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-foreground">
-            Your text
-          </label>
+          <div className="text-sm font-medium text-foreground flex flex-row gap-x-1 justify-center ">
+            <span>Enter your text</span>
+            <IoLanguage className="w-5 h-5 text-indigo-800 dark:text-indigo-300" />{" "}
+          </div>
           <div
             className="flex text-gray-800 hover:text-gray-950 dark:text-gray-300 dark:hover:text-gray-200 flex-row gap-x-0.5 items-center text-xs cursor-pointer hover:underline  w-fit"
             onClick={() => toggleSettingsDialog()}
