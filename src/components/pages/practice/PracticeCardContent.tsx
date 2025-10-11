@@ -9,6 +9,7 @@ import { IoMdCheckmark } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
 import { usePracticeSession } from "@/hooks/usePracticeSession";
+import PracticeCardContentSkeleton from "./PracticeCardContentSkeleton";
 const PracticeCardContent = () => {
   const {
     selectedMode,
@@ -40,6 +41,9 @@ const PracticeCardContent = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, [timeLeft]);
+
+  const isLoading = !currentWord;
+  if (isLoading) return <PracticeCardContentSkeleton />;
 
   return (
     <Card className="w-xs py-1 md:w-xl lg:w-3xl shadow-xl rounded-2xl border-0 bg-sky-900 dark:bg-indigo-900/50 backdrop-blur-sm">
