@@ -18,8 +18,8 @@ const PracticeCardContentSkeleton = () => {
         </Badge>
       </CardHeader>
 
-      <CardContent className="flex flex-col items-center gap-6 relative">
-        <div className="grid md:grid-cols-2 gap-x-6 md:gap-x-12 gap-4 items-center justify-end w-3/4">
+      <CardContent className="flex flex-col items-center gap-3 md:gap-6 relative">
+        <div className="grid md:grid-cols-2 gap-x-6 md:gap-x-12 gap-1 md:gap-3 items-center justify-end w-3/4">
           {Array.from({ length: 2 }).map((_, i) => (
             <div key={i} className="flex flex-col items-center">
               <Skeleton className="h-6 w-50 bg-violet-400/30 rounded-md" />
@@ -27,15 +27,15 @@ const PracticeCardContentSkeleton = () => {
           ))}
         </div>
 
-        <div className="flex items-center justify-center flex-col gap-3 w-full mt-1">
-          <Skeleton className="h-10 w-2/4 bg-lime-400/30 rounded-lg" />
-          <Skeleton className="h-10 w-2/4 bg-red-400/30 rounded-lg" />
+        <div className="flex items-center justify-center flex-col gap-1 md:gap-3 w-full mt-1">
+          <Skeleton className="h-8 md:h-10 w-2/4 bg-lime-400/30 rounded-lg" />
+          <Skeleton className="h-8 md:h-10 w-2/4 bg-red-400/30 rounded-lg" />
         </div>
 
-        <div className="w-full flex gap-x-3 md:gap-x-4 justify-end -mr-10 md:-mr-5">
-          <Skeleton className="h-5 w-30 bg-green-400/30 rounded-md" />
-          <Skeleton className="h-5 w-30 bg-red-400/30 rounded-md" />
-          <Skeleton className="h-5 w-30 bg-yellow-400/30 rounded-md" />
+        <div className="w-full flex gap-x-3 md:gap-x-4 justify-center md:justify-end -mr-10 md:-mr-5">
+          <Skeleton className="h-3 md:h-5 w-30 bg-green-400/30 rounded-md" />
+          <Skeleton className="h-3 md:h-5 w-30 bg-red-400/30 rounded-md" />
+          <Skeleton className="h-3 md:h-5 w-30 bg-yellow-400/30 rounded-md" />
         </div>
       </CardContent>
     </Card>
