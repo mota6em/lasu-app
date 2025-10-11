@@ -1,12 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
-import Translation from "@/types/translation";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { HistoryCardSkeleton } from "@/components/pages/history/HistoryCardSkeleton";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { useInView } from "react-intersection-observer";
 import HistoryFilter from "@/components/pages/history/HistoryFilter";
-import HistoryCard from "@/components/pages/history/HistoryCard";
 import AuthAlert from "@/components/pages/history/AuthAlert";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
 import useTranslationHistory from "@/hooks/useTranslationHistory";
