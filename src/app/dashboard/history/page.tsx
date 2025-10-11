@@ -11,6 +11,7 @@ import AuthAlert from "@/components/pages/history/AuthAlert";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
 import useTranslationHistory from "@/hooks/useTranslationHistory";
 import HistoryEmptyState from "@/components/pages/history/HistoryEmptyState";
+import HistorySkeletonGrid from "@/components/pages/history/HistorySkeletonGrid";
 
 export default function HistoryPage() {
   const [filter, setFilter] = useState<"all" | "word" | "phrase">("all");
@@ -50,13 +51,7 @@ export default function HistoryPage() {
       <HistoryFilter filter={filter} setFilter={setFilter} />
 
       {(status === "loading" || (status === "authenticated" && isLoading)) && (
-        <>
-          <div className="grid md:grid-cols-2 gap-6 px-3 py-3 md:py-5">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <HistoryCardSkeleton key={i} />
-            ))}
-          </div>
-        </>
+        <HistorySkeletonGrid />
       )}
       {displayHistory.length === 0 && status !== "loading" && (
         <HistoryEmptyState />
