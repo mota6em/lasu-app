@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import HistoryFilter from "@/components/pages/history/HistoryFilter";
 import AuthAlert from "@/components/pages/history/AuthAlert";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
@@ -18,8 +17,9 @@ export default function HistoryPage() {
     isFetchingNextPage,
     loadMoreRef,
     handleDelete,
+    status,
+    session,
   } = useTranslationHistory(filter);
-  const { data: session, status } = useSession();
 
   if (isError) {
     return (
