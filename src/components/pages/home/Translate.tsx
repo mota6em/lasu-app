@@ -74,7 +74,7 @@ export function Translate() {
             translationType,
           }),
         });
-        if (!text.trim().includes(" ")) {
+        if (!text.trim().includes(" ")&& text.length < 100) {
           await fetch("/api/community/live", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
