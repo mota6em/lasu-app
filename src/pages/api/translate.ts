@@ -19,9 +19,6 @@ export default async function handler(
 
   const isSingleWord = text.trim().split(/\s+/).length === 1;
 
-  const formatLines = preferredLangs
-    .map((lang: string) => `${lang}: ...`)
-    .join("\n");
   const userPrompt = isSingleWord
     ? `
       "${text}" is a single word.
