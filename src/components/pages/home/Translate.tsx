@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Copy, Check, Clipboard, Trash2 } from "lucide-react";
@@ -125,6 +125,13 @@ export function Translate() {
       setText((prev) => (prev ? prev + " " : "") + clipText);
     } catch {}
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlText = params.get("text");
+    if (urlText) setText(decodeURIComponent(urlText));
+  }, []);
+
   return (
     <div className="bg-white dark:bg-zinc-900 px-0 lg:p-6   w-full space-y-6 flex flex-col lg:flex-row gap-x-5 ">
       <form
