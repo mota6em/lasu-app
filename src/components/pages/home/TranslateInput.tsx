@@ -82,10 +82,7 @@ export default function TranslateInput({
                   className="rounded-full"
                   onClick={async () => {
                     const clip = await navigator.clipboard.readText();
-                    if (clip)
-                      setText(
-                        (prev: string) => (prev ? prev + " " : "") + clip
-                      );
+                    if (clip) setText(text ? text + " " + clip : clip);
                   }}
                 >
                   <Clipboard className="w-4 h-4" />
