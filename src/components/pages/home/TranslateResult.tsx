@@ -64,7 +64,9 @@ export default function TranslateResult({
                       <p>{result.example[lang]}</p>
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText(result.example[lang]);
+                          const exampleText = result.example?.[lang];
+                          if (!exampleText) return;
+                          navigator.clipboard.writeText(exampleText);
                           setCopiedLang(lang + "-example");
                           setTimeout(() => setCopiedLang(null), 2000);
                         }}
