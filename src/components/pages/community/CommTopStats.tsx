@@ -12,11 +12,10 @@ import UserRanks from "./UserRanks";
 import React, { useEffect, useState } from "react";
 import ExpandableList from "./ExpandableList";
 import { FiTrendingUp } from "react-icons/fi";
-import { Brain, MessageSquareText, Globe } from "lucide-react";
+import { MessageSquareText, Globe } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
-  //from TopLearners component
   const { learners: topDay, loading: loadingDay } = useTopLearners("daily");
   const { learners: topMonth, loading: loadingMonth } =
     useTopLearners("monthly");
@@ -37,7 +36,6 @@ const CommTopStats = ({ userId }: { userId: string }) => {
     allTime: { words: StatItem[]; languages: StatItem[] };
   }
 
-  //from LangsWordsChart component
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
@@ -48,7 +46,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
         .catch(console.error);
     };
 
-    fetchStats(); // initial fetch
+    fetchStats();
 
     const interval = setInterval(fetchStats, 60000); //refresh every 1 min
     return () => clearInterval(interval);
@@ -81,7 +79,6 @@ const CommTopStats = ({ userId }: { userId: string }) => {
 
   return (
     <>
-      {/*from TopLearners Component */}
       <div className="flex flex-col items-center gap-2">
         <UserRanks userId={userId} />
         <div className="grid md:grid-cols-3 items-center gap-2">
@@ -149,8 +146,8 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           </button>
         </div>
       </div>
-      {/*from LangsWordsChart component */}
 
+      {/* Top Words & Languages Table */}
       <div className="flex flex-col items-center justify-center gap-y-8">
         {showTopWordsTable && (
           <div className="w-full my-5">
@@ -217,7 +214,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           </div>
         )}
       </div>
-      {/*from TopLearners Component */}
+      {/* Top Learners Table */}
       {showTopLearnersTable && (
         <div className="mt-6 mx-2 md:mx-0 p-6 bg-gray-100 dark:bg-purple-900/5 rounded-2xl shadow-lg text-black dark:text-white">
           <div className="flex flex-col lg:flex-row gap-6">
