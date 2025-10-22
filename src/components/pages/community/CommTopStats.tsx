@@ -32,7 +32,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
   const [loadingStats, setLoadingStats] = useState(false);
 
   const fetchStats = async () => {
-    if (stats || loadingStats) return; // don’t refetch if already loaded
+    if (loadingStats) return; // don’t refetch if already loaded
     try {
       setLoadingStats(true);
       const res = await fetch("/api/community/stats");
@@ -45,10 +45,10 @@ const CommTopStats = ({ userId }: { userId: string }) => {
     }
   };
   const handleShowWords = () => {
-    setShowTopWordsTable(!showTopWordsTable);
+    setShowTopWordsTable(true);
     setShowTopLearnersTable(false);
     setShowTopLangsTable(false);
-    if (!stats) fetchStats();
+    fetchStats();
   };
 
   const handleShowLangs = () => {
@@ -74,6 +74,9 @@ const CommTopStats = ({ userId }: { userId: string }) => {
     monthly: { words: StatItem[]; languages: StatItem[] };
     allTime: { words: StatItem[]; languages: StatItem[] };
   }
+  const prefetchStats = () => {
+    if (!stats && !loadingStats) fetchStats();
+  };
 
   const shouldShowSkeleton =
     (showTopWordsTable || showTopLangsTable) && loadingStats && !stats;
@@ -100,6 +103,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           </button>
           <button
             onClick={handleShowWords}
+            onMouseEnter={prefetchStats}
             className="bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
           >
             {showTopWordsTable ? (
