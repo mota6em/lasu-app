@@ -13,7 +13,6 @@ import React, { useState } from "react";
 import ExpandableList from "./ExpandableList";
 import { FiTrendingUp } from "react-icons/fi";
 import { MessageSquareText, Globe } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
   const [showTopLearnersTable, setShowTopLearnersTable] = useState(false);
@@ -32,7 +31,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
   const [loadingStats, setLoadingStats] = useState(false);
 
   const fetchStats = async () => {
-    if (loadingStats) return; // don’t refetch if already loaded
+    if (loadingStats) return;
     try {
       setLoadingStats(true);
       const res = await fetch("/api/community/stats");
@@ -44,11 +43,12 @@ const CommTopStats = ({ userId }: { userId: string }) => {
       setLoadingStats(false);
     }
   };
+
   const handleShowWords = () => {
-    setShowTopWordsTable(true);
+    setShowTopWordsTable(!showTopWordsTable);
     setShowTopLearnersTable(false);
     setShowTopLangsTable(false);
-    fetchStats();
+    if (!stats) fetchStats();
   };
 
   const handleShowLangs = () => {
@@ -74,6 +74,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
     monthly: { words: StatItem[]; languages: StatItem[] };
     allTime: { words: StatItem[]; languages: StatItem[] };
   }
+
   const prefetchStats = () => {
     if (!stats && !loadingStats) fetchStats();
   };
@@ -138,23 +139,10 @@ const CommTopStats = ({ userId }: { userId: string }) => {
             )}
           </button>
         </div>
-        {shouldShowSkeleton && (
-          <div className="flex flex-col items-center gap-2 mt-4">
-            <span className="text-xs text-gray-400">
-              Loading community stats…
-            </span>
-            <div className="grid md:grid-cols-3 items-center justify-center gap-2">
-              <Skeleton className="h-6 w-40" />
-              <Skeleton className="h-6 w-40" />
-              <Skeleton className="h-6 w-40" />
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Top Words & Languages Table */}
       <div className="flex flex-col items-center justify-center gap-y-8">
-        {stats && showTopWordsTable && (
+        {showTopWordsTable && (
           <div className="w-full my-5">
             <h2 className="text-2xl font-bold text-center mb-5 flex items-center justify-center gap-x-2 ">
               <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1" />
@@ -162,31 +150,50 @@ const CommTopStats = ({ userId }: { userId: string }) => {
               <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1 -ms-1" />
             </h2>
             <div className="flex flex-col md:flex-row flex-wrap gap-4 items-center md:items-start justify-center">
-              <ExpandableList
-                title="Today"
-                items={stats.daily.words.map((w: any) => ({
-                  word: w._id,
-                  count: w.count,
-                }))}
-              />
-              <ExpandableList
-                title="This Month"
-                items={stats.monthly.words.map((w: any) => ({
-                  word: w._id,
-                  count: w.count,
-                }))}
-              />
-              <ExpandableList
-                title="All Time"
-                items={stats.allTime.words.map((w: any) => ({
-                  word: w._id,
-                  count: w.count,
-                }))}
-              />
+              {stats ? (
+                <>
+                  <ExpandableList
+                    title="Today"
+                    items={stats.daily.words.map((w: any) => ({
+                      word: w._id,
+                      count: w.count,
+                    }))}
+                    loading={shouldShowSkeleton}
+                  />
+                  <ExpandableList
+                    title="This Month"
+                    items={stats.monthly.words.map((w: any) => ({
+                      word: w._id,
+                      count: w.count,
+                    }))}
+                    loading={shouldShowSkeleton}
+                  />
+                  <ExpandableList
+                    title="All Time"
+                    items={stats.allTime.words.map((w: any) => ({
+                      word: w._id,
+                      count: w.count,
+                    }))}
+                    loading={shouldShowSkeleton}
+                  />
+                </>
+              ) : (
+                <>
+                  {[0, 1, 2].map((i) => (
+                    <ExpandableList
+                      key={i}
+                      title="Loading..."
+                      items={[]}
+                      loading
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         )}
-        {stats && showTopLangsTable && (
+
+        {showTopLangsTable && (
           <div className="w-full my-5">
             <h2 className="text-2xl font-bold text-center mb-5 flex items-center justify-center gap-x-2 ">
               <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1" />
@@ -194,32 +201,50 @@ const CommTopStats = ({ userId }: { userId: string }) => {
               <FiTrendingUp className="w-6 h-6 text-yellow-500 mt-1 -ms-1" />
             </h2>
             <div className="flex flex-col w-full md:flex-row flex-wrap gap-4 items-center md:items-start justify-center">
-              <ExpandableList
-                title="Today"
-                items={stats.daily.languages.map((l: any) => ({
-                  word: l._id,
-                  count: l.count,
-                }))}
-              />
-              <ExpandableList
-                title="This Month"
-                items={stats.monthly.languages.map((l: any) => ({
-                  word: l._id,
-                  count: l.count,
-                }))}
-              />
-              <ExpandableList
-                title="All Time"
-                items={stats.allTime.languages.map((l: any) => ({
-                  word: l._id,
-                  count: l.count,
-                }))}
-              />
+              {stats ? (
+                <>
+                  <ExpandableList
+                    title="Today"
+                    items={stats.daily.languages.map((l: any) => ({
+                      word: l._id,
+                      count: l.count,
+                    }))}
+                    loading={shouldShowSkeleton}
+                  />
+                  <ExpandableList
+                    title="This Month"
+                    items={stats.monthly.languages.map((l: any) => ({
+                      word: l._id,
+                      count: l.count,
+                    }))}
+                    loading={shouldShowSkeleton}
+                  />
+                  <ExpandableList
+                    title="All Time"
+                    items={stats.allTime.languages.map((l: any) => ({
+                      word: l._id,
+                      count: l.count,
+                    }))}
+                    loading={shouldShowSkeleton}
+                  />
+                </>
+              ) : (
+                <>
+                  {[0, 1, 2].map((i) => (
+                    <ExpandableList
+                      key={i}
+                      title="Loading..."
+                      items={[]}
+                      loading
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         )}
       </div>
-      {/* Top Learners Table */}
+
       {showTopLearnersTable && (
         <div className="mt-6 mx-2 md:mx-0 p-6 bg-gray-100 dark:bg-purple-900/5 rounded-2xl shadow-lg text-black dark:text-white">
           <div className="flex flex-col lg:flex-row gap-6">
