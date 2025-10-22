@@ -2,7 +2,7 @@
 import { Learner } from "@/types/learner";
 import { useEffect, useState } from "react";
 
-type Period = "daily" | "monthly" | "allTime";
+type Period = "daily" | "monthly" | "allTime" | null;
 
 export function useTopLearners(period: Period) {
   const [learners, setLearners] = useState<Learner[]>([]);
