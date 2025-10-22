@@ -42,18 +42,18 @@ export default function ExpandableList({
         <ul
           className={cn(
             `space-y-2 h-50 !w-full`,
-            items.length === 0 && "h-10",
-            items.length >= 5 && "overflow-y-scroll"
+            (items?.length ?? 0) === 0 && "h-10",
+            (items?.length ?? 0) >= 5 && "overflow-y-scroll"
           )}
         >
-          {items.length === 0 && (
+          {items?.length === 0 && (
             <li className="flex items-center justify-between rounded-lg px-3 py-2 bg-gray-500 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 transition">
               <span className="text-sm font-medium">
                 No results yet, yours can be the first!
               </span>
             </li>
           )}
-          {items.map((item, idx) => (
+          {items?.map((item, idx) => (
             <li
               key={idx}
               className="flex items-center justify-between  rounded-lg px-3 py-2 bg-gray-50 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 transition"
