@@ -12,10 +12,23 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const skip = (page - 1) * limit;
+
       const translations = await LiveTranslation.find({})
         .sort({ createdAt: -1 })
-        .limit(100);
-      return res.status(200).json(translations);
+        .skip(skip)
+        .limit(limit);
+
+      const total = await LiveTranslation.countDocuments();
+
+      return res.status(200).json({
+        data: translations,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+      });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: "Server error" });
@@ -39,7 +52,7 @@ export default async function handler(
       }
 
       await addXPtoUser(newTrans.userId, newTrans.sourceText.length * 2);
-      
+
       return res.status(201).json(newTrans);
     } catch (err) {
       console.error(err);

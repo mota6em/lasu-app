@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { FaVolumeUp, FaSpinner } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FaChartLine } from "react-icons/fa";
-import { useEffect } from "react";
 import Image from "next/image";
+import { useInView } from "react-intersection-observer";
 
 interface TranslationResult {
   translations: Record<string, string>;
@@ -33,62 +33,73 @@ export default function CommunityTranslations() {
   const selectLanguage = (cardId: string, lang: string) => {
     setSelectedLangs((prev) => ({ ...prev, [cardId]: lang }));
   };
-
   const [translations, setTranslations] = useState<CommunityTranslation[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [newCards, setNewCards] = useState<Set<string>>(new Set());
-  const seenCardIds = useRef<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const { ref, inView } = useInView({ threshold: 0.5 });
 
-  useEffect(() => {
-    let firstLoad = true;
+  const fetchTranslations = async (pageNum = 1) => {
+    try {
+      if (pageNum === 1) setIsLoading(true);
+      else setLoadingMore(true);
 
-    const fetchTranslations = async () => {
-      try {
-        if (firstLoad) setIsLoading(true);
+      const res = await fetch(`/api/community/live?page=${pageNum}&limit=12`);
+      const data = await res.json();
 
-        const res = await fetch("/api/community/live");
-        const data: CommunityTranslation[] = await res.json();
-
-        const currentIds = new Set(
-          data.map((t) => t.userId.toString() + t.sourceText)
+      if (pageNum === 1) {
+        setTranslations(data.data);
+      } else {
+        const prevIds = new Set(
+          translations.map((t) => t.userId + t.sourceText)
+        );
+        const newOnes = data.data.filter(
+          (t) => !prevIds.has(t.userId + t.sourceText)
         );
 
-        const newIds = Array.from(currentIds).filter(
-          (id) => !seenCardIds.current.has(id)
-        );
-
-        if (newIds.length > 0) {
+        if (newOnes.length > 0) {
           setNewCards((prev) => {
-            const updated = new Set([...prev, ...newIds]);
+            const updated = new Set(prev);
+            newOnes.forEach((t) => updated.add(t.userId + t.sourceText));
             return updated;
           });
 
           setTimeout(() => {
             setNewCards((prev) => {
               const copy = new Set(prev);
-              newIds.forEach((id) => copy.delete(id));
+              newOnes.forEach((t) => copy.delete(t.userId + t.sourceText));
               return copy;
             });
-          }, 3500);
+          }, 3000);
         }
 
-        seenCardIds.current = new Set([...seenCardIds.current, ...currentIds]);
-
-        setTranslations(data);
-
-        if (firstLoad) setIsLoading(false);
-        firstLoad = false;
-      } catch (err) {
-        console.error(err);
-        if (firstLoad) setIsLoading(false);
-        firstLoad = false;
+        setTranslations((prev) => [...prev, ...data.data]);
       }
-    };
 
-    fetchTranslations(); // initial fetch
-    const interval = setInterval(fetchTranslations, 10000); // every 10s
-    return () => clearInterval(interval);
+      if (pageNum >= data.totalPages) setHasMore(false);
+
+      setIsLoading(false);
+      setLoadingMore(false);
+    } catch (err) {
+      console.error(err);
+      setIsLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTranslations(1);
   }, []);
+  const [newCards, setNewCards] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (inView && hasMore && !loadingMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchTranslations(nextPage);
+    }
+  }, [inView]);
 
   const speakText = (text: string, lang: string, cardId: string) => {
     if ("speechSynthesis" in window) {
@@ -233,6 +244,11 @@ export default function CommunityTranslations() {
               </div>
             );
           })}
+        </div>
+      )}
+      {hasMore && (
+        <div ref={ref} className="h-12 flex justify-center items-center mt-4">
+          {loadingMore && <FaSpinner className="animate-spin text-gray-500" />}
         </div>
       )}
     </div>
