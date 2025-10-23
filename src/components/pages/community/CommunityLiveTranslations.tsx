@@ -1,99 +1,36 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useEffect } from "react";
 import { FaVolumeUp, FaSpinner } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FaChartLine } from "react-icons/fa";
 import Image from "next/image";
-import { useInView } from "react-intersection-observer";
-
-interface TranslationResult {
-  translations: Record<string, string>;
-  example: Record<string, string>;
-}
-
-interface CommunityTranslation {
-  userId: string;
-  userName: string;
-  userImage: string;
-  sourceText: string;
-  translationType: string;
-  translationFilter: string;
-  result: TranslationResult;
-  createdAt: string | Date;
-}
+import {
+  useCommunityLive,
+} from "@/hooks/useCommunityLive";
 
 export default function CommunityTranslations() {
-  const [selectedLangs, setSelectedLangs] = useState<Record<string, string>>(
-    {}
-  );
-  const [audioLoading, setAudioLoading] = useState<Record<string, boolean>>({});
-
-  const selectLanguage = (cardId: string, lang: string) => {
-    setSelectedLangs((prev) => ({ ...prev, [cardId]: lang }));
-  };
-  const [translations, setTranslations] = useState<CommunityTranslation[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const { ref, inView } = useInView({ threshold: 0.5 });
-
-  const fetchTranslations = async (pageNum = 1) => {
-    try {
-      if (pageNum === 1) setIsLoading(true);
-      else setLoadingMore(true);
-
-      const res = await fetch(`/api/community/live?page=${pageNum}&limit=12`);
-      const data = await res.json();
-
-      if (pageNum === 1) {
-        setTranslations(data.data);
-      } else {
-        const prevIds = new Set(
-          translations.map((t) => t.userId + t.sourceText)
-        );
-        const newOnes = data.data.filter(
-          (t: CommunityTranslation) => !prevIds.has(t.userId + t.sourceText)
-        );
-
-        if (newOnes.length > 0) {
-          setNewCards((prev) => {
-            const updated = new Set(prev);
-            newOnes.forEach((t: CommunityTranslation) =>
-              updated.add(t.userId + t.sourceText)
-            );
-            return updated;
-          });
-
-          setTimeout(() => {
-            setNewCards((prev) => {
-              const copy = new Set(prev);
-              newOnes.forEach((t: CommunityTranslation) => copy.delete(t.userId + t.sourceText));
-              return copy;
-            });
-          }, 3000);
-        }
-
-        setTranslations((prev) => [...prev, ...data.data]);
-      }
-
-      if (pageNum >= data.totalPages) setHasMore(false);
-
-      setIsLoading(false);
-      setLoadingMore(false);
-    } catch (err) {
-      console.error(err);
-      setIsLoading(false);
-      setLoadingMore(false);
-    }
-  };
+  const {
+    selectLanguage,
+    selectedLangs,
+    audioLoading,
+    translations,
+    isLoading,
+    page,
+    setPage,
+    hasMore,
+    loadingMore,
+    ref,
+    inView,
+    fetchTranslations,
+    newCards,
+    speakText,
+  } = useCommunityLive();
 
   useEffect(() => {
     fetchTranslations(1);
   }, []);
-  const [newCards, setNewCards] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (inView && hasMore && !loadingMore) {
@@ -103,22 +40,6 @@ export default function CommunityTranslations() {
     }
   }, [inView]);
 
-  const speakText = (text: string, lang: string, cardId: string) => {
-    if ("speechSynthesis" in window) {
-      setAudioLoading((prev) => ({ ...prev, [cardId]: true }));
-      const utterance = new SpeechSynthesisUtterance(text);
-      const voice = speechSynthesis
-        .getVoices()
-        .find((v) =>
-          v.lang.toLowerCase().includes(lang.toLowerCase().substring(0, 2))
-        );
-      if (voice) utterance.voice = voice;
-      utterance.onend = utterance.onerror = () =>
-        setAudioLoading((prev) => ({ ...prev, [cardId]: false }));
-      speechSynthesis.speak(utterance);
-    }
-  };
-
   return (
     <div className="mt-6 space-y-6 px-2 lg:px-4">
       <h2 className="text-xl md:text-2xl font-bold flex items-center justify-center gap-2 dark:text-white animate-pulse">
@@ -127,7 +48,7 @@ export default function CommunityTranslations() {
       </h2>
       {(isLoading || translations.length === 0) && (
         <div className="px-3 justify-center items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_) => (
             <div className="relative p-4 border rounded-xl shadow animate-pulse bg-gray-200 dark:bg-neutral-800/20">
               <div className="mb-3 flex items-center justify-between">
                 <div>
