@@ -55,20 +55,22 @@ export default function CommunityTranslations() {
           translations.map((t) => t.userId + t.sourceText)
         );
         const newOnes = data.data.filter(
-          (t) => !prevIds.has(t.userId + t.sourceText)
+          (t: CommunityTranslation) => !prevIds.has(t.userId + t.sourceText)
         );
 
         if (newOnes.length > 0) {
           setNewCards((prev) => {
             const updated = new Set(prev);
-            newOnes.forEach((t) => updated.add(t.userId + t.sourceText));
+            newOnes.forEach((t: CommunityTranslation) =>
+              updated.add(t.userId + t.sourceText)
+            );
             return updated;
           });
 
           setTimeout(() => {
             setNewCards((prev) => {
               const copy = new Set(prev);
-              newOnes.forEach((t) => copy.delete(t.userId + t.sourceText));
+              newOnes.forEach((t: CommunityTranslation) => copy.delete(t.userId + t.sourceText));
               return copy;
             });
           }, 3000);
