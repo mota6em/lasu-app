@@ -3,16 +3,14 @@ import {
   FaClock,
   FaCalendarAlt,
   FaTrophy,
-  FaStar,
-  FaTimes,
 } from "react-icons/fa";
 import RenderSection from "./RenderSection";
 import UserRanks from "./UserRanks";
 import React from "react";
 import ExpandableList from "./ExpandableList";
 import { FiTrendingUp } from "react-icons/fi";
-import { MessageSquareText, Globe } from "lucide-react";
 import { useCommunityStats } from "@/hooks/useCommunityStats";
+import StatsButtons from "./StatsButtons";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
   const {
@@ -37,59 +35,15 @@ const CommTopStats = ({ userId }: { userId: string }) => {
     <>
       <div className="flex flex-col items-center gap-2">
         <UserRanks userId={userId} />
-        <div className="grid md:grid-cols-3 items-center gap-2">
-          <button
-            onClick={handleShowLearners}
-            className="bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
-          >
-            {showTopLearnersTable ? (
-              <>
-                <FaTimes className="dark:text-yellow-300" /> Hide Leaderboard
-              </>
-            ) : (
-              <>
-                <FaStar className="text-yellow-300 animate-pulse" size={20} />{" "}
-                Leaderboard
-              </>
-            )}
-          </button>
-          <button
-            onClick={handleShowWords}
-            onMouseEnter={prefetchStats}
-            className="bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
-          >
-            {showTopWordsTable ? (
-              <>
-                <FaTimes className="dark:text-yellow-300" /> Hide Top Translated
-                Words
-              </>
-            ) : (
-              <>
-                <MessageSquareText
-                  className="text-yellow-300 animate-pulse"
-                  size={20}
-                />{" "}
-                Top Translated Words
-              </>
-            )}
-          </button>
-          <button
-            onClick={handleShowLangs}
-            className="bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl"
-          >
-            {showTopLangsTable ? (
-              <>
-                <FaTimes className="dark:text-yellow-300" /> Hide Top Translated
-                Languages
-              </>
-            ) : (
-              <>
-                <Globe className="text-yellow-300 animate-pulse" size={20} />{" "}
-                Top Translated Langs
-              </>
-            )}
-          </button>
-        </div>
+        <StatsButtons
+          showTopLearnersTable={showTopLearnersTable}
+          showTopWordsTable={showTopWordsTable}
+          showTopLangsTable={showTopLangsTable}
+          handleShowLearners={handleShowLearners}
+          handleShowWords={handleShowWords}
+          handleShowLangs={handleShowLangs}
+          prefetchStats={prefetchStats}
+        />
       </div>
 
       <div className="flex flex-col items-center justify-center gap-y-8">
