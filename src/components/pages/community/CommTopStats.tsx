@@ -6,81 +6,32 @@ import {
   FaStar,
   FaTimes,
 } from "react-icons/fa";
-import { useTopLearners } from "@/hooks/useTopLearners";
 import RenderSection from "./RenderSection";
 import UserRanks from "./UserRanks";
-import React, { useState } from "react";
+import React from "react";
 import ExpandableList from "./ExpandableList";
 import { FiTrendingUp } from "react-icons/fi";
 import { MessageSquareText, Globe } from "lucide-react";
+import { useCommunityStats } from "@/hooks/useCommunityStats";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
-  const [showTopLearnersTable, setShowTopLearnersTable] = useState(false);
-  const [showTopWordsTable, setShowTopWordsTable] = useState(false);
-  const [showTopLangsTable, setShowTopLangsTable] = useState(false);
-  const { learners: topDay, loading: loadingDay } = useTopLearners(
-    showTopLearnersTable ? "daily" : null
-  );
-  const { learners: topMonth, loading: loadingMonth } = useTopLearners(
-    showTopLearnersTable ? "monthly" : null
-  );
-  const { learners: topAllTime, loading: loadingAll } = useTopLearners(
-    showTopLearnersTable ? "allTime" : null
-  );
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loadingStats, setLoadingStats] = useState(false);
-
-  const fetchStats = async () => {
-    if (loadingStats) return;
-    try {
-      setLoadingStats(true);
-      const res = await fetch("/api/community/stats");
-      const data = await res.json();
-      setStats(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingStats(false);
-    }
-  };
-
-  const handleShowWords = () => {
-    setShowTopWordsTable(!showTopWordsTable);
-    setShowTopLearnersTable(false);
-    setShowTopLangsTable(false);
-    if (!stats) fetchStats();
-  };
-
-  const handleShowLangs = () => {
-    setShowTopLangsTable(!showTopLangsTable);
-    setShowTopLearnersTable(false);
-    setShowTopWordsTable(false);
-    if (!stats) fetchStats();
-  };
-
-  const handleShowLearners = () => {
-    setShowTopLearnersTable(!showTopLearnersTable);
-    setShowTopWordsTable(false);
-    setShowTopLangsTable(false);
-  };
-
-  interface StatItem {
-    _id: string;
-    count: number;
-  }
-
-  interface Stats {
-    daily: { words: StatItem[]; languages: StatItem[] };
-    monthly: { words: StatItem[]; languages: StatItem[] };
-    allTime: { words: StatItem[]; languages: StatItem[] };
-  }
-
-  const prefetchStats = () => {
-    if (!stats && !loadingStats) fetchStats();
-  };
-
-  const shouldShowSkeleton =
-    (showTopWordsTable || showTopLangsTable) && loadingStats && !stats;
+  const {
+    showTopLearnersTable,
+    showTopWordsTable,
+    showTopLangsTable,
+    topDay,
+    loadingDay,
+    topMonth,
+    loadingMonth,
+    topAllTime,
+    loadingAll,
+    stats,
+    handleShowWords,
+    handleShowLangs,
+    handleShowLearners,
+    prefetchStats,
+    shouldShowSkeleton,
+  } = useCommunityStats();
 
   return (
     <>
