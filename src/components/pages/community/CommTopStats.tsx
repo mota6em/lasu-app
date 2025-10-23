@@ -40,25 +40,6 @@ const CommTopStats = ({ userId }: { userId: string }) => {
         />
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-y-8">
-        {showTopWordsTable && (
-          <StatsSection
-            title="Top used Words"
-            data={stats}
-            type="words"
-            loading={shouldShowSkeleton}
-          />
-        )}
-        {showTopLangsTable && (
-          <StatsSection
-            title="Top used Languages"
-            data={stats}
-            type="languages"
-            loading={shouldShowSkeleton}
-          />
-        )}
-      </div>
-
       {showTopLearnersTable && (
         <LearnersLeaderboard
           topDay={topDay}
@@ -67,6 +48,24 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           loadingMonth={loadingMonth}
           topAllTime={topAllTime}
           loadingAll={loadingAll}
+        />
+      )}
+
+      {showTopWordsTable && (
+        <StatsSection
+          title="Top used Words"
+          data={stats}
+          type="words"
+          loading={shouldShowSkeleton}
+        />
+      )}
+      
+      {showTopLangsTable && (
+        <StatsSection
+          title="Top used Languages"
+          data={stats}
+          type="languages"
+          loading={shouldShowSkeleton}
         />
       )}
     </>
