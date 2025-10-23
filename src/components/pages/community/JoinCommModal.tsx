@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CiCircleQuestion } from "react-icons/ci";
-
 import {
   Dialog,
   DialogContent,
@@ -38,13 +37,11 @@ const JoinCommModal = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ showName, showPicture, shareTranslations }),
       });
-      const data = await res.json();
-      console.log(data);
-      alert(data.message); //temp for testing
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+      window.location.reload();
     }
   };
 
