@@ -7,6 +7,7 @@ import CommHero from "@/components/pages/community/CommHero";
 import CommunityLiveTranslations from "@/components/pages/community/CommunityLiveTranslations";
 import CommTopStats from "@/components/pages/community/CommTopStats";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
+import CommSettings from "@/components/pages/community/CommSettings";
 
 export default async function page() {
   const session = await getServerSession(authOptions);
@@ -19,7 +20,8 @@ export default async function page() {
     return <JoinCommHero />;
   }
   return (
-    <div className="">
+    <div>
+      <CommSettings />
       <CommHero
         userName={session.user.name || "Anonymous"}
         userId={session.user.id}
