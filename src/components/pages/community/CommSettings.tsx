@@ -18,15 +18,41 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useSession } from "next-auth/react";
 
 const CommSettings = () => {
+  const { data: session } = useSession();
   const [showName, setShowName] = useState(true);
   const [showPicture, setShowPicture] = useState(true);
   const [shareTranslations, setShareTranslations] = useState(true);
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const updateSettings = () => {};
+  // fetch current settings
+  useEffect(() => {
+    const fetchSettings = async () => {
+      if (!session?.user?.id) return;
+      try {
+        const res = await fetch(`/api/community/users/${session.user.id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        setShowName(data.showName);
+        setShowPicture(data.showPicture);
+        setShareTranslations(data.shareTranslations);
+        setName(data.name || session.user.name || "");
+        setImage(data.image || session.user.image || "");
+      } catch (err) {
+        console.error("Failed to fetch community user:", err);
+      }
+    };
+    fetchSettings();
+  }, [session]);
+
+
   return (
     <div className="absolute right-3">
       <Dialog>
@@ -52,11 +78,29 @@ const CommSettings = () => {
               LaSu Community Settings
             </DialogTitle>
             <DialogDescription>
-              Update your visibility and sharing preferences anytime.
+              Update your name, profile picture, and visibility preferences.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
+            <div className="grid gap-2">
+              <Label className="text-sm text-gray-300">Name</Label>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="bg-gray-800 text-white border-none focus-visible:ring-1 focus-visible:ring-purple-600"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label className="text-sm text-gray-300">Profile Image URL</Label>
+              <Input
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                placeholder="https://..."
+                className="bg-gray-800 text-white border-none focus-visible:ring-1 focus-visible:ring-purple-600"
+              />
+            </div>
             <div
               onClick={() => setShowName(!showName)}
               className="flex items-center justify-between"
@@ -88,7 +132,7 @@ const CommSettings = () => {
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  Only the translated words are visible, nothing else you type.
+                  Only translated words are visible, nothing else you type.
                   <span className="block font-semibold">
                     Translated phrases are NOT shared!
                   </span>
