@@ -94,18 +94,18 @@ const TranslationSettingDialog = () => {
                     <input
                       type="checkbox"
                       className={`cursor-pointer ${
-                        selectedLanguages.length >= 4
+                        selectedLanguages?.length >= 4
                           ? "pointer-events-none opacity-50 "
                           : ""
                       }`}
-                      checked={selectedLanguages.some(
+                      checked={selectedLanguages?.some(
                         (l) => l.value === lang.value
                       )}
                       onChange={() => toggleLanguage(lang)}
                       disabled={
-                        !selectedLanguages.some(
+                        !selectedLanguages?.some(
                           (l) => l.value === lang.value
-                        ) && selectedLanguages.length >= 4
+                        ) && selectedLanguages?.length >= 4
                       }
                     />
 
