@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
 import { CommunityUserSchema } from "@/models/communityUser";
+import { User } from "@/models/user";
 
 const CommunityUser =
   mongoose.models.CommunityUser ||
@@ -28,27 +29,22 @@ export default async function handler(
     }
 
     if (req.method === "PATCH") {
-      const { name, image, showName, showPicture, shareTranslations } =
-        req.body;
-      const updatedUser = await CommunityUser.findOneAndUpdate(
+      const { showName, showPicture, shareTranslations } = req.body;
+
+      const updatedCommunityUser = await CommunityUser.findOneAndUpdate(
         { userId },
         {
-          ...(name && { name }),
-          ...(image && { image }),
           showName,
           showPicture,
           shareTranslations,
         },
         { new: true }
-      ).lean();
+      );
 
-      if (!updatedUser)
-        return res.status(404).json({ error: "User not found" });
-
-      return res.status(200).json(updatedUser);
+      return res.status(200).json(updatedCommunityUser);
     }
 
-    return res.status(405).json({ error: "Method not allowed" });
+    res.status(405).json({ error: "Method not allowed" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });

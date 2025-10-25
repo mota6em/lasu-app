@@ -30,6 +30,7 @@ const CommSettings = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   // fetch current settings
   useEffect(() => {
@@ -43,8 +44,6 @@ const CommSettings = () => {
         setShowName(data.showName);
         setShowPicture(data.showPicture);
         setShareTranslations(data.shareTranslations);
-        setName(data.name || session.user.name || "");
-        setImage(data.image || session.user.image || "");
       } catch (err) {
         console.error("Failed to fetch community user:", err);
       }
@@ -61,15 +60,13 @@ const CommSettings = () => {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          image,
           showName,
           showPicture,
           shareTranslations,
         }),
       });
       if (res.ok) {
-        window.location.reload();
+        setOpen(false);
       }
     } catch (err) {
       console.error("Error updating settings:", err);
@@ -80,11 +77,12 @@ const CommSettings = () => {
 
   return (
     <div className="absolute right-3">
-      <Dialog>
+      <Dialog open={open}>
         <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
               <Button
+                onClick={() => setOpen(!open)}
                 variant="ghost"
                 className="bg-transparent hover:bg-transparent focus-visible:ring-0 focus:outline-none shadow-none"
               >
@@ -103,29 +101,11 @@ const CommSettings = () => {
               LaSu Community Settings
             </DialogTitle>
             <DialogDescription>
-              Update your name, profile picture, and visibility preferences.
+              Update your visibility preferences in our Community.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="grid gap-2">
-              <Label className="text-sm text-gray-300">Name</Label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                className="bg-gray-800 text-white border-none focus-visible:ring-1 focus-visible:ring-purple-600"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label className="text-sm text-gray-300">Profile Image URL</Label>
-              <Input
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="https://..."
-                className="bg-gray-800 text-white border-none focus-visible:ring-1 focus-visible:ring-purple-600"
-              />
-            </div>
             <div
               onClick={() => setShowName(!showName)}
               className="flex items-center justify-between"
