@@ -52,6 +52,31 @@ const CommSettings = () => {
     fetchSettings();
   }, [session]);
 
+  // update settings
+  const updateSettings = async () => {
+    if (!session?.user?.id) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/community/users/${session.user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          image,
+          showName,
+          showPicture,
+          shareTranslations,
+        }),
+      });
+      if (res.ok) {
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error("Error updating settings:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="absolute right-3">
