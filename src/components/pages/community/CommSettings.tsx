@@ -95,9 +95,9 @@ const CommSettings = () => {
           </TooltipContent>
         </Tooltip>
 
-        <DialogContent className="sm:max-w-lg bg-[#161616]">
+        <DialogContent className="sm:max-w-lg bg-accent dark:bg-[#161616]">
           <DialogHeader>
-            <DialogTitle className="text-yellow-100">
+            <DialogTitle className="text-yellow-800 dark:text-yellow-100">
               LaSu Community Settings
             </DialogTitle>
             <DialogDescription>
