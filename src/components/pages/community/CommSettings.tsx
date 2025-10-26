@@ -77,7 +77,7 @@ const CommSettings = () => {
 
   return (
     <div className="absolute right-3">
-      <Dialog open={open}>
+      <Dialog open={open} onOpenChange={setOpen}>
         <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
