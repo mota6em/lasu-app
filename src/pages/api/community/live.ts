@@ -12,23 +12,10 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
-      const skip = (page - 1) * limit;
-
       const translations = await LiveTranslation.find({})
         .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit);
-
-      const total = await LiveTranslation.countDocuments();
-
-      return res.status(200).json({
-        data: translations,
-        total,
-        page,
-        totalPages: Math.ceil(total / limit),
-      });
+        .limit(100);
+      return res.status(200).json(translations);
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: "Server error" });
