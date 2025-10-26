@@ -44,15 +44,16 @@ export function useTranslate() {
       });
       setResultLoading(false);
 
-      //save to db
-      console.log("save to db", {
-        sourceText: text,
-        result: apiResult || {},
-        userId: session?.user?.id,
-        userName: session?.user?.name,
-        userImage: session?.user?.image,
-        translationType,
-      });
+      //get user community privacy settings
+      const fetchUserCommunityPrivacySettings = async () => {
+        const res = await fetch(`/api/community/users/${session?.user?.id}`);
+        const data = await res.json();
+        return data;
+      };
+      const { showName, showPicture, shareTranslations } =
+        await fetchUserCommunityPrivacySettings();
+      
+        //save to database  
       if (session) {
         await fetch("/api/translation/save", {
           method: "POST",
@@ -63,24 +64,32 @@ export function useTranslate() {
             translationType,
           }),
         });
-        if (!text.trim().includes(" ") && text.length < 100) {
+
+        //save to community 
+        if (
+          !text.trim().includes(" ") &&
+          text.length < 100 &&
+          shareTranslations
+        ) {
           await fetch("/api/community/live", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               userId: session?.user?.id,
-              userName:
-                session?.user?.name ||
-                session?.user?.email?.split("@")[0] ||
-                "Anonymous",
+              userName: showName
+                ? session?.user?.name || session?.user?.email?.split("@")[0]
+                : "Anonymous",
               sourceText: text,
-              userImage: session?.user?.image,
+              userImage: showPicture
+                ? session?.user?.image
+                : "/imgs/userIcon.jpg",
               translationType,
               result: apiResult,
             }),
           });
         }
       } else {
+        //save to local storage
         console.log("save to local storage");
         try {
           const existing = localStorage.getItem("lasu-history");
