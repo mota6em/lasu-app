@@ -52,11 +52,11 @@ const JoinCommModal = () => {
           Join Now
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg bg-[#161616]">
+      <DialogContent className="sm:max-w-lg bg-accent dark:bg-[#161616]">
         <DialogHeader>
-          <DialogTitle className="text-yellow-100">
+          <DialogTitle className="text-[#161616] dark:text-yellow-100">
             Welcome to{" "}
-            <span className="text-yellow-400 newyork text-4xl">LaSu</span>{" "}
+            <span className="text-yellow-600 dark:text-yellow-400 newyork text-4xl">LaSu</span>{" "}
             Community!
           </DialogTitle>
           <DialogDescription>
@@ -114,7 +114,7 @@ const JoinCommModal = () => {
             onClick={() => setAgreed(!agreed)}
           >
             <Checkbox checked={agreed} className="cursor-pointer"></Checkbox>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-800 dark:text-gray-500">
               {" "}
               I agree to the Terms & Conditions
             </p>
@@ -124,7 +124,7 @@ const JoinCommModal = () => {
         <DialogFooter>
           <Button
             disabled={!agreed || loading}
-            className="bg-purple-600 text-white hover:bg-purple-700"
+            className="bg-purple-800 dark:bg-purple-600 text-white hover:bg-purple-700"
             onClick={joinCommunity}
           >
             {loading ? "Joining..." : "Enter Community"}
