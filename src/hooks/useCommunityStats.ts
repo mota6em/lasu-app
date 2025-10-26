@@ -1,96 +1,108 @@
-import { useState } from "react";
-import { useTopLearners } from "./useTopLearners";
-
-interface StatItem {
-  _id: string;
-  count: number;
-}
-
-export interface Stats {
-  daily: { words: StatItem[]; languages: StatItem[] };
-  monthly: { words: StatItem[]; languages: StatItem[] };
-  allTime: { words: StatItem[]; languages: StatItem[] };
-}
+import { useEffect, useState } from "react";
 
 export function useCommunityStats() {
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [stats, setStats] = useState<any | null>(null);
+
+  // ui toggles
   const [showTopLearnersTable, setShowTopLearnersTable] = useState(false);
   const [showTopWordsTable, setShowTopWordsTable] = useState(false);
   const [showTopLangsTable, setShowTopLangsTable] = useState(false);
-  const { learners: topDay, loading: loadingDay } = useTopLearners(
-    showTopLearnersTable ? "daily" : null
-  );
-  const { learners: topMonth, loading: loadingMonth } = useTopLearners(
-    showTopLearnersTable ? "monthly" : null
-  );
-  const { learners: topAllTime, loading: loadingAll } = useTopLearners(
-    showTopLearnersTable ? "allTime" : null
-  );
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loadingStats, setLoadingStats] = useState(false);
 
-  const fetchStats = async () => {
-    if (loadingStats) return;
+  // derived leaderboards
+  const [topDay, setTopDay] = useState<any[]>([]);
+  const [topMonth, setTopMonth] = useState<any[]>([]);
+  const [topAllTime, setTopAllTime] = useState<any[]>([]);
+
+  async function fetchStats() {
     try {
       setLoadingStats(true);
       const res = await fetch("/api/community/stats");
-      const data = await res.json();
+      const json = await res.json();
+      const data = json.data;
       setStats(data);
+
+      // learners tables
+      setTopDay(data.daily.learners || []);
+      setTopMonth(data.monthly.learners || []);
+      setTopAllTime(data.allTime.learners || []);
+
+      // words tables
+      setTopDay(data.daily.words || []);
+      setTopMonth(data.monthly.words || []);
+      setTopAllTime(data.allTime.words || []);
+
+      // languages tables
+      setTopDay(data.daily.languages || []);
+      setTopMonth(data.monthly.languages || []);
+      setTopAllTime(data.allTime.languages || []);
     } catch (err) {
       console.error(err);
     } finally {
       setLoadingStats(false);
     }
+  }
+
+  // lazy-load stats only on first open of ANY stats section
+  const ensureStatsLoaded = () => {
+    if (!stats && !loadingStats) {
+      fetchStats();
+    }
   };
 
   const handleShowWords = () => {
-    setShowTopWordsTable(!showTopWordsTable);
-    setShowTopLearnersTable(false);
-    setShowTopLangsTable(false);
-    if (!stats) fetchStats();
+    setShowTopWordsTable((v) => {
+      const nv = !v;
+      if (nv) {
+        setShowTopLearnersTable(false);
+        setShowTopLangsTable(false);
+        ensureStatsLoaded();
+      }
+      return nv;
+    });
   };
 
   const handleShowLangs = () => {
-    setShowTopLangsTable(!showTopLangsTable);
-    setShowTopLearnersTable(false);
-    setShowTopWordsTable(false);
-    if (!stats) fetchStats();
+    setShowTopLangsTable((v) => {
+      const nv = !v;
+      if (nv) {
+        setShowTopLearnersTable(false);
+        setShowTopWordsTable(false);
+        ensureStatsLoaded();
+      }
+      return nv;
+    });
   };
 
   const handleShowLearners = () => {
-    setShowTopLearnersTable(!showTopLearnersTable);
-    setShowTopWordsTable(false);
-    setShowTopLangsTable(false);
-  };
-
-  const prefetchStats = () => {
-    if (!stats && !loadingStats) fetchStats();
+    setShowTopLearnersTable((v) => {
+      const nv = !v;
+      if (nv) {
+        setShowTopWordsTable(false);
+        setShowTopLangsTable(false);
+        ensureStatsLoaded();
+      }
+      return nv;
+    });
   };
 
   const shouldShowSkeleton =
-    (showTopWordsTable || showTopLangsTable) && loadingStats && !stats;
+    (showTopWordsTable || showTopLangsTable || showTopLearnersTable) &&
+    loadingStats &&
+    !stats;
 
   return {
     showTopLearnersTable,
-    setShowTopLearnersTable,
     showTopWordsTable,
-    setShowTopWordsTable,
     showTopLangsTable,
-    setShowTopLangsTable,
     topDay,
-    loadingDay,
     topMonth,
-    loadingMonth,
     topAllTime,
-    loadingAll,
     stats,
-    setStats,
     loadingStats,
-    setLoadingStats,
-    fetchStats,
     handleShowWords,
     handleShowLangs,
     handleShowLearners,
-    prefetchStats,
     shouldShowSkeleton,
   };
 }

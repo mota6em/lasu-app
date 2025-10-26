@@ -8,7 +8,6 @@ interface Props {
   handleShowLearners: () => void;
   handleShowWords: () => void;
   handleShowLangs: () => void;
-  prefetchStats: () => void;
 }
 
 export default function StatsButtons({
@@ -18,7 +17,6 @@ export default function StatsButtons({
   handleShowLearners,
   handleShowWords,
   handleShowLangs,
-  prefetchStats,
 }: Props) {
   const btnClass =
     "bg-gradient-to-r justify-center text-sm dark:from-purple-600/20 from-purple-950/90 dark:to-yellow-500/20 to-yellow-700/90 hover:from-purple-700/60 hover:to-yellow-600/60 text-white font-semibold py-1 px-3 rounded-lg cursor-pointer shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:rounded-xl";
@@ -38,11 +36,7 @@ export default function StatsButtons({
         )}
       </button>
 
-      <button
-        onClick={handleShowWords}
-        onMouseEnter={prefetchStats}
-        className={btnClass}
-      >
+      <button onClick={handleShowWords} className={btnClass}>
         {showTopWordsTable ? (
           <>
             <FaTimes className="dark:text-yellow-300" /> Hide Top Words

@@ -1,6 +1,6 @@
 "use client";
-import UserRanks from "./UserRanks";
 import React from "react";
+import UserRanks from "./UserRanks";
 import { useCommunityStats } from "@/hooks/useCommunityStats";
 import StatsButtons from "./StatsButtons";
 import StatsSection from "./StatsSection";
@@ -12,19 +12,14 @@ const CommTopStats = ({ userId }: { userId: string }) => {
     showTopWordsTable,
     showTopLangsTable,
     topDay,
-    loadingDay,
     topMonth,
-    loadingMonth,
     topAllTime,
-    loadingAll,
     stats,
     handleShowWords,
     handleShowLangs,
     handleShowLearners,
-    prefetchStats,
     shouldShowSkeleton,
   } = useCommunityStats();
-
   return (
     <>
       <div className="flex flex-col items-center gap-2">
@@ -36,18 +31,15 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           handleShowLearners={handleShowLearners}
           handleShowWords={handleShowWords}
           handleShowLangs={handleShowLangs}
-          prefetchStats={prefetchStats}
         />
       </div>
 
       {showTopLearnersTable && (
         <LearnersLeaderboard
           topDay={topDay}
-          loadingDay={loadingDay}
           topMonth={topMonth}
-          loadingMonth={loadingMonth}
           topAllTime={topAllTime}
-          loadingAll={loadingAll}
+          loading={shouldShowSkeleton}
         />
       )}
 
@@ -59,7 +51,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           loading={shouldShowSkeleton}
         />
       )}
-      
+
       {showTopLangsTable && (
         <StatsSection
           title="Top used Languages"
