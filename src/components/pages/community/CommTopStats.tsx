@@ -5,6 +5,7 @@ import { useCommunityStats } from "@/hooks/useCommunityStats";
 import StatsButtons from "./StatsButtons";
 import StatsSection from "./StatsSection";
 import LearnersLeaderboard from "./LearnersLeaderboard";
+import { FiClock } from "react-icons/fi";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
   const {
@@ -28,6 +29,10 @@ const CommTopStats = ({ userId }: { userId: string }) => {
           handleShowWords={handleShowWords}
           handleShowLangs={handleShowLangs}
         />
+        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 italic">
+          <FiClock className="w-3 h-3" />
+          <span>Leaderboards refresh automatically every hour</span>
+        </div>
       </div>
 
       {showTopLearnersTable && (
