@@ -8,18 +8,14 @@ import LearnersLeaderboard from "./LearnersLeaderboard";
 
 const CommTopStats = ({ userId }: { userId: string }) => {
   const {
-    showTopLearnersTable,
-    showTopWordsTable,
-    showTopLangsTable,
-    topDay,
-    topMonth,
-    topAllTime,
+    showTables: { showTopLearnersTable, showTopWordsTable, showTopLangsTable },
     stats,
     handleShowWords,
     handleShowLangs,
     handleShowLearners,
     shouldShowSkeleton,
   } = useCommunityStats();
+
   return (
     <>
       <div className="flex flex-col items-center gap-2">
@@ -35,12 +31,7 @@ const CommTopStats = ({ userId }: { userId: string }) => {
       </div>
 
       {showTopLearnersTable && (
-        <LearnersLeaderboard
-          topDay={topDay}
-          topMonth={topMonth}
-          topAllTime={topAllTime}
-          loading={shouldShowSkeleton}
-        />
+        <LearnersLeaderboard stats={stats} loading={shouldShowSkeleton} />
       )}
 
       {showTopWordsTable && (
