@@ -1,7 +1,9 @@
 interface CommunityUser {
   userId: string;
   joinedAt: Date;
+  name: string;
   showName: boolean;
+  image: string;
   showPicture: boolean;
   shareTranslations: boolean;
   xp: number;

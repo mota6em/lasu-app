@@ -1,10 +1,10 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 export const CommunityUserSchema = new Schema({
   userId: { type: String, required: true, unique: true },
   joinedAt: { type: Date, default: Date.now },
-  name: { type: String },
+  name: { type: String, required: true },
   showName: { type: Boolean, default: true },
-  image: { type: String },
+  image: { type: String, required: false },
   showPicture: { type: Boolean, default: true },
   shareTranslations: { type: Boolean, default: true },
   xp: { type: Number, default: 0 },

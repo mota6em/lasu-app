@@ -13,6 +13,10 @@ export default async function handler(
   }
 
   return res.status(200).json({
-    user: { id: session.user.id, name: session.user.name },
+    user: {
+      id: session.user.id,
+      name: session.user.name,
+      image: session.user.image,
+    },
   });
 }
