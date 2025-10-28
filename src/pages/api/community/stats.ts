@@ -3,8 +3,7 @@ import { connectToDB } from "@/lib/mongodb";
 import { CommunityStatsCache } from "@/models/communityStatsCache";
 import { recalcAndStoreCommunityStats } from "@/lib/recalculateCommunityStats";
 
-// const TEN_MINUTES = 10 * 60 * 1000;
-const TEN_MINUTES = 0; //this is temp for testing
+const ONE_HOUR = 60 * 60 * 1000; // 1 hour
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,7 +24,7 @@ export default async function handler(
   }
 
   const age = Date.now() - new Date(cacheDoc.lastUpdated).getTime();
-  if (age > TEN_MINUTES) {
+  if (age > ONE_HOUR) {
     await recalcAndStoreCommunityStats();
     cacheDoc = await CommunityStatsCache.findOne().lean();
   }
