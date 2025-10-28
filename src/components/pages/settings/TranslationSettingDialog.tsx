@@ -7,9 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { CiSettings } from "react-icons/ci";
 import Language from "@/types/language";
 import { useTranslateStore } from "@/store/useTranslateStore";
 import { Button } from "../../ui/button";

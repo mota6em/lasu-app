@@ -1,11 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { FaVolumeUp, FaSpinner } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FaChartLine } from "react-icons/fa";
-import { useEffect } from "react";
 import Image from "next/image";
 import { useCommunityLive } from "@/hooks/useCommunityLive";
 
