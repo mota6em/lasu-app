@@ -28,7 +28,7 @@ async function enrichLearners(aggregated: any) {
     results.push({
       id: user.userId,
       name: user.showName ? user.name || "Anonymous" : "Anonymous",
-      Image: user.showPicture
+      image: user.showPicture
         ? user.image || "/imgs/userIcon.jpg"
         : "/imgs/userIcon.jpg",
       xp: user.xp || 0,
