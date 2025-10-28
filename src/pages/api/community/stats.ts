@@ -3,35 +3,33 @@ import { connectToDB } from "@/lib/mongodb";
 import { CommunityStatsCache } from "@/models/communityStatsCache";
 import { recalcAndStoreCommunityStats } from "@/lib/recalculateCommunityStats";
 
-const ONE_HOUR = 60 * 60 * 1000; // 1 hour
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const auth = req.headers.authorization;
+  if (auth !== `Bearer ${process.env.COMMUNITY_STATS_CRON_SECRET}`) {
+    return res.status(403).json({ ok: false, error: "Unauthorized" });
+  }
   await connectToDB();
 
   let cacheDoc: any = await CommunityStatsCache.findOne().lean();
 
   if (!cacheDoc) {
     await recalcAndStoreCommunityStats();
-    const fresh = await CommunityStatsCache.findOne().lean();
-    return res.status(200).json({
-      ok: true,
-      cached: false,
-      data: fresh,
-    });
+    cacheDoc = await CommunityStatsCache.findOne().lean();
+    return res.status(200).json({ ok: true, cached: false, data: cacheDoc });
   }
 
-  const age = Date.now() - new Date(cacheDoc.lastUpdated).getTime();
-  if (age > ONE_HOUR) {
+  const now = new Date();
+  const last = new Date(cacheDoc.lastUpdated);
+  const needsUpdate =
+    now.getHours() !== last.getHours() || now.getDate() !== last.getDate();
+
+  if (needsUpdate) {
     await recalcAndStoreCommunityStats();
     cacheDoc = await CommunityStatsCache.findOne().lean();
   }
 
-  return res.status(200).json({
-    ok: true,
-    cached: false,
-    data: cacheDoc,
-  });
+  return res.status(200).json({ ok: true, cached: false, data: cacheDoc });
 }
