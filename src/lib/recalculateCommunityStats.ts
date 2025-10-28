@@ -1,6 +1,7 @@
 import { connectToDB } from "@/lib/mongodb";
 import LiveTranslation from "@/models/liveTranslations";
 import { CommunityStatsCache } from "@/models/communityStatsCache";
+import CommunityUser from "@/models/communityUser";
 
 // helper: get date ranges
 function getDayStart() {
@@ -13,6 +14,32 @@ function getMonthStart() {
   d.setDate(1);
   d.setHours(0, 0, 0, 0);
   return d;
+}
+
+// helper to resolve learner info
+async function enrichLearners(aggregated: any) {
+  const results = [];
+  console.log("aggregated -------------", aggregated);
+
+  for (const l of aggregated) {
+    const user = await CommunityUser.findOne({ userId: l._id });
+    if (!user) continue;
+
+    results.push({
+      id: user.userId,
+      name: user.showName ? user.name || "Anonymous" : "Anonymous",
+      Image: user.showPicture
+        ? user.image || "/imgs/userIcon.jpg"
+        : "/imgs/userIcon.jpg",
+      xp: user.xp || 0,
+      showName: user.showName,
+      showPicture: user.showPicture,
+      totalTranslations: l.count,
+    });
+  }
+
+  console.log("---results", results);
+  return results;
 }
 
 // this runs heavy aggregations ONE TIME and stores the result in db
@@ -44,12 +71,13 @@ export async function recalcAndStoreCommunityStats() {
     { $limit: 10 },
   ]);
 
-  const dailyLearners = await LiveTranslation.aggregate([
+  const dailyLearnersRaw = await LiveTranslation.aggregate([
     { $match: { createdAt: { $gte: dayStart } } },
     { $group: { _id: "$userId", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
+  const dailyLearners = await enrichLearners(dailyLearnersRaw);
 
   // MONTH
   const monthlyWords = await LiveTranslation.aggregate([
@@ -58,7 +86,7 @@ export async function recalcAndStoreCommunityStats() {
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
-  
+
   const monthlyLangs = await LiveTranslation.aggregate([
     { $match: { createdAt: { $gte: monthStart } } },
     {
@@ -72,12 +100,13 @@ export async function recalcAndStoreCommunityStats() {
     { $limit: 10 },
   ]);
 
-  const monthlyLearners = await LiveTranslation.aggregate([
+  const monthlyLearnersRaw = await LiveTranslation.aggregate([
     { $match: { createdAt: { $gte: monthStart } } },
     { $group: { _id: "$userId", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
+  const monthlyLearners = await enrichLearners(monthlyLearnersRaw);
 
   // ALL TIME
   const allTimeWords = await LiveTranslation.aggregate([
@@ -98,11 +127,12 @@ export async function recalcAndStoreCommunityStats() {
     { $limit: 10 },
   ]);
 
-  const allTimeLearners = await LiveTranslation.aggregate([
+  const allTimeLearnersRaw = await LiveTranslation.aggregate([
     { $group: { _id: "$userId", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
+  const allTimeLearners = await enrichLearners(allTimeLearnersRaw);
 
   // ----- SAVE INTO CACHE -----
   await CommunityStatsCache.findOneAndUpdate(
