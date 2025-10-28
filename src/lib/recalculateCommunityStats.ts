@@ -33,7 +33,13 @@ export async function recalcAndStoreCommunityStats() {
 
   const dailyLangs = await LiveTranslation.aggregate([
     { $match: { createdAt: { $gte: dayStart } } },
-    { $group: { _id: "$translationFilter", count: { $sum: 1 } } },
+    {
+      $project: {
+        langs: { $objectToArray: "$result.translations" },
+      },
+    },
+    { $unwind: "$langs" },
+    { $group: { _id: "$langs.k", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
@@ -52,10 +58,16 @@ export async function recalcAndStoreCommunityStats() {
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
-
+  
   const monthlyLangs = await LiveTranslation.aggregate([
     { $match: { createdAt: { $gte: monthStart } } },
-    { $group: { _id: "$translationFilter", count: { $sum: 1 } } },
+    {
+      $project: {
+        langs: { $objectToArray: "$result.translations" },
+      },
+    },
+    { $unwind: "$langs" },
+    { $group: { _id: "$langs.k", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
@@ -75,7 +87,13 @@ export async function recalcAndStoreCommunityStats() {
   ]);
 
   const allTimeLangs = await LiveTranslation.aggregate([
-    { $group: { _id: "$translationFilter", count: { $sum: 1 } } },
+    {
+      $project: {
+        langs: { $objectToArray: "$result.translations" },
+      },
+    },
+    { $unwind: "$langs" },
+    { $group: { _id: "$langs.k", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
   ]);
