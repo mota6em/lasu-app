@@ -25,6 +25,8 @@ export default async function handler(
 
   user = await CommunityUser.create({
     userId: session.user.id,
+    name: session.user.name,
+    image: session.user.image,
     showName,
     showPicture,
     shareTranslations,
