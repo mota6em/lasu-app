@@ -1,8 +1,7 @@
-import { Learner } from "@/types/learner";
 import { FaMedal, FaCrown } from "react-icons/fa";
 import Image from "next/image";
 
-const RenderLearner = (learner: Learner, rank: number) => {
+const RenderLearner = (learner: any, rank: number) => {
   const getMedalColor = () => {
     if (rank === 1) return "dark:text-yellow-200 text-yellow-600";
     if (rank === 2) return "dark:text-yellow-400 text-yellow-700";
@@ -17,7 +16,7 @@ const RenderLearner = (learner: Learner, rank: number) => {
     >
       {learner.showPicture ? (
         <Image
-          src={learner.Image || "/imgs/userIcon.jpg"}
+          src={learner.image || "/imgs/userIcon.jpg"}
           alt="User Avatar"
           width={40}
           height={40}

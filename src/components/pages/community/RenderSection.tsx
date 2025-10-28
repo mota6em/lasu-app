@@ -1,11 +1,10 @@
-import { Learner } from "@/types/learner";
 import RenderLearner from "./RenderLearner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const RenderSection = (
   title: string,
   icon: React.ReactNode,
-  data: Learner[],
+  data: any[],
   loading: boolean
 ) => (
   <div className="flex-1">
