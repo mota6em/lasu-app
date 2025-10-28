@@ -4,7 +4,7 @@ import { CommunityStatsCache } from "@/models/communityStatsCache";
 import { recalcAndStoreCommunityStats } from "@/lib/recalculateCommunityStats";
 
 // const TEN_MINUTES = 10 * 60 * 1000;
-const TEN_MINUTES = 1 * 1000; //this is temp for testing
+const TEN_MINUTES = 0; //this is temp for testing
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,7 +12,7 @@ export default async function handler(
 ) {
   await connectToDB();
 
-  const cacheDoc: any = await CommunityStatsCache.findOne().lean();
+  let cacheDoc: any = await CommunityStatsCache.findOne().lean();
 
   if (!cacheDoc) {
     await recalcAndStoreCommunityStats();
@@ -26,14 +26,13 @@ export default async function handler(
 
   const age = Date.now() - new Date(cacheDoc.lastUpdated).getTime();
   if (age > TEN_MINUTES) {
-    recalcAndStoreCommunityStats().catch((err) =>
-      console.error("recalc failed", err)
-    );
+    await recalcAndStoreCommunityStats();
+    cacheDoc = await CommunityStatsCache.findOne().lean();
   }
 
   return res.status(200).json({
     ok: true,
-    cached: true,
+    cached: false,
     data: cacheDoc,
   });
 }
