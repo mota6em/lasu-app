@@ -19,7 +19,6 @@ function getMonthStart() {
 // helper to resolve learner info
 async function enrichLearners(aggregated: any) {
   const results = [];
-  console.log("aggregated -------------", aggregated);
 
   for (const l of aggregated) {
     const user = await CommunityUser.findOne({ userId: l._id });
@@ -38,7 +37,6 @@ async function enrichLearners(aggregated: any) {
     });
   }
 
-  console.log("---results", results);
   return results;
 }
 

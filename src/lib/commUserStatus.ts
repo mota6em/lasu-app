@@ -28,7 +28,6 @@ export async function addXPtoUser(userId: string, xpGained: number) {
   user.lastActive = new Date();
 
   await user.save();
-  console.log("user and xp", user, user.xp);
   return { xp: user.xp, level: user.level, streak: user.streak };
 }
 

@@ -90,7 +90,6 @@ export function useTranslate() {
         }
       } else {
         //save to local storage
-        console.log("save to local storage");
         try {
           const existing = localStorage.getItem("lasu-history");
           const parsed = JSON.parse(existing || "[]");
