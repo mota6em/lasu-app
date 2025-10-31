@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,19 +9,28 @@ import { MdOutlineEmail } from "react-icons/md";
 import { GiBookshelf, GiBrain } from "react-icons/gi";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState({
-    name: "Motasem Abubaraka",
-    email: "mo@lasu.app",
-    image: "/imgs/userIcon.jpg",
-    stats: {
-      totalTranslations: 128,
-      wordsLearned: 42,
-      streakDays: 7,
-    },
-  });
+  const [user, setUser] = useState<any>(null);
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
 
-  const [name, setName] = useState(user.name);
-  const [image, setImage] = useState(user.image);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch("/api/session");
+      const data = await res.json();
+      setUser(data.user);
+      setName(data.user.name);
+      setImage(data.user.image);
+    };
+    fetchUser();
+  }, []);
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <span className="loading loading-dots loading-xl"></span>
+      </div>
+    );
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,7 +41,13 @@ export default function ProfilePage() {
   };
 
   const handleSave = () => {
-    setUser((prev) => ({ ...prev, name, image }));
+    setUser((prev: any) => ({ ...prev, name, image }));
+  };
+
+  const stats = user.stats || {
+    totalTranslations: 128,
+    wordsLearned: 42,
+    streakDays: 7,
   };
 
   return (
@@ -77,7 +92,7 @@ export default function ProfilePage() {
             </div>
             <div className="flex items-center gap-2 text-gray-500">
               <MdOutlineEmail className="text-yellow-600" />
-              <span>{user.email}</span>
+              <span>{user.email || "no email"}</span>
             </div>
             <Button
               onClick={handleSave}
@@ -95,7 +110,7 @@ export default function ProfilePage() {
           <CardContent className="p-4 flex flex-col items-center">
             <GiBookshelf className="text-3xl text-yellow-600 mb-1" />
             <p className="text-3xl font-bold text-yellow-600">
-              {user.stats.totalTranslations}
+              {stats.totalTranslations}
             </p>
             <p className="text-sm text-gray-500">Total Translations</p>
           </CardContent>
@@ -104,7 +119,7 @@ export default function ProfilePage() {
           <CardContent className="p-4 flex flex-col items-center">
             <GiBrain className="text-3xl text-yellow-600 mb-1" />
             <p className="text-3xl font-bold text-yellow-600">
-              {user.stats.wordsLearned}
+              {stats.wordsLearned}
             </p>
             <p className="text-sm text-gray-500">Words Learned</p>
           </CardContent>
@@ -113,14 +128,13 @@ export default function ProfilePage() {
           <CardContent className="p-4 flex flex-col items-center">
             <FaFireAlt className="text-3xl text-yellow-600 mb-1" />
             <p className="text-3xl font-bold text-yellow-600">
-              {user.stats.streakDays}
+              {stats.streakDays}
             </p>
             <p className="text-sm text-gray-500">Day Streak</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Footer */}
       <p className="text-center text-gray-400 text-sm mt-4 flex items-center justify-center gap-1">
         <FaCrown className="text-yellow-500" />
         LaSu — Language learning made powerful.
