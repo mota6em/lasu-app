@@ -25,7 +25,7 @@ export const authOptions = {
           const newUser = await User.create({
             email: user.email,
             name: user.name,
-            image: user.image,
+            image: "/imgs/icons/penguin.jpg",
             selectedLanguages: ["english", "spanish"],
             translationType: "formal",
           });
