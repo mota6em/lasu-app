@@ -1,13 +1,12 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
-import { FaBolt, FaCrown, FaFireAlt } from "react-icons/fa";
-import { GiBookshelf } from "react-icons/gi";
+import { FaCrown } from "react-icons/fa";
 import { Toaster } from "react-hot-toast";
 import useProfile from "@/hooks/useProfile";
 import Hero from "@/components/pages/profile/Hero";
+import UserProfileStatsGrid from "@/components/pages/profile/UserProfileStatsGrid";
 
 export default function ProfilePage() {
-  const { user, allStats, setName, setIcon } = useProfile();
+  const { user, allStats } = useProfile();
 
   if (!user)
     return (
@@ -19,42 +18,13 @@ export default function ProfilePage() {
   return (
     <div className="max-w-3xl mx-auto p-6 flex flex-col gap-6">
       <Toaster position="top-center" reverseOrder={false} />
-
       <h2 className="text-3xl font-bold text-center mb-2 text-yellow-600 flex items-center justify-center gap-2">
         <FaCrown className="text-yellow-600" /> My Profile
       </h2>
       <p className="text-center text-gray-600">Manage your info and rewards.</p>
 
       <Hero />
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
-          <CardContent className="p-4 flex flex-col items-center">
-            <GiBookshelf className="text-3xl text-yellow-600 mb-1" />
-            <p className="text-3xl font-bold text-yellow-600">
-              {allStats.totalTranslations}
-            </p>
-            <p className="text-sm text-gray-600">Total Translations</p>
-          </CardContent>
-        </Card>
-        <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
-          <CardContent className="p-4 flex flex-col items-center">
-            <FaBolt className="text-3xl text-yellow-600 mb-1" />
-            <p className="text-3xl font-bold text-yellow-600">{allStats.xp}</p>
-            <p className="text-sm text-gray-600">XP</p>
-          </CardContent>
-        </Card>
-        <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
-          <CardContent className="p-4 flex flex-col items-center">
-            <FaFireAlt className="text-3xl text-yellow-600 mb-1" />
-            <p className="text-3xl font-bold text-yellow-600">
-              {allStats.streakDays}
-            </p>
-            <p className="text-sm text-gray-600">Day Streak</p>
-          </CardContent>
-        </Card>
-      </div>
+      <UserProfileStatsGrid {...allStats} />
 
       <p className="text-center text-gray-400 text-sm mt-4 flex items-center justify-center gap-1">
         <FaCrown className="text-yellow-600" /> LaSu — Language learning made
