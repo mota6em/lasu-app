@@ -10,25 +10,13 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: "consent",
-        },
-      },
+      authorization: { params: { prompt: "consent" } },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    async jwt({
-      token,
-      account,
-      user,
-    }: {
-      token: JWT;
-      account?: any;
-      user?: any;
-    }) {
+    async jwt({ token, account, user, trigger, session }: any) {
       if (account && user) {
         await connectToDB();
         const dbUser = await User.findOne({ email: user.email });
@@ -42,16 +30,28 @@ export const authOptions = {
             translationType: "formal",
           });
           token.id = newUser._id.toString();
+          token.name = newUser.name;
+          token.picture = newUser.image;
         } else {
           token.id = dbUser._id.toString();
+          token.name = dbUser.name;
+          token.picture = dbUser.image;
         }
+      }
+
+      if (trigger === "update" && session) {
+        if (session.name) token.name = session.name;
+        if (session.image) token.picture = session.image;
       }
 
       return token;
     },
+
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.image = token.picture as string;
       }
       return session;
     },
