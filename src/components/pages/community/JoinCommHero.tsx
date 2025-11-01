@@ -62,7 +62,7 @@ const JoinCommHero = () => {
                     variant="secondary"
                     className="flex items-center gap-1"
                   >
-                    <FaUsers /> 1.2k Members
+                    <FaUsers /> Global Learners
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent>Join thousands of learners!</TooltipContent>
