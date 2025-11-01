@@ -147,7 +147,7 @@ const Hero = () => {
           </div>
           <div className="flex items-center gap-2 text-gray-600">
             <MdOutlineEmail className="text-yellow-600" />
-            <span>{user.email || "no email"}</span>
+            <span>{user?.email || "no email"}</span>
           </div>
           <Button
             onClick={handleSave}

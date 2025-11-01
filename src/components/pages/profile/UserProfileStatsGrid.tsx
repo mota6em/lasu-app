@@ -5,9 +5,9 @@ import { FaBolt, FaFireAlt } from "react-icons/fa";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface UserStatsGridProps {
-  totalTranslations: number;
-  xp: number;
-  streakDays: number;
+  totalTranslations: any;
+  xp: any;
+  streakDays: any;
 }
 
 export default function UserProfileStatsGrid({
