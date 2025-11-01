@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +12,8 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FaUser } from "react-icons/fa";
+import { LogOut } from "lucide-react";
 
 export function UserMenu() {
   const { data: session, status } = useSession();
@@ -47,14 +50,31 @@ export function UserMenu() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="text-md text-black dark:text-white font-bold">
+        <DropdownMenuLabel className="text-md text-black w-full text-center dark:text-white font-bold">
           {user.name}
         </DropdownMenuLabel>
-        <DropdownMenuLabel className="text-xs text-gray-400">
+        <DropdownMenuLabel className="text-xs text-center text-gray-400">
           {user.email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center gap-2 text-sm text-black dark:text-white"
+          >
+            <FaUser className="text-yellow-600" /> My Profile
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onClick={() => signOut()}
+          className="flex items-center gap-2 text-red-600 cursor-pointer"
+        >
+          <LogOut className="h-4 w-4" /> Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
