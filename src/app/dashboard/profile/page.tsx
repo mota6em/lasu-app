@@ -14,22 +14,20 @@ import {
 import { FaUserEdit, FaCrown, FaFireAlt, FaLock } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { GiBookshelf, GiBrain } from "react-icons/gi";
+import { useSession } from "next-auth/react";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
+  const { data: session, update } = useSession();
+  const user = session?.user;
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch("/api/session");
-      const data = await res.json();
-      setUser(data.user);
-      setName(data.user.name);
-      setIcon(data.user.image || "/imgs/icons/default.png");
-    };
-    fetchUser();
-  }, []);
+    if (user) {
+      setName(user.name || "");
+      setIcon(user.image || "/imgs/userIcon.png");
+    }
+  }, [user]);
 
   if (!user)
     return (
@@ -38,8 +36,33 @@ export default function ProfilePage() {
       </div>
     );
 
-  const handleSave = () =>
-    setUser((prev: any) => ({ ...prev, name, image: icon }));
+  const handleSave = async () => {
+    const userId = user?._id || user?.id;
+    if (!userId) {
+      console.error("User ID missing, aborting update");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, image: icon }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        await update({
+          name: data.user.name,
+          image: data.user.image,
+        });
+      } else {
+        console.error("❌ Failed to update:", data.error);
+      }
+    } catch (err) {
+      console.error("❌ Error:", err);
+    }
+  };
 
   const icons = {
     available: [
