@@ -21,6 +21,10 @@ import Link from "next/link";
 export default function WelcomePage() {
   const [open, setOpen] = useState(false);
 
+  const handleLogIn = () => {
+    signIn("google", { callbackUrl: "/dashboard" });
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="p-10 max-w-xl text-center -mt-20">
@@ -39,7 +43,7 @@ export default function WelcomePage() {
         <div className="flex flex-col gap-4">
           <Button
             className="bg-blue-600 hover:bg-blue-700 text-white text-lg py-3 rounded-xl shadow-md flex items-center justify-center gap-2"
-            onClick={() => signIn("google")}
+            onClick={() => handleLogIn()}
           >
             <FaGoogle /> Login & Get Started
           </Button>
@@ -69,7 +73,7 @@ export default function WelcomePage() {
                   <Link href="/dashboard">Skip and Continue to main page</Link>
                 </AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => signIn("google")}
+                  onClick={() => handleLogIn()}
                   className="cursor-pointer"
                 >
                   I'll login in now
