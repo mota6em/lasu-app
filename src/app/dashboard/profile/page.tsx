@@ -79,16 +79,16 @@ export default function ProfilePage() {
 
   const icons = {
     available: [
-      { id: 1, src: "/imgs/icons/lion.png", label: "Lion" },
-      { id: 2, src: "/imgs/icons/fox.png", label: "Fox" },
+      { id: 1, src: "/imgs/icons/lion.jpg", label: "Lion" },
+      { id: 2, src: "/imgs/icons/fox.jpg", label: "Fox" },
     ],
     locked: [
-      { id: 3, src: "/imgs/icons/eagle.png", label: "Eagle", requiredXP: 2000 },
-      { id: 4, src: "/imgs/icons/tiger.png", label: "Tiger", requiredXP: 3000 },
+      { id: 3, src: "/imgs/icons/eagle.jpg", label: "Eagle", requiredXP: 2000 },
+      { id: 4, src: "/imgs/icons/tiger.jpg", label: "Tiger", requiredXP: 3000 },
     ],
     premium: [
-      { id: 5, src: "/imgs/icons/dragon.png", label: "Dragon" },
-      { id: 6, src: "/imgs/icons/phoenix.png", label: "Phoenix" },
+      { id: 5, src: "/imgs/icons/dragon.jpg", label: "Dragon" },
+      { id: 6, src: "/imgs/icons/phoenix.jpg", label: "Phoenix" },
     ],
   };
 
