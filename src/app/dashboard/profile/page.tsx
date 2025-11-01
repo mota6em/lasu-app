@@ -5,10 +5,11 @@ import { GiBookshelf, GiBrain } from "react-icons/gi";
 import { Toaster } from "react-hot-toast";
 import useProfile from "@/hooks/useProfile";
 import Hero from "@/components/pages/profile/Hero";
+import CommHero from "@/components/pages/community/CommHero";
+import UserStats from "@/components/pages/community/UserStats";
 
 export default function ProfilePage() {
   const { user, stats, setName, setIcon } = useProfile();
-
 
   if (!user)
     return (
@@ -27,6 +28,7 @@ export default function ProfilePage() {
       <p className="text-center text-gray-600">Manage your info and rewards.</p>
 
       <Hero />
+      <UserStats userId={user.id} />
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
