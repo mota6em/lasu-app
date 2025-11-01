@@ -15,12 +15,15 @@ import { FaUserEdit, FaCrown, FaFireAlt, FaLock } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { GiBookshelf, GiBrain } from "react-icons/gi";
 import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ProfilePage() {
   const { data: session, update } = useSession();
   const user = session?.user;
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -38,12 +41,10 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     const userId = user?._id || user?.id;
-    if (!userId) {
-      console.error("User ID missing, aborting update");
-      return;
-    }
+    if (!userId) return;
 
     try {
+      setLoading(true);
       const res = await fetch(`/api/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -56,12 +57,24 @@ export default function ProfilePage() {
           name: data.user.name,
           image: data.user.image,
         });
+
+        toast.success("Profile updated successfully 🎉");
       } else {
-        console.error("❌ Failed to update:", data.error);
+        toast.error(data.error || "Update failed ❌");
       }
     } catch (err) {
-      console.error("❌ Error:", err);
+      toast.error("Error updating profile ⚠️");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const stats = user.stats || {
+    totalTranslations: 128,
+    wordsLearned: 42,
+    streakDays: 7,
+    xp: 1600,
+    premium: false,
   };
 
   const icons = {
@@ -79,16 +92,10 @@ export default function ProfilePage() {
     ],
   };
 
-  const stats = user.stats || {
-    totalTranslations: 128,
-    wordsLearned: 42,
-    streakDays: 7,
-    xp: 1600,
-    premium: false,
-  };
-
   return (
     <div className="max-w-3xl mx-auto p-6 flex flex-col gap-6">
+      <Toaster position="top-center" reverseOrder={false} />
+
       <h2 className="text-3xl font-bold text-center mb-2 text-yellow-600 flex items-center justify-center gap-2">
         <FaCrown className="text-yellow-600" /> My Profile
       </h2>
@@ -115,7 +122,7 @@ export default function ProfilePage() {
                   <DialogTitle className="text-yellow-600 font-bold text-xl">
                     Choose Your Icon
                   </DialogTitle>
-                </DialogHeader>
+                </DialogHeader>{" "}
                 <div className="space-y-4">
                   {/* Available */}
                   <section>
@@ -211,9 +218,11 @@ export default function ProfilePage() {
             </div>
             <Button
               onClick={handleSave}
-              className="bg-yellow-600 hover:bg-yellow-600 text-white w-fit mt-2"
+              disabled={loading}
+              className="bg-yellow-600 hover:bg-yellow-600 text-white w-fit mt-2 flex items-center gap-2"
             >
-              Save Changes
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </CardContent>
