@@ -10,16 +10,8 @@ import HistoryGrid from "@/components/pages/history/HistoryGrid";
 
 export default function HistoryPage() {
   const [filter, setFilter] = useState<"all" | "word" | "phrase">("all");
-  const {
-    displayHistory,
-    isLoading,
-    isError,
-    isFetchingNextPage,
-    loadMoreRef,
-    handleDelete,
-    status,
-    session,
-  } = useTranslationHistory(filter);
+  const { displayHistory, isLoading, isError, handleDelete, status, session } =
+    useTranslationHistory(filter);
 
   if (isError) {
     return (
@@ -53,12 +45,7 @@ export default function HistoryPage() {
         <HistoryEmptyState />
       )}
       {!(status === "loading" || (status === "authenticated" && isLoading)) && (
-        <HistoryGrid
-          displayHistory={displayHistory}
-          isFetchingNextPage={isFetchingNextPage}
-          loadMoreRef={loadMoreRef}
-          onDelete={handleDelete}
-        />
+        <HistoryGrid displayHistory={displayHistory} onDelete={handleDelete} />
       )}
       <ScrollToTop />
     </>
