@@ -4,14 +4,21 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { FaCamera, FaUserEdit, FaCrown, FaFireAlt } from "react-icons/fa";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { FaUserEdit, FaCrown, FaFireAlt, FaLock } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { GiBookshelf, GiBrain } from "react-icons/gi";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [name, setName] = useState("");
-  const [image, setImage] = useState("");
+  const [icon, setIcon] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -19,66 +26,151 @@ export default function ProfilePage() {
       const data = await res.json();
       setUser(data.user);
       setName(data.user.name);
-      setImage(data.user.image);
+      setIcon(data.user.image || "/imgs/icons/default.png");
     };
     fetchUser();
   }, []);
 
-  if (!user) {
+  if (!user)
     return (
       <div className="flex items-center justify-center h-screen">
         <span className="loading loading-dots loading-xl"></span>
       </div>
     );
-  }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setImage(reader.result as string);
-    reader.readAsDataURL(file);
-  };
+  const handleSave = () =>
+    setUser((prev: any) => ({ ...prev, name, image: icon }));
 
-  const handleSave = () => {
-    setUser((prev: any) => ({ ...prev, name, image }));
+  const icons = {
+    available: [
+      { id: 1, src: "/imgs/icons/lion.png", label: "Lion" },
+      { id: 2, src: "/imgs/icons/fox.png", label: "Fox" },
+    ],
+    locked: [
+      { id: 3, src: "/imgs/icons/eagle.png", label: "Eagle", requiredXP: 2000 },
+      { id: 4, src: "/imgs/icons/tiger.png", label: "Tiger", requiredXP: 3000 },
+    ],
+    premium: [
+      { id: 5, src: "/imgs/icons/dragon.png", label: "Dragon" },
+      { id: 6, src: "/imgs/icons/phoenix.png", label: "Phoenix" },
+    ],
   };
 
   const stats = user.stats || {
     totalTranslations: 128,
     wordsLearned: 42,
     streakDays: 7,
+    xp: 1600,
+    premium: false,
   };
 
   return (
     <div className="max-w-3xl mx-auto p-6 flex flex-col gap-6">
       <h2 className="text-3xl font-bold text-center mb-2 text-yellow-600 flex items-center justify-center gap-2">
-        <FaCrown className="text-yellow-500" /> My Profile
+        <FaCrown className="text-yellow-600" /> My Profile
       </h2>
-      <p className="text-center text-gray-500">
-        Manage your personal info and see your learning stats.
-      </p>
+      <p className="text-center text-gray-600">Manage your info and rewards.</p>
 
-      {/* Profile Info */}
       <Card className="shadow-md border border-yellow-100 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-900/10">
         <CardContent className="flex flex-col sm:flex-row items-center gap-6 p-6">
-          <div className="relative">
+          <div className="relative flex flex-col items-center">
             <Image
-              src={image}
-              alt="Profile"
+              src={icon}
+              alt="Profile Icon"
               width={120}
               height={120}
-              className="rounded-full border-4 border-yellow-500 shadow-lg"
+              className="rounded-full border-4 border-yellow-600 shadow-lg bg-white"
             />
-            <label className="absolute bottom-2 right-2 bg-yellow-500 text-white p-2 rounded-full cursor-pointer hover:bg-yellow-600 transition">
-              <FaCamera />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="mt-3 bg-yellow-600 hover:bg-yellow-600 text-white w-fit">
+                  Change Icon
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className="text-yellow-600 font-bold text-xl">
+                    Choose Your Icon
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  {/* Available */}
+                  <section>
+                    <h3 className="font-semibold text-yellow-700 mb-2">
+                      Available
+                    </h3>
+                    <div className="grid grid-cols-4 gap-3">
+                      {icons.available.map((ic) => (
+                        <Image
+                          key={ic.id}
+                          src={ic.src}
+                          alt={ic.label}
+                          width={70}
+                          height={70}
+                          onClick={() => setIcon(ic.src)}
+                          className={`cursor-pointer rounded-full border-2 transition bg-white ${
+                            icon === ic.src
+                              ? "border-yellow-600 scale-110"
+                              : "border-transparent hover:opacity-80"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Locked */}
+                  <section>
+                    <h3 className="font-semibold text-gray-600 mb-2 flex items-center gap-1">
+                      <FaLock /> Locked (Reach more XP)
+                    </h3>
+                    <div className="grid grid-cols-4 gap-3 opacity-50">
+                      {icons.locked.map((ic) => (
+                        <div
+                          key={ic.id}
+                          className="relative flex items-center justify-center"
+                        >
+                          <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden">
+                            <Image
+                              src={ic.src}
+                              alt={ic.label}
+                              fill
+                              className="object-cover grayscale bg-white"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold bg-black/50 text-white">
+                              {ic.requiredXP} XP
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Premium */}
+                  <section>
+                    <h3 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1">
+                      <FaCrown className="text-yellow-600" /> Premium Users
+                    </h3>
+                    <div className="grid grid-cols-4 gap-3">
+                      {icons.premium.map((ic) => (
+                        <Image
+                          key={ic.id}
+                          src={ic.src}
+                          alt={ic.label}
+                          width={70}
+                          height={70}
+                          className={`rounded-full border-2 bg-white ${
+                            stats.premium
+                              ? "border-yellow-600 cursor-pointer"
+                              : "grayscale opacity-60 cursor-no-drop"
+                          }`}
+                          onClick={() => stats.premium && setIcon(ic.src)}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="flex flex-col gap-3 flex-1 w-full">
@@ -90,13 +182,13 @@ export default function ProfilePage() {
                 className="border-gray-300"
               />
             </div>
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-gray-600">
               <MdOutlineEmail className="text-yellow-600" />
               <span>{user.email || "no email"}</span>
             </div>
             <Button
               onClick={handleSave}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white w-fit mt-2"
+              className="bg-yellow-600 hover:bg-yellow-600 text-white w-fit mt-2"
             >
               Save Changes
             </Button>
@@ -112,7 +204,7 @@ export default function ProfilePage() {
             <p className="text-3xl font-bold text-yellow-600">
               {stats.totalTranslations}
             </p>
-            <p className="text-sm text-gray-500">Total Translations</p>
+            <p className="text-sm text-gray-600">Total Translations</p>
           </CardContent>
         </Card>
         <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
@@ -121,7 +213,7 @@ export default function ProfilePage() {
             <p className="text-3xl font-bold text-yellow-600">
               {stats.wordsLearned}
             </p>
-            <p className="text-sm text-gray-500">Words Learned</p>
+            <p className="text-sm text-gray-600">Words Learned</p>
           </CardContent>
         </Card>
         <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
@@ -130,14 +222,14 @@ export default function ProfilePage() {
             <p className="text-3xl font-bold text-yellow-600">
               {stats.streakDays}
             </p>
-            <p className="text-sm text-gray-500">Day Streak</p>
+            <p className="text-sm text-gray-600">Day Streak</p>
           </CardContent>
         </Card>
       </div>
 
       <p className="text-center text-gray-400 text-sm mt-4 flex items-center justify-center gap-1">
-        <FaCrown className="text-yellow-500" />
-        LaSu — Language learning made powerful.
+        <FaCrown className="text-yellow-600" /> LaSu — Language learning made
+        powerful.
       </p>
     </div>
   );
