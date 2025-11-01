@@ -15,7 +15,7 @@ export default async function handler(
   await connectToDB();
 
   // get language stats for Overview Cards
-  const { wantStats, page = "0", limit = "10", filter = "all" } = req.query;
+  const { wantStats, page, limit, filter = "all" } = req.query;
   if (wantStats) {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -77,16 +77,19 @@ export default async function handler(
     });
   }
 
-  // Handle pagination
-  const pageNum = parseInt(page as string, 10);
-  const limitNum = parseInt(limit as string, 10);
-  const skip = pageNum * limitNum;
   const query: any = { userId };
   if (filter !== "all") query.translationFilter = filter;
-  const history = await Translation.find(query)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limitNum)
-    .lean();
+
+  let cursor = Translation.find(query).sort({ createdAt: -1 });
+
+  // only apply pagination if limit is provided
+  if (limit) {
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    const skip = pageNum * limitNum;
+    cursor = cursor.skip(skip).limit(limitNum);
+  }
+
+  const history = await cursor.lean();
   res.status(200).json(history);
 }
