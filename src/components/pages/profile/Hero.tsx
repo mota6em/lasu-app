@@ -10,11 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FaUserEdit, FaCrown, FaLock } from "react-icons/fa";
+import { FaUserEdit, FaCrown, FaLock, FaCamera } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { Loader2 } from "lucide-react";
 import useProfile from "@/hooks/useProfile";
 import { useEffect } from "react";
+
 const Hero = () => {
   const {
     user,
@@ -37,103 +38,112 @@ const Hero = () => {
     <Card className="shadow-md border border-yellow-100 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-900/10">
       <CardContent className="flex flex-col sm:flex-row items-center gap-6 p-6">
         <div className="relative flex flex-col items-center">
-          <Image
-            src={icon}
-            alt="Profile Icon"
-            width={120}
-            height={120}
-            className="rounded-full border-4 border-yellow-600 shadow-lg bg-white"
-          />
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="mt-3 bg-yellow-600 hover:bg-yellow-600 text-white w-fit">
-                Change Icon
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle className="text-yellow-600 font-bold text-xl">
-                  Choose Your Icon
-                </DialogTitle>
-              </DialogHeader>{" "}
-              <div className="space-y-4">
-                {/* Available */}
-                <section>
-                  <h3 className="font-semibold text-yellow-700 mb-2">
-                    Available
-                  </h3>
-                  <div className="grid grid-cols-4 gap-3">
-                    {icons.available.map((ic) => (
-                      <Image
-                        key={ic.id}
-                        src={ic.src}
-                        alt={ic.label}
-                        width={70}
-                        height={70}
-                        onClick={() => setIcon(ic.src)}
-                        className={`cursor-pointer rounded-full border-2 transition bg-white ${
-                          icon === ic.src
-                            ? "border-yellow-600 scale-110"
-                            : "border-transparent hover:opacity-80"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </section>
+          <div className="relative group">
+            <Image
+              src={icon}
+              alt="Profile Icon"
+              width={120}
+              height={120}
+              className="rounded-full border-4 border-yellow-600 shadow-lg bg-white transition-all group-hover:brightness-95"
+            />
 
-                {/* Locked */}
-                <section>
-                  <h3 className="font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                    <FaLock /> Locked (Reach more XP)
-                  </h3>
-                  <div className="grid grid-cols-4 gap-3 opacity-50">
-                    {icons.locked.map((ic) => (
-                      <div
-                        key={ic.id}
-                        className="relative flex items-center justify-center"
-                      >
-                        <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden">
-                          <Image
-                            src={ic.src}
-                            alt={ic.label}
-                            fill
-                            className="object-cover grayscale bg-white"
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold bg-black/50 text-white">
-                            {ic.requiredXP} XP
+            <Dialog>
+              <DialogTrigger asChild>
+                <button
+                  className="absolute bottom-0 right-0 p-2 bg-yellow-600 text-white rounded-full shadow-md 
+                            hover:bg-yellow-700 transition-all duration-200"
+                  title="Change Icon"
+                >
+                  <FaCamera className="h-4 w-4 cursor-pointer" />
+                </button>
+              </DialogTrigger>
+
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className="text-yellow-600 font-bold text-xl">
+                    Choose Your Icon
+                  </DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-4">
+                  {/* Available */}
+                  <section>
+                    <h3 className="font-semibold text-yellow-700 mb-2">
+                      Available
+                    </h3>
+                    <div className="grid grid-cols-4 gap-3">
+                      {icons.available.map((ic) => (
+                        <Image
+                          key={ic.id}
+                          src={ic.src}
+                          alt={ic.label}
+                          width={70}
+                          height={70}
+                          onClick={() => setIcon(ic.src)}
+                          className={`cursor-pointer rounded-full border-2 transition bg-white ${
+                            icon === ic.src
+                              ? "border-yellow-600 scale-110"
+                              : "border-transparent hover:opacity-80"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Locked */}
+                  <section>
+                    <h3 className="font-semibold text-gray-600 mb-2 flex items-center gap-1">
+                      <FaLock /> Locked (Reach more XP)
+                    </h3>
+                    <div className="grid grid-cols-4 gap-3 opacity-50">
+                      {icons.locked.map((ic) => (
+                        <div
+                          key={ic.id}
+                          className="relative flex items-center justify-center cursor-no-drop"
+                        >
+                          <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden">
+                            <Image
+                              src={ic.src}
+                              alt={ic.label}
+                              fill
+                              className="object-cover grayscale bg-white"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold bg-black/50 text-white">
+                              {ic.requiredXP} XP
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
+                      ))}
+                    </div>
+                  </section>
 
-                {/* Premium */}
-                <section>
-                  <h3 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1">
-                    <FaCrown className="text-yellow-600" /> Premium Users
-                  </h3>
-                  <div className="grid grid-cols-4 gap-3">
-                    {icons.premium.map((ic) => (
-                      <Image
-                        key={ic.id}
-                        src={ic.src}
-                        alt={ic.label}
-                        width={70}
-                        height={70}
-                        className={`rounded-full border-2 bg-white ${
-                          allStats.premium
-                            ? "border-yellow-600 cursor-pointer"
-                            : "grayscale opacity-60 cursor-no-drop"
-                        }`}
-                        onClick={() => allStats.premium && setIcon(ic.src)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              </div>
-            </DialogContent>
-          </Dialog>
+                  {/* Premium */}
+                  <section>
+                    <h3 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1">
+                      <FaCrown className="text-yellow-600" /> Premium Users
+                    </h3>
+                    <div className="grid grid-cols-4 gap-3">
+                      {icons.premium.map((ic) => (
+                        <Image
+                          key={ic.id}
+                          src={ic.src}
+                          alt={ic.label}
+                          width={70}
+                          height={70}
+                          className={`rounded-full border-2 bg-white ${
+                            allStats.premium
+                              ? "border-yellow-600 cursor-pointer"
+                              : "grayscale opacity-60 cursor-no-drop"
+                          }`}
+                          onClick={() => allStats.premium && setIcon(ic.src)}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3 flex-1 w-full">
