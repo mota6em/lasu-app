@@ -9,7 +9,7 @@ interface HistoryFilterProps {
 
 const HistoryFilter = ({ filter, setFilter }: HistoryFilterProps) => {
   return (
-    <div className="flex gap-2 px-0 my-1 mt-2 ms-8">
+    <div className="flex gap-2 px-0 ms-8">
       {["all", "word", "phrase"].map((f: string) => (
         <button
           key={f}
