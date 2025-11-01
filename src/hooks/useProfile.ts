@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { useOverviewCards } from "./useOverviewCards";
+import { useUserStats } from "./useUserStats";
 
 const useProfile = () => {
   const { data: session, update } = useSession();
@@ -8,8 +10,12 @@ const useProfile = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [loading, setLoading] = useState(false);
+  const { cards } = useOverviewCards();
+  const totalTranslations =
+    cards.find((c) => c.title === "Total Translations")?.value ?? "-";
+  const { stats } = useUserStats(user?.id ?? "");
   const handleSave = async () => {
-    const userId =  user?.id;
+    const userId = user?.id;
     if (!userId) return;
 
     try {
@@ -38,11 +44,11 @@ const useProfile = () => {
     }
   };
 
-  const stats = {
-    totalTranslations: 128,
-    wordsLearned: 42,
-    streakDays: 7,
-    xp: 1600,
+  const allStats = {
+    totalTranslations,
+    streakDays: stats.streak,
+    xp: stats.xp,
+    level: stats.level,
     premium: false,
   };
 
@@ -63,7 +69,7 @@ const useProfile = () => {
 
   return {
     user,
-    stats,
+    allStats,
     icons,
     name,
     setName,
