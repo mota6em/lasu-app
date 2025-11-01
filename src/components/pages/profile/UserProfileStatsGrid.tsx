@@ -17,7 +17,7 @@ export default function UserProfileStatsGrid({
 }: UserStatsGridProps) {
   console.log(totalTranslations, xp, streakDays);
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
         <CardContent className="p-4 flex flex-col items-center">
           <GiBookshelf className="text-3xl text-yellow-600 mb-1" />
