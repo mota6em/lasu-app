@@ -46,9 +46,9 @@ const useProfile = () => {
 
   const allStats = {
     totalTranslations,
-    streakDays: stats.streak,
-    xp: stats.xp,
-    level: stats.level,
+    streakDays: stats.streak ?? "-",
+    xp: stats.xp ?? "-",
+    level: stats.level ?? "-",
     premium: false,
   };
 
