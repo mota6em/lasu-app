@@ -1,15 +1,13 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { FaCrown, FaFireAlt } from "react-icons/fa";
-import { GiBookshelf, GiBrain } from "react-icons/gi";
+import { FaBolt, FaCrown, FaFireAlt } from "react-icons/fa";
+import { GiBookshelf } from "react-icons/gi";
 import { Toaster } from "react-hot-toast";
 import useProfile from "@/hooks/useProfile";
 import Hero from "@/components/pages/profile/Hero";
-import CommHero from "@/components/pages/community/CommHero";
-import UserStats from "@/components/pages/community/UserStats";
 
 export default function ProfilePage() {
-  const { user, stats, setName, setIcon } = useProfile();
+  const { user, allStats, setName, setIcon } = useProfile();
 
   if (!user)
     return (
@@ -28,7 +26,6 @@ export default function ProfilePage() {
       <p className="text-center text-gray-600">Manage your info and rewards.</p>
 
       <Hero />
-      <UserStats userId={user.id} />
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -36,25 +33,23 @@ export default function ProfilePage() {
           <CardContent className="p-4 flex flex-col items-center">
             <GiBookshelf className="text-3xl text-yellow-600 mb-1" />
             <p className="text-3xl font-bold text-yellow-600">
-              {stats.totalTranslations}
+              {allStats.totalTranslations}
             </p>
             <p className="text-sm text-gray-600">Total Translations</p>
           </CardContent>
         </Card>
         <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
           <CardContent className="p-4 flex flex-col items-center">
-            <GiBrain className="text-3xl text-yellow-600 mb-1" />
-            <p className="text-3xl font-bold text-yellow-600">
-              {stats.wordsLearned}
-            </p>
-            <p className="text-sm text-gray-600">Words Learned</p>
+            <FaBolt className="text-3xl text-yellow-600 mb-1" />
+            <p className="text-3xl font-bold text-yellow-600">{allStats.xp}</p>
+            <p className="text-sm text-gray-600">XP</p>
           </CardContent>
         </Card>
         <Card className="text-center bg-yellow-50 dark:bg-yellow-900/10 shadow-sm">
           <CardContent className="p-4 flex flex-col items-center">
             <FaFireAlt className="text-3xl text-yellow-600 mb-1" />
             <p className="text-3xl font-bold text-yellow-600">
-              {stats.streakDays}
+              {allStats.streakDays}
             </p>
             <p className="text-sm text-gray-600">Day Streak</p>
           </CardContent>

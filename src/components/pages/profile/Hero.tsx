@@ -18,7 +18,7 @@ import { useEffect } from "react";
 const Hero = () => {
   const {
     user,
-    stats,
+    allStats,
     icons,
     name,
     setName,
@@ -122,11 +122,11 @@ const Hero = () => {
                         width={70}
                         height={70}
                         className={`rounded-full border-2 bg-white ${
-                          stats.premium
+                          allStats.premium
                             ? "border-yellow-600 cursor-pointer"
                             : "grayscale opacity-60 cursor-no-drop"
                         }`}
-                        onClick={() => stats.premium && setIcon(ic.src)}
+                        onClick={() => allStats.premium && setIcon(ic.src)}
                       />
                     ))}
                   </div>
