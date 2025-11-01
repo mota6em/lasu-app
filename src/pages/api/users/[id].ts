@@ -15,14 +15,37 @@ export default async function handler(
   }
 
   try {
-    const user = await User.findById(id).select("name image email");
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    // GET user info
+    if (req.method === "GET") {
+      const user = await User.findById(id).select("name image email");
+      if (!user) return res.status(404).json({ error: "User not found" });
+      return res.status(200).json(user);
     }
 
-    res.status(200).json(user);
+    // PATCH - update name or image
+    if (req.method === "PATCH") {
+      const { name, image } = req.body;
+
+      if (!name && !image)
+        return res.status(400).json({ error: "No data to update" });
+
+      const updatedUser = await User.findByIdAndUpdate(
+        id,
+        { ...(name && { name }), ...(image && { image }) },
+        { new: true }
+      ).select("name image email");
+
+      if (!updatedUser)
+        return res.status(404).json({ error: "User not found" });
+
+      return res.status(200).json({ success: true, user: updatedUser });
+    }
+
+    // invalid method
+    res.setHeader("Allow", ["GET", "PATCH"]);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 }
