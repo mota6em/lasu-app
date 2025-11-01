@@ -28,7 +28,6 @@ export default function HistoryPage() {
     setAppliedSearch(search.trim());
   };
 
-  const debouncedSearch = useDebouncedValue(search);
 
   const filteredHistory = useMemo(() => {
     if (!appliedSearch) return displayHistory;
@@ -88,7 +87,7 @@ export default function HistoryPage() {
       {(status === "loading" || (status === "authenticated" && isLoading)) && (
         <HistorySkeletonGrid />
       )}
-      {displayHistory.length === 0 && status !== "loading" && (
+      {filteredHistory.length === 0 && status !== "loading" && (
         <HistoryEmptyState />
       )}
       {!(status === "loading" || (status === "authenticated" && isLoading)) && (
