@@ -112,7 +112,8 @@ export default function CommunityTranslations() {
                       className="rounded-full"
                     />
                     <span className=" font-semibold ">
-                      {t.userName! || "Anonymous"}
+                      {t.userName?.split(" ")[0].charAt(0).toUpperCase() +
+                        t.userName?.split(" ")[0].slice(1) || "Anonymous"}
                     </span>
                   </div>
                 </div>
