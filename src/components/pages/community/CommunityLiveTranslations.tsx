@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { FaChartLine } from "react-icons/fa";
 import Image from "next/image";
 import { useCommunityLive } from "@/hooks/useCommunityLive";
+import Link from "next/link";
 
 interface TranslationResult {
   translations: Record<string, string>;
@@ -103,7 +104,10 @@ export default function CommunityTranslations() {
                       {t.translationType} • {t.translationFilter}
                     </p>
                   </div>
-                  <div className="flex flex-row gap-x-1 items-center justify-center text-xs text-muted-foreground">
+                  <Link
+                    href={`/dashboard/profile/${t.userId}`}
+                    className="flex flex-row gap-x-1 cursor-pointer items-center justify-center text-xs text-muted-foreground"
+                  >
                     <Image
                       src={t.userImage ?? "/imgs/userIcon.jpg"}
                       alt="User Avatar"
@@ -115,7 +119,7 @@ export default function CommunityTranslations() {
                       {t.userName?.split(" ")[0].charAt(0).toUpperCase() +
                         t.userName?.split(" ")[0].slice(1) || "Anonymous"}
                     </span>
-                  </div>
+                  </Link>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-3">
