@@ -4,18 +4,25 @@ import toast from "react-hot-toast";
 import { useOverviewCards } from "./useOverviewCards";
 import { useUserStats } from "./useUserStats";
 
-const useProfile = () => {
+interface UseProfileProps {
+  sUserId?: string; // optional, for public profiles
+}
+
+const useProfile = ({ sUserId }: UseProfileProps = {}) => {
   const { data: session, update } = useSession();
   const user = session?.user;
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // stats and cards
   const { cards } = useOverviewCards();
   const totalTranslations =
     cards.find((c) => c.title === "Total Translations")?.value ?? "-";
-  const { stats } = useUserStats(user?.id ?? "");
+  const { stats } = useUserStats(sUserId || user?.id || "");
+
   const handleSave = async () => {
-    const userId = user?.id;
+    const userId = sUserId || user?.id;
     if (!userId) return;
 
     try {
@@ -28,7 +35,7 @@ const useProfile = () => {
 
       const data = await res.json();
       if (data.success) {
-        await update({
+        await update?.({
           name: data.user.name,
           image: data.user.image,
         });
@@ -46,9 +53,9 @@ const useProfile = () => {
 
   const allStats = {
     totalTranslations,
-    streakDays: stats.streak ?? "-",
-    xp: stats.xp ?? "-",
-    level: stats.level ?? "-",
+    streakDays: stats?.streak ?? "-",
+    xp: stats?.xp ?? "-",
+    level: stats?.level ?? "-",
     premium: false,
   };
 
