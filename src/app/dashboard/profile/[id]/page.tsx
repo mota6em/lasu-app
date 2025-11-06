@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactElement } from "react";
 import { useParams } from "next/navigation";
 import useProfile from "@/hooks/useProfile";
 import {
@@ -12,8 +13,9 @@ import {
 } from "react-icons/fa";
 
 export default function PublicProfilePage() {
-  const { id } = useParams();
-  const { allStats, user } = useProfile({ sUserId: id as string });
+  const params = useParams() as { id: string };
+  const { id } = params;
+  const { allStats, user } = useProfile({ sUserId: id });
 
   if (!user)
     return (
@@ -33,7 +35,7 @@ export default function PublicProfilePage() {
       <div className="flex flex-col items-center">
         <img
           src={user.image || "/imgs/icons/default.png"}
-          alt={user.name}
+          alt={user.name || "User profile"}
           className="w-28 h-28 rounded-full border-4 border-yellow-500 shadow-md object-cover"
         />
         <p className="mt-2 text-lg font-semibold">{user.name}</p>
@@ -58,7 +60,7 @@ const Stat = ({
   label,
   value,
 }: {
-  icon: JSX.Element;
+  icon: ReactElement;
   label: string;
   value: string | number;
 }) => (
