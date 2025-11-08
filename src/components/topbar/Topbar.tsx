@@ -2,8 +2,6 @@
 import { ModeToggle } from "./ModeToggle";
 import { UserMenu } from "./UserMenu";
 import { useSession } from "next-auth/react";
-import { Menu } from "lucide-react";
-import Link from "next/link";
 import LogoAndMenuBtn from "./LogoAndMenuBtn";
 import { Skeleton } from "../ui/skeleton";
 
