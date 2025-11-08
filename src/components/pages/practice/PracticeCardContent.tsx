@@ -23,6 +23,7 @@ const PracticeCardContent = ({
   currentWord,
   handleNext,
   handleRecall,
+  disableButtons,
 }: any) => {
   useEffect(() => {
     setTimeLeft(timer);
@@ -76,7 +77,7 @@ const PracticeCardContent = ({
                       </span>{" "}
                       :{" "}
                       {showResult ? (
-                        String(translation)  
+                        String(translation)
                       ) : (
                         <div className="h-4 w-20 blur-xs bg-violet-300 dark:bg-violet-400 ml-2"></div>
                       )}
@@ -139,13 +140,17 @@ const PracticeCardContent = ({
             <div className="flex flex-col gap-3 w-full">
               <Button
                 onClick={() => handleRecall(true)}
-                className="bg-lime-500 dark:bg-lime-600 w-full dark:hover:bg-green-600 hover:bg-green-500 text-white"
+                className={`bg-lime-500 dark:bg-lime-600 w-full dark:hover:bg-green-600 hover:bg-green-500 text-white transition ${
+                  showResult ? "opacity-50 pointer-events-none" : ""
+                }`}
               >
                 I remember
               </Button>
               <Button
                 onClick={() => handleRecall(false)}
-                className="bg-red-500 w-full hover:bg-red-600 text-white"
+                className={`bg-red-500 w-full hover:bg-red-600 text-white transition ${
+                  showResult ? "opacity-50 pointer-events-none" : ""
+                }`}
               >
                 I don't
               </Button>
@@ -166,7 +171,8 @@ const PracticeCardContent = ({
           </div>
           <Badge
             onClick={handleNext}
-            className="bg-transparent text-sm md:text-md text-yellow-500 cursor-pointer flex items-center gap-0.5 md:gap-1"
+            className={`bg-transparent text-sm md:text-md text-yellow-500 cursor-pointer flex items-center gap-0.5 md:gap-1
+              ${disableButtons ? "animate-pulse border border-yellow-500" : ""}`}
           >
             Next Word
             <MdNavigateNext className="md:!w-10 !w-6 !h-6 md:!h-10" />
