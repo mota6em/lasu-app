@@ -8,25 +8,22 @@ import { MdNavigateNext } from "react-icons/md";
 import { IoMdCheckmark } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
-import { usePracticeSession } from "@/hooks/usePracticeSession";
 import PracticeCardContentSkeleton from "./PracticeCardContentSkeleton";
-const PracticeCardContent = () => {
-  const {
-    selectedMode,
-    currentIndex,
-    timer,
-    timeLeft,
-    setTimeLeft,
-    showResult,
-    setShowResult,
-    stats,
-    answers,
-    setAnswers,
-    currentWord,
-    handleNext,
-    handleRecall,
-  } = usePracticeSession("recall");
-
+const PracticeCardContent = ({
+  selectedMode,
+  currentIndex,
+  timer,
+  timeLeft,
+  setTimeLeft,
+  showResult,
+  setShowResult,
+  stats,
+  answers,
+  setAnswers,
+  currentWord,
+  handleNext,
+  handleRecall,
+}: any) => {
   useEffect(() => {
     setTimeLeft(timer);
   }, [currentIndex, timer]);

@@ -8,15 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePracticeSession } from "@/hooks/usePracticeSession";
-const PracticeCardSettings = () => {
-  const {
-    selectedMode,
-    setSelectedMode,
-    timer,
-    setTimer,
-  } = usePracticeSession("recall");
-
+ const PracticeCardSettings = ({
+  selectedMode,
+  setSelectedMode,
+  timer,
+  setTimer,
+}: any) => {
   return (
     <div className="flex w-full items-center mb-2 md:px-4 justify-between">
       <div className="flex items-center gap-2">
