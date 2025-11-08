@@ -34,7 +34,7 @@ const PracticeCardContent = ({
     }
     if (timeLeft <= 1) return;
     const timer = setInterval(() => {
-      setTimeLeft((t) => t - 1);
+      setTimeLeft((t: number) => t - 1);
     }, 1000);
     return () => clearInterval(timer);
   }, [timeLeft]);
@@ -76,7 +76,7 @@ const PracticeCardContent = ({
                       </span>{" "}
                       :{" "}
                       {showResult ? (
-                        translation
+                        String(translation)  
                       ) : (
                         <div className="h-4 w-20 blur-xs bg-violet-300 dark:bg-violet-400 ml-2"></div>
                       )}
@@ -102,23 +102,23 @@ const PracticeCardContent = ({
                           <Input
                             value={answers[lang] || ""}
                             onChange={(e) =>
-                              setAnswers((prev) => ({
+                              setAnswers((prev: Record<string, string>) => ({
                                 ...prev,
                                 [lang]: e.target.value,
                               }))
                             }
                             placeholder={`Type the meaning in ${lang}...`}
-                            className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-blue-500 transition"
+                            className="p-3 text-base rounded-lg border focus:ring-2 focus:ring-2 focus:ring-blue-500 transition"
                           />
                           {showResult && (
                             <p className="flex items-center gap-x-2 mt-1">
-                              {answers[lang]?.trim().toLowerCase() ===
-                              translation.trim().toLowerCase() ? (
+                              {(answers[lang] || "").trim().toLowerCase() ===
+                              String(translation).trim().toLowerCase() ? (
                                 <IoMdCheckmark className="w-6 h-6 text-green-500" />
                               ) : (
                                 <IoClose className="w-6 h-6 text-red-500" />
                               )}
-                              {translation}
+                              {String(translation)}
                             </p>
                           )}
                         </div>
