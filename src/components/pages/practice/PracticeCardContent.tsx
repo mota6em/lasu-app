@@ -161,21 +161,25 @@ const PracticeCardContent = ({
         </div>
 
         <div className="w-full flex gap-x-3 md:gap-x-4 !-mt-5 justify-end -mr-10 md:-mr-5">
-          <div className="flex gap-x-2 flex-row items-center justify-center">
-            <div className="text-green-300 dark:text-green-600 mt-0.5 flex gap-x-2 text-xs md:text-sm w-full">
-              <span>Remembered: </span>
-              <span>{stats.remembered}</span>
+          {selectedMode === "recall" && (
+            <div className="flex gap-x-2 flex-row items-center justify-center">
+              <div className="text-green-300 dark:text-green-600 mt-0.5 flex gap-x-2 text-xs md:text-sm w-full">
+                <span>Remembered: </span>
+                <span>{stats.remembered}</span>
+              </div>
+              <div className="text-red-300 dark:text-red-600 flex gap-x-2 w-full mt-0.5 text-xs md:text-sm">
+                <span>Forgotten:</span>
+                <span>{stats.forgotten}</span>
+              </div>
             </div>
-            <div className="text-red-300 dark:text-red-600 flex gap-x-2 w-full mt-0.5 text-xs md:text-sm">
-              <span>Forgotten:</span>
-              <span>{stats.forgotten}</span>
-            </div>
-          </div>
+          )}
           <Badge
             onClick={handleNext}
             className={`bg-transparent text-sm md:text-md text-yellow-500 cursor-pointer flex items-center gap-0.5 md:gap-1
               ${
-                disableButtons || showResult ? "animate-pulse border border-yellow-500" : ""
+                disableButtons || showResult
+                  ? "animate-pulse border border-yellow-500"
+                  : ""
               }`}
           >
             Next Word
