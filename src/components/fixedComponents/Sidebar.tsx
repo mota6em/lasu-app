@@ -111,7 +111,13 @@ export function Sidebar({
                   </div>
                 );
               }
-
+              if (
+                !session &&
+                status === "unauthenticated" &&
+                item.label === "Practice Hub"
+              ) {
+                return null;
+              }
               return (
                 <Link
                   key={item.href}
