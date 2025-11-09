@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { usePracticeWords } from "@/hooks/usePracticeWords";
 import { usePracticeStore } from "@/store/usePracticeStore";
+import { set } from "mongoose";
 
 export function usePracticeSession(
   defaultMode: "recall" | "writing" = "recall"
@@ -28,6 +29,7 @@ export function usePracticeSession(
     setShowResult(false);
     setAnswers({});
     setDisableButtons(false);
+    setTimeLeft(timer);
   };
 
   const handleRecall = (remembered: boolean) => {
