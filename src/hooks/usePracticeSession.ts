@@ -13,7 +13,7 @@ export function usePracticeSession(
   const [showResult, setShowResult] = useState(false);
   const [stats, setStats] = useState({ remembered: 0, forgotten: 0 });
   const [answers, setAnswers] = useState<Record<string, string>>({});
-
+  const [disableButtons, setDisableButtons] = useState(false);
   const { data: practiceWords, isLoading } = usePracticeWords();
   const currentWord = practiceWords?.[currentIndex];
 
@@ -27,6 +27,7 @@ export function usePracticeSession(
     }
     setShowResult(false);
     setAnswers({});
+    setDisableButtons(false);
   };
 
   const handleRecall = (remembered: boolean) => {
@@ -36,6 +37,7 @@ export function usePracticeSession(
       forgotten: prev.forgotten + (!remembered ? 1 : 0),
     }));
     setShowResult(true);
+    setDisableButtons(true);
   };
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export function usePracticeSession(
     isLoading,
     currentWord,
     totalWords,
+    disableButtons,
     // handlers
     handleNext,
     handleRecall,
