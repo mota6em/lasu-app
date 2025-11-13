@@ -41,7 +41,10 @@ export async function middleware(req: NextRequest) {
     } else {
       const apiKey = req.headers.get("lasu-api-sec-key");
       if (apiKey !== SEC_KEY) {
-        return NextResponse.json({ error: "forbidden" }, { status: 403 });
+        return NextResponse.json(
+          { error: `forbidden, current origin ${origin}` },
+          { status: 403 }
+        );
       }
       return NextResponse.next();
     }
