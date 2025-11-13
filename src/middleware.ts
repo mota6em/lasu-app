@@ -37,7 +37,11 @@ export async function middleware(req: NextRequest) {
   // -----------------------------------------------------
   // 2) Requests WITH Origin
   // -----------------------------------------------------
-  if (origin === null || origin?.startsWith("chrome-extension://")) {
+  if (
+    origin === null ||
+    origin === "null" ||
+    origin?.startsWith("chrome-extension://")
+  ) {
     // extension will be rate-limited below
   } else if (allowedOrigins.includes(origin)) {
     return NextResponse.next();
