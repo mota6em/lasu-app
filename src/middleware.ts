@@ -61,8 +61,8 @@ export async function middleware(req: NextRequest) {
     req.headers.get("x-forwarded-for")?.split(",")[0] ||
     "unknown";
 
-  // 5 per minute
-  const minute = await rateLimit(deviceId, 5, "1m");
+  // 25 per minute
+  const minute = await rateLimit(deviceId, 25, "1m");
   if (!minute.ok) {
     return NextResponse.json(
       { error: "Too many requests (minute limit)" },
@@ -70,8 +70,8 @@ export async function middleware(req: NextRequest) {
     );
   }
 
-  // 100 per day
-  const daily = await rateLimit(deviceId, 100, "1d");
+  // 250 per day
+  const daily = await rateLimit(deviceId, 250, "1d");
   if (!daily.ok) {
     return NextResponse.json({ error: "Daily limit reached" }, { status: 429 });
   }
