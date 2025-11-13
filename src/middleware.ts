@@ -34,15 +34,17 @@ export async function middleware(req: NextRequest) {
   // 2) Requests WITH Origin
   // -----------------------------------------------------
   if (origin) {
-    if (allowedOrigins.includes(origin)) {
+    if (origin.startsWith("chrome-extension://")) {
+      // skip origin check, but extension will go through rate-limit below
+    } else if (allowedOrigins.includes(origin)) {
+      return NextResponse.next();
+    } else {
+      const apiKey = req.headers.get("lasu-api-sec-key");
+      if (apiKey !== SEC_KEY) {
+        return NextResponse.json({ error: "forbidden" }, { status: 403 });
+      }
       return NextResponse.next();
     }
-
-    const apiKey = req.headers.get("lasu-api-sec-key");
-    if (apiKey !== SEC_KEY) {
-      return NextResponse.json({ error: "forbidden" }, { status: 403 });
-    }
-    return NextResponse.next();
   }
 
   // -----------------------------------------------------
