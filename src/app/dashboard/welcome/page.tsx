@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { FaGoogle } from "react-icons/fa";
 import { MdOutlineWavingHand } from "react-icons/md";
 import { CgDanger } from "react-icons/cg";
+import { useRouter } from "next/router";
 
 import {
   AlertDialog,
@@ -20,9 +21,11 @@ import { useState } from "react";
 import Link from "next/link";
 export default function WelcomePage() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleLogIn = () => {
     signIn("google", { callbackUrl: "/dashboard" });
+    router.push("/dashboard");
   };
 
   return (
