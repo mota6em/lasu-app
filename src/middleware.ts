@@ -6,18 +6,14 @@ const allowedOrigins = [
   "https://lasu.app",
   "https://www.lasu.app",
   "http://localhost:3000",
-  "chrome-extension://jllhdgojepfdpmlppkccogdobopmiaok",
 ];
 
+const EXTENSION_ORIGIN = "chrome-extension://jllhdgojepfdpmlppkccogdobopmiaok";
 const SEC_KEY = process.env.LASU_API_SEC_KEY!;
 
 export async function middleware(req: NextRequest) {
   const origin = req.headers.get("origin");
   const method = req.method;
-  const path = req.nextUrl.pathname;
-  console.log("Origin:", origin);
-  console.log("x-device-id:", req.headers.get("x-device-id"));
-  console.log("API key:", req.headers.get("lasu-api-sec-key"));
 
   // -----------------------------------------------------
   // 1) CORS Preflight — ALWAYS ALLOW
@@ -35,17 +31,23 @@ export async function middleware(req: NextRequest) {
   }
 
   // -----------------------------------------------------
-  // 2) Requests WITH Origin
+  // 2) ORIGIN HANDLING
   // -----------------------------------------------------
-  if (
+
+  // a) Allowed website → NO rate limits
+  if (origin && allowedOrigins.includes(origin)) {
+    return NextResponse.next();
+  }
+
+  // b) Extension (origin null or chrome-extension://)
+  const isExtension =
     origin === null ||
     origin === "null" ||
-    origin?.startsWith("chrome-extension://")
-  ) {
-    // extension will be rate-limited below
-  } else if (allowedOrigins.includes(origin)) {
-    return NextResponse.next();
-  } else {
+    origin?.startsWith("chrome-extension://") ||
+    origin === EXTENSION_ORIGIN;
+
+  // c) Unknown website → must include secret key
+  if (!isExtension) {
     const apiKey = req.headers.get("lasu-api-sec-key");
     if (apiKey !== SEC_KEY) {
       return NextResponse.json(
@@ -57,16 +59,16 @@ export async function middleware(req: NextRequest) {
   }
 
   // -----------------------------------------------------
-  // 3) origin === null (extension / cron-job)
+  // 3) EXTENSION / CRON-JOB FLOW
   // -----------------------------------------------------
   const apiKey = req.headers.get("lasu-api-sec-key");
 
-  // a) cron-job.org or backend scripts → skip rate limit
-  if (apiKey && apiKey === SEC_KEY) {
+  // a) cron-job with API key → skip limits
+  if (apiKey === SEC_KEY) {
     return NextResponse.next();
   }
 
-  // b) extension users → rate limit
+  // b) extension → apply rate limits
   const deviceId =
     req.headers.get("x-device-id") ||
     req.headers.get("x-forwarded-for")?.split(",")[0] ||
