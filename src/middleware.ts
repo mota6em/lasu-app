@@ -6,6 +6,7 @@ const allowedOrigins = [
   "https://lasu.app",
   "https://www.lasu.app",
   "http://localhost:3000",
+  "chrome-extension://jllhdgojepfdpmlppkccogdobopmiaok",
 ];
 
 const SEC_KEY = process.env.LASU_API_SEC_KEY!;
@@ -14,6 +15,9 @@ export async function middleware(req: NextRequest) {
   const origin = req.headers.get("origin");
   const method = req.method;
   const path = req.nextUrl.pathname;
+  console.log("Origin:", origin);
+  console.log("x-device-id:", req.headers.get("x-device-id"));
+  console.log("API key:", req.headers.get("lasu-api-sec-key"));
 
   // -----------------------------------------------------
   // 1) CORS Preflight — ALWAYS ALLOW
@@ -33,21 +37,18 @@ export async function middleware(req: NextRequest) {
   // -----------------------------------------------------
   // 2) Requests WITH Origin
   // -----------------------------------------------------
-  if (origin) {
-    if (origin.startsWith("chrome-extension://")) {
-      // skip origin check, but extension will go through rate-limit below
-    } else if (allowedOrigins.includes(origin)) {
-      return NextResponse.next();
-    } else {
-      const apiKey = req.headers.get("lasu-api-sec-key");
-      if (apiKey !== SEC_KEY) {
-        return NextResponse.json(
-          { error: `forbidden, current origin ${origin}` },
-          { status: 403 }
-        );
-      }
-      return NextResponse.next();
+  if (origin && allowedOrigins.includes(origin)) {
+    return NextResponse.next();
+  }
+  if (origin && !allowedOrigins.includes(origin)) {
+    const apiKey = req.headers.get("lasu-api-sec-key");
+    if (apiKey !== SEC_KEY) {
+      return NextResponse.json(
+        { error: `Forbidden: untrusted origin`, origin },
+        { status: 403 }
+      );
     }
+    return NextResponse.next();
   }
 
   // -----------------------------------------------------
