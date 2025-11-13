@@ -37,14 +37,15 @@ export async function middleware(req: NextRequest) {
   // -----------------------------------------------------
   // 2) Requests WITH Origin
   // -----------------------------------------------------
-  if (origin && allowedOrigins.includes(origin)) {
+  if (origin === null || origin?.startsWith("chrome-extension://")) {
+    // extension will be rate-limited below
+  } else if (allowedOrigins.includes(origin)) {
     return NextResponse.next();
-  }
-  if (origin && !allowedOrigins.includes(origin)) {
+  } else {
     const apiKey = req.headers.get("lasu-api-sec-key");
     if (apiKey !== SEC_KEY) {
       return NextResponse.json(
-        { error: `Forbidden: untrusted origin`, origin },
+        { error: "Forbidden: untrusted origin", origin },
         { status: 403 }
       );
     }
