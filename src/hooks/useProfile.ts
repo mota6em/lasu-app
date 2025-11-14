@@ -58,22 +58,29 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
     level: stats?.level ?? "-",
     premium: false,
   };
-
-  const icons = {
-    available: [
-      { id: 1, src: "/imgs/icons/lion.jpg", label: "Lion" },
-      { id: 2, src: "/imgs/icons/fox.jpg", label: "Fox" },
-    ],
-    locked: [
-      { id: 3, src: "/imgs/icons/eagle.jpg", label: "Eagle", requiredXP: 2000 },
-      { id: 4, src: "/imgs/icons/tiger.jpg", label: "Tiger", requiredXP: 3000 },
-    ],
-    premium: [
-      { id: 5, src: "/imgs/icons/dragon.jpg", label: "Dragon" },
-      { id: 6, src: "/imgs/icons/phoenix.jpg", label: "Phoenix" },
-    ],
-  };
-
+  const icons = [
+    { id: 1, src: "/imgs/icons/lion.jpg", label: "Lion", requiredXP: 0 },
+    { id: 2, src: "/imgs/icons/aqrab.jpg", label: "Aqrab", requiredXP: 50 },
+    { id: 3, src: "/imgs/icons/bogy.jpg", label: "Bogy", requiredXP: 150 },
+    { id: 4, src: "/imgs/icons/dragon2.jpg", label: "Dragon", requiredXP: 250 },
+    { id: 5, src: "/imgs/icons/fox2.jpg", label: "Fox", requiredXP: 750 },
+    { id: 6, src: "/imgs/icons/snack.jpg", label: "Snack", requiredXP: 1000 },
+    { id: 7, src: "/imgs/icons/widcat.jpg", label: "Cat", requiredXP: 500 },
+    { id: 8, src: "/imgs/icons/eagle.jpg", label: "Eagle", requiredXP: 2000 },
+    { id: 9, src: "/imgs/icons/tiger.jpg", label: "Tiger", requiredXP: 3000 },
+    {
+      id: 10,
+      src: "/imgs/icons/dragon.jpg",
+      label: "Dragon",
+      requiredXP: 4000,
+    },
+    {
+      id: 11,
+      src: "/imgs/icons/phoenix.jpg",
+      label: "Phoenix",
+      requiredXP: 5000,
+    },
+  ];
   return {
     user,
     allStats,

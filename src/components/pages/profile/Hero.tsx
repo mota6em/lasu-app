@@ -72,72 +72,52 @@ const Hero = () => {
                       Available
                     </h3>
                     <div className="grid grid-cols-4 gap-3">
-                      {icons.available.map((ic) => (
-                        <Image
-                          key={ic.id}
-                          src={ic.src}
-                          alt={ic.label}
-                          width={70}
-                          height={70}
-                          onClick={() => setIcon(ic.src)}
-                          className={`cursor-pointer rounded-full border-2 transition bg-white ${
-                            icon === ic.src
-                              ? "border-yellow-600 scale-110"
-                              : "border-transparent hover:opacity-80"
-                          }`}
-                        />
-                      ))}
+                      {icons
+                        .filter((ic) => (allStats.xp || 0) >= ic.requiredXP)
+                        .map((ic) => (
+                          <Image
+                            key={ic.id}
+                            src={ic.src}
+                            alt={ic.label}
+                            width={70}
+                            height={70}
+                            onClick={() => setIcon(ic.src)}
+                            className={`cursor-pointer rounded-full border-2 transition bg-white ${
+                              icon === ic.src
+                                ? "border-yellow-600 scale-110"
+                                : "border-transparent hover:opacity-80"
+                            }`}
+                          />
+                        ))}
                     </div>
                   </section>
 
                   {/* Locked */}
                   <section>
                     <h3 className="font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                      <FaLock /> Locked (Reach more XP)
+                      <FaLock /> Locked (Need more XP)
                     </h3>
                     <div className="grid grid-cols-4 gap-3 opacity-50">
-                      {icons.locked.map((ic) => (
-                        <div
-                          key={ic.id}
-                          className="relative flex items-center justify-center cursor-no-drop"
-                        >
-                          <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden">
-                            <Image
-                              src={ic.src}
-                              alt={ic.label}
-                              fill
-                              className="object-cover grayscale bg-white"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold bg-black/50 text-white">
-                              {ic.requiredXP} XP
+                      {icons
+                        .filter((ic) => (allStats.xp || 0) < ic.requiredXP)
+                        .map((ic) => (
+                          <div
+                            key={ic.id}
+                            className="relative flex items-center justify-center cursor-no-drop"
+                          >
+                            <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden">
+                              <Image
+                                src={ic.src}
+                                alt={ic.label}
+                                fill
+                                className="object-cover grayscale bg-white"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold bg-black/50 text-white">
+                                {ic.requiredXP} XP
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-
-                  {/* Premium */}
-                  <section>
-                    <h3 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1">
-                      <FaCrown className="text-yellow-600" /> Premium Users
-                    </h3>
-                    <div className="grid grid-cols-4 gap-3">
-                      {icons.premium.map((ic) => (
-                        <Image
-                          key={ic.id}
-                          src={ic.src}
-                          alt={ic.label}
-                          width={70}
-                          height={70}
-                          className={`rounded-full border-2 bg-white ${
-                            allStats.premium
-                              ? "border-yellow-600 cursor-pointer"
-                              : "grayscale opacity-60 cursor-no-drop"
-                          }`}
-                          onClick={() => allStats.premium && setIcon(ic.src)}
-                        />
-                      ))}
+                        ))}
                     </div>
                   </section>
                 </div>
