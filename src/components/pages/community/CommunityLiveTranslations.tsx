@@ -2,27 +2,11 @@
 
 import { FaVolumeUp, FaSpinner } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { FaChartLine } from "react-icons/fa";
 import Image from "next/image";
 import { useCommunityLive } from "@/hooks/useCommunityLive";
 import Link from "next/link";
 
-interface TranslationResult {
-  translations: Record<string, string>;
-  example: Record<string, string>;
-}
-
-interface CommunityTranslation {
-  userId: string;
-  userName: string;
-  userImage: string;
-  sourceText: string;
-  translationType: string;
-  translationFilter: string;
-  result: TranslationResult;
-  createdAt: string | Date;
-}
 
 export default function CommunityTranslations() {
   const {
