@@ -58,6 +58,9 @@ export async function sendSummary(
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 50);
 
+  //return if no words
+  if (mergedList.length === 0) return;
+
   //Pick a "word of the day/week"
   const selectedWord =
     mergedList.length > 0
