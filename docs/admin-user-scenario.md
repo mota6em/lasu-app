@@ -17,8 +17,15 @@ So in this implementation:
 
 ### 1) Sign in
 1. Open the app.
-2. Click **Login with Google**.
-3. Complete Google authentication.
+2. Click **Login** (top navigation) or **Login with Google** if you are already on the dashboard welcome page.
+3. In the sign-in screen, choose **Continue with Google**.
+4. Select your Google account and approve access.
+5. You are redirected back to the dashboard.
+
+### 1.1) If you cannot find the Google button
+- Start at the top-right **LOGIN** button on `https://blackant.app`.
+- If the login page still does not show Google, your deployment may use a different auth setup than this repo.
+- In that case, ask your platform admin which identity provider is enabled for your environment.
 
 ### 2) First-time user flow
 1. Open **Dashboard**.
