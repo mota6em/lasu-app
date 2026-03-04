@@ -46,3 +46,14 @@ To support "admin creates users" with username/password, you need new features:
 - admin-only user management UI + APIs
 
 Until those are implemented, use Google login for all accounts.
+
+
+## Where this Google-login statement comes from
+
+It is based on the repository source code (not a marketing page claim):
+- `src/pages/api/auth/[...nextauth].ts` configures NextAuth with `GoogleProvider(...)`.
+- `src/app/dashboard/welcome/page.tsx` triggers `signIn("google", ...)`.
+- `src/components/fixedComponents/Sidebar.tsx` includes a `Login with Google` button wired to `signIn("google")`.
+
+So yes, it is now documented in this guide, and it is directly traceable to code.
+

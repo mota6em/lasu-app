@@ -39,4 +39,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Admin/User scenario guide
 
-See `docs/admin-user-scenario.md` for login reality, how to sign in with Google, troubleshooting (`admin/admin`), and the supported user flow in this codebase.
+See `docs/admin-user-scenario.md` for login reality, where Google login is defined in code, troubleshooting (`admin/admin`), and the supported user flow in this codebase.
