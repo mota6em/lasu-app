@@ -39,4 +39,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Admin/User scenario guide
 
-See `docs/admin-user-scenario.md` for a practical step-by-step admin and end-user walkthrough.
+See `docs/admin-user-scenario.md` for login reality, troubleshooting (`admin/admin`), and the supported user flow in this codebase.

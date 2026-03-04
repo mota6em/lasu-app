@@ -1,76 +1,41 @@
-# BlackAnt / LaSu Admin + User Walkthrough
+# BlackAnt / LaSu Access Guide (Important Login Reality)
 
-This guide gives you a **simple role-play scenario** you can follow.
+If you tried **username/password = `admin` / `admin`** and could not do anything, that behavior is expected for this repository.
 
-> Important: in this codebase, login is implemented with **Google sign-in** (NextAuth Google provider), not a username/password form. If your production site `https://blackant.app` has username/password, keep using your real admin account there. The workflow below still applies conceptually.  
+## Why `admin/admin` does not work here
 
----
+This app currently authenticates with **Google Sign-In (NextAuth Google provider)**. There is no credentials-based login form, no built-in admin password account, and no admin role management UI in the current codebase.
 
-## 1) Admin scenario: create a user
-
-### Goal
-As admin, create a learner account for a team member/student.
-
-### Scenario steps
-1. Sign in as **Admin** on `https://blackant.app`.
-2. Go to user/account management.
-3. Click **Create user**.
-4. Fill user details:
-   - Full name
-   - Email (or username if your deployment uses username/password)
-   - Temporary password (if required)
-   - Initial settings (languages, translation style)
-5. Save.
-6. Share credentials securely with the user and force password reset on first login (best practice).
-
-### What success looks like
-- New user appears in the users list.
-- User can log in.
-- User profile/settings are initialized.
+So in this implementation:
+- `admin/admin` is **not** a valid built-in account.
+- users are created automatically when someone signs in with Google for the first time.
+- there is no "admin creates user with username/password" flow yet.
 
 ---
 
-## 2) User scenario: first-time use
+## What works right now
 
-### Goal
-User logs in and performs the first learning activity.
+### 1) Sign in
+1. Open the app.
+2. Click **Login with Google**.
+3. Complete Google authentication.
 
-### Scenario steps
-1. Open `https://blackant.app`.
-2. Log in with the credentials provided by admin.
-3. Open **Dashboard**.
-4. Go to **Settings** and select preferred language pair + translation type.
-5. Use the **Translate** tool:
-   - Enter a source word/sentence.
-   - Select translation direction/type.
-   - Submit translation.
-6. Confirm translation is saved into **History**.
-7. Open **Stats** to verify activity is tracked.
-8. (Optional) Join/use **Community** features.
-
-### What success looks like
-- Translation result is displayed.
-- A history record exists.
-- Stats/community counters update.
+### 2) First-time user flow
+1. Open **Dashboard**.
+2. Configure **Settings** (languages + translation type).
+3. Use **Translate** with a sample word/sentence.
+4. Check **History** for saved translations.
+5. Check **Stats** for progress.
+6. Optionally use **Community** and **Practice Hub**.
 
 ---
 
-## 3) Ongoing user flow (later)
+## If you need a real admin workflow
 
-Use this weekly cycle:
-1. Add new words/sentences in Translate.
-2. Review recent entries in History.
-3. Check Stats progress.
-4. Practice in Practice Hub.
-5. Update Settings as learning goals change.
+To support "admin creates users" with username/password, you need new features:
+- credentials auth provider (email/username + password)
+- password hashing/reset flow
+- role field (admin/user)
+- admin-only user management UI + APIs
 
----
-
-## 4) Notes for this repository (technical reality)
-
-From current source code:
-- Authentication uses **Google Provider** with NextAuth.
-- A user document is auto-created on first successful login.
-- Sidebar and dashboard include modules for Overview, Community, Practice Hub, History, Stats, and Settings.
-
-So if you need strict username/password admin provisioning, that is a **product requirement gap** to implement separately in this codebase.
+Until those are implemented, use Google login for all accounts.
