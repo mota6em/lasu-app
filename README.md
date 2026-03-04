@@ -35,3 +35,8 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # lasu-app
+
+
+## Admin/User scenario guide
+
+See `docs/admin-user-scenario.md` for login reality, where Google login is defined in code, troubleshooting (`admin/admin`), and the supported user flow in this codebase.
