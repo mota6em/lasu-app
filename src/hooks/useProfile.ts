@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useOverviewCards } from "./useOverviewCards";
@@ -10,19 +10,52 @@ interface UseProfileProps {
 
 const useProfile = ({ sUserId }: UseProfileProps = {}) => {
   const { data: session, update } = useSession();
-  const user = session?.user;
+  const sessionUser = session?.user;
+  const [publicUser, setPublicUser] = useState<any>(null);
+  const [publicUserLoading, setPublicUserLoading] = useState(false);
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [loading, setLoading] = useState(false);
 
   // stats and cards
   const { cards } = useOverviewCards();
-  const totalTranslations =
-    cards.find((c) => c.title === "Total Translations")?.value ?? "-";
-  const { stats } = useUserStats(sUserId || user?.id || "");
+  const { stats } = useUserStats(sUserId || sessionUser?.id || "");
+
+  useEffect(() => {
+    if (!sUserId) {
+      setPublicUser(null);
+      setPublicUserLoading(false);
+      return;
+    }
+
+    let active = true;
+    const fetchPublicUser = async () => {
+      if (active) setPublicUserLoading(true);
+      try {
+        const res = await fetch(`/api/users/${sUserId}`);
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const data = await res.json();
+        if (active) setPublicUser(data);
+      } catch {
+        if (active) setPublicUser(null);
+      } finally {
+        if (active) setPublicUserLoading(false);
+      }
+    };
+
+    fetchPublicUser();
+    return () => {
+      active = false;
+    };
+  }, [sUserId]);
+
+  const user = sUserId ? publicUser : sessionUser;
+  const totalTranslations = sUserId
+    ? (stats?.allTimeTranslations ?? "-")
+    : (cards.find((c) => c.title === "Total Translations")?.value ?? "-");
 
   const handleSave = async () => {
-    const userId = sUserId || user?.id;
+    const userId = sessionUser?.id;
     if (!userId) return;
 
     try {
@@ -90,6 +123,7 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
     icon,
     setIcon,
     loading,
+    publicUserLoading,
     handleSave,
   };
 };

@@ -15,7 +15,14 @@ import {
 export default function PublicProfilePage() {
   const params = useParams() as { id: string };
   const { id } = params;
-  const { allStats, user } = useProfile({ sUserId: id });
+  const { allStats, user, publicUserLoading } = useProfile({ sUserId: id });
+
+  if (publicUserLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <span className="loading loading-dots loading-xl"></span>
+      </div>
+    );
 
   if (!user)
     return (
