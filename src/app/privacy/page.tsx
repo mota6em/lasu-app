@@ -1,3 +1,5 @@
+import React from "react";
+
 export const metadata = {
   title: "Privacy Policy - LaSu",
   description: "How LaSu handles user data safely and responsibly.",
@@ -5,85 +7,107 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-20 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100">
-      <div className="max-w-2xl w-full space-y-6">
-        <h1 className="text-3xl font-bold text-center mb-6">Privacy Policy</h1>
+    <main className="min-h-screen flex flex-col items-center px-6 py-20 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100">
+      <div className="max-w-2xl w-full space-y-8">
+        <header className="text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2">
+            Privacy Policy
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Last updated: 2026 april 23
+          </p>
+        </header>
 
-        <p>
-          <strong>Last updated:</strong> November 2025
-        </p>
-
-        <p>
-          LaSu helps users learn languages by providing AI-powered translations
-          for selected text while browsing. We value your privacy and keep
-          things simple.
-        </p>
+        <section className="prose dark:prose-invert max-w-none">
+          <p className="text-lg leading-relaxed">
+            LaSu is built to help you master new languages by providing
+            AI-powered translations for the text you encounter while browsing.
+            We believe your data is yours, and we keep our privacy practices
+            simple and transparent.
+          </p>
+        </section>
 
         <section>
-          <h2 className="text-xl font-semibold mt-4 mb-2">
-            1. Data We Process
-          </h2>
+          <h2 className="text-2xl font-semibold mb-3">1. Data We Process</h2>
           <p>
-            LaSu only processes text you select on web pages to generate
-            translations. We do not collect personal, financial, or location
+            LaSu only processes the **specific text you highlight or select** on
+            web pages. We do not collect or monitor your browsing history,
+            personal identifiers, financial information, or precise location
             data.
           </p>
         </section>
 
         <section>
-          <section>
-            <h2 className="text-xl font-semibold mt-4 mb-2">
-              2. How Data Is Used
-            </h2>
-            <p>
-              Selected text is sent securely to LaSu&apos;s servers (and AI
-              providers like OpenAI) to produce translations. Stored
-              translations are only for your personal history and review.
-              Nothing is sold or shared.
-            </p>
-          </section>
+          <h2 className="text-2xl font-semibold mb-3">
+            2. How AI Processing Works
+          </h2>
+          <p className="mb-4">
+            To provide high-quality translations, your selected text is sent
+            securely to our servers and then to third-party AI providers (such
+            as OpenAI).
+          </p>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>
+              <strong>Anonymity:</strong> We do not send your name or account
+              details to AI providers.
+            </li>
+            <li>
+              <strong>Purpose:</strong> Data sent to these providers is used
+              solely to generate the translation or explanation you requested.
+            </li>
+            <li>
+              <strong>History:</strong> Translations are saved to your personal
+              history so you can review and practice them later.
+            </li>
+          </ul>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mt-4 mb-2">
-            3. Local Preferences
+          <h2 className="text-2xl font-semibold mb-3">
+            3. Local Storage & Preferences
           </h2>
           <p>
-            Language and feature settings may be saved locally on your device to
-            improve your experience.
+            Settings such as your target language, UI preferences, and feature
+            toggles are stored locally on your device (using LocalStorage or
+            cookies) to ensure a seamless experience across browsing sessions.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mt-4 mb-2">4. Security</h2>
-          <p>
-            All communication uses HTTPS. No personal data is sold, shared, or
-            transferred.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold mt-4 mb-2">
-            5. Children's Privacy
+          <h2 className="text-2xl font-semibold mb-3">
+            4. Security & Data Sharing
           </h2>
           <p>
-            LaSu is intended for general audiences and not for children under
-            13.
+            We use industry-standard <strong>HTTPS encryption</strong> for all
+            data in transit. LaSu does not sell your data to advertisers. We
+            only share selected text with our AI sub-processors to fulfill the
+            core service of the app.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mt-4 mb-2">6. Contact</h2>
+          <h2 className="text-2xl font-semibold mb-3">5. Your Rights</h2>
           <p>
-            For any questions, email us at{" "}
+            You have full control over your learning data. You can clear your
+            translation history or reset your settings at any time within the
+            app interface.
+          </p>
+        </section>
+
+        <section className="pt-6 border-t border-gray-200 dark:border-gray-800">
+          <h2 className="text-2xl font-semibold mb-3">6. Contact Us</h2>
+          <p>
+            If you have questions about how we handle your data, feel free to
+            reach out:
+          </p>
+          <div className="mt-4">
             <a
               href="mailto:team.lasu.app@gmail.com"
-              className="text-purple-600 dark:text-purple-400 underline"
+              className="text-purple-600 dark:text-purple-400 font-medium underline underline-offset-4 hover:text-purple-500 transition-colors"
             >
               team.lasu.app@gmail.com
             </a>
-            .
-          </p>
+          </div>
         </section>
       </div>
     </main>
