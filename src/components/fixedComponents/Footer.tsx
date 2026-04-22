@@ -75,7 +75,7 @@ export default function Footer() {
               <div className="text-sm mt-1 text-muted-foreground gap-x-0.5 w-full flex justify-start items-start flex-row">
                 <IoCodeSlashOutline size={18} className="mt-0.5" /> by{" "}
                 <a
-                  href="https://motasem.info"
+                  href="https://motasem.dev"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary text-yellow-800 dark:text-yellow-600"
@@ -105,8 +105,8 @@ export default function Footer() {
               <DialogHeader>
                 <DialogTitle>Contact us</DialogTitle>
                 <DialogDescription>
-                  Questions, partnerships, or feedback? We’d love to hear from
-                  you.
+                  Questions, partnerships, or feedback? We&#39;d love to hear
+                  from you.
                 </DialogDescription>
               </DialogHeader>
 
@@ -149,13 +149,13 @@ export default function Footer() {
                     What we collect
                   </h4>
                   <ul className="list-disc pl-5 space-y-1">
-                    <li>Account info (name, email) for login and support</li>
+                    <li>
+                      Account info (name, email) for user login and sending translation
+                      history via email
+                    </li>
                     <li>
                       Translation history (text + results) to show past items,
                       stats, and practice
-                    </li>
-                    <li>
-                      Basic analytics (anonymous) to improve performance and UX
                     </li>
                   </ul>
                 </div>
@@ -165,8 +165,7 @@ export default function Footer() {
                   </h4>
                   <ul className="list-disc pl-5 space-y-1">
                     <li>
-                      Data is stored securely in our database using encryption
-                      where possible
+                      Data is stored securely in our database.
                     </li>
                     <li>
                       Access to your data is limited to authorized team members
