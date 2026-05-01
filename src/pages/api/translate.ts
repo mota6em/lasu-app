@@ -60,7 +60,7 @@ export default async function handler(
     `;
   try {
     const chat = await openai.chat.completions.create({
-      model: process.env.OPENAI_MODEL || "gpt-3.5-turbo",
+      model: process.env.OPENAI_MODEL || "gpt-5.4-mini",
       messages: [
         {
           role: "system",
