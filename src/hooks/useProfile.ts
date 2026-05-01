@@ -15,6 +15,7 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
   const [publicUserLoading, setPublicUserLoading] = useState(false);
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
+  const [emailSummary, setEmailSummary] = useState(true);
   const [loading, setLoading] = useState(false);
 
   // stats and cards
@@ -25,6 +26,14 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
     if (!sUserId) {
       setPublicUser(null);
       setPublicUserLoading(false);
+
+      if (sessionUser?.id) {
+        fetch(`/api/users/${sessionUser.id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            setEmailSummary(data.emailSummary ?? true);
+          });
+      }
       return;
     }
 
@@ -35,7 +44,10 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
         const res = await fetch(`/api/users/${sUserId}`);
         if (!res.ok) throw new Error("Failed to fetch user");
         const data = await res.json();
-        if (active) setPublicUser(data);
+        if (active) {
+          setPublicUser(data);
+          setEmailSummary(data.emailSummary ?? true);
+        }
       } catch {
         if (active) setPublicUser(null);
       } finally {
@@ -63,7 +75,7 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
       const res = await fetch(`/api/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, image: icon }),
+        body: JSON.stringify({ name, image: icon, emailSummary }),
       });
 
       const data = await res.json();
@@ -122,6 +134,8 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
     setName,
     icon,
     setIcon,
+    emailSummary,
+    setEmailSummary,
     loading,
     publicUserLoading,
     handleSave,

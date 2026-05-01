@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   await connectToDB();
 
@@ -17,23 +17,29 @@ export default async function handler(
   try {
     // GET user info
     if (req.method === "GET") {
-      const user = await User.findById(id).select("name image email");
+      const user = await User.findById(id).select(
+        "name image email emailSummary",
+      );
       if (!user) return res.status(404).json({ error: "User not found" });
       return res.status(200).json(user);
     }
 
-    // PATCH - update name or image
+    // PATCH - update name or image or emailSummary
     if (req.method === "PATCH") {
-      const { name, image } = req.body;
+      const { name, image, emailSummary } = req.body;
 
-      if (!name && !image)
+      if (!name && !image && emailSummary === undefined)
         return res.status(400).json({ error: "No data to update" });
 
       const updatedUser = await User.findByIdAndUpdate(
         id,
-        { ...(name && { name }), ...(image && { image }) },
-        { new: true }
-      ).select("name image email");
+        {
+          ...(name && { name }),
+          ...(image && { image }),
+          ...(emailSummary !== undefined && { emailSummary }),
+        },
+        { new: true },
+      ).select("name image email emailSummary");
 
       if (!updatedUser)
         return res.status(404).json({ error: "User not found" });

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
@@ -25,6 +26,8 @@ const Hero = () => {
     setName,
     icon,
     setIcon,
+    emailSummary,
+    setEmailSummary,
     loading,
     handleSave,
   } = useProfile();
@@ -138,6 +141,16 @@ const Hero = () => {
           <div className="flex items-center gap-2 text-gray-600">
             <MdOutlineEmail className="text-yellow-600" />
             <span>{user?.email || "no email"}</span>
+          </div>
+          <div className="flex items-center justify-between w-full max-w-[300px] mt-1 border p-2 rounded-lg">
+            <div className="flex flex-col">
+              <span className="text-sm">Email Summaries</span>
+            </div>
+            <Switch
+              checked={emailSummary}
+              onCheckedChange={setEmailSummary}
+              className="data-[state=checked]:bg-yellow-600"
+            />
           </div>
           <Button
             onClick={handleSave}

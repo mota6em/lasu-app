@@ -14,7 +14,10 @@ export async function getAllUsersWithTranslations(period: "week" | "day") {
     startDate = new Date(0);
   }
 
-  const users = await db.collection("users").find({}).toArray();
+  const users = await db
+    .collection("users")
+    .find({ emailSummary: { $ne: false } })
+    .toArray();
   const translations = await db
     .collection("translations")
     .find({ createdAt: { $gte: startDate } })

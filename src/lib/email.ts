@@ -14,12 +14,12 @@ export const transporter = nodemailer.createTransport({
 export async function sendSummary(
   user: User,
   userTranslations: Translation[],
-  type: "daily" | "weekly"
+  type: "daily" | "weekly",
 ) {
   const summaryType = type === "daily" ? "Daily" : "Weekly";
   //Filter single words only (no phrases)
   const singleWords = userTranslations.filter(
-    (t) => !t.sourceText.includes(" ")
+    (t) => !t.sourceText.includes(" "),
   );
 
   //Merge languages for duplicate words
@@ -87,11 +87,11 @@ export async function sendSummary(
                 ? `<p style="margin:4px 0 0 12px; font-size:13px; color:#444;"><i>${t.examples[lang]}</i></p>`
                 : ""
             }
-          </div>`
+          </div>`,
             )
             .join("")}
         </div> 
-      </div>`
+      </div>`,
     )
     .join("");
 
@@ -107,7 +107,7 @@ export async function sendSummary(
       <div style="background:#eee; border-radius:10px; overflow:hidden; margin:20px 0;">
         <div style="background:#4cafef; height:12px; width:${Math.min(
           (mergedList.length / 50) * 100,
-          100
+          100,
         )}%;"></div>
       </div>
       <p style="font-size:14px; color:#444; text-align:center;">You reviewed <b>${
@@ -126,14 +126,14 @@ export async function sendSummary(
             ${Object.entries(selectedWord.langs)
               .map(
                 ([lang, val]) =>
-                  `<span style="display:inline-block; background:#eef; padding:2px 8px; margin:2px; border-radius:12px; font-size:13px;">${lang}: ${val}</span>`
+                  `<span style="display:inline-block; background:#eef; padding:2px 8px; margin:2px; border-radius:12px; font-size:13px;">${lang}: ${val}</span>`,
               )
               .join("")}
           </div>
             ${Object.entries(selectedWord.examples || {})
               .map(
                 ([lang, ex]) =>
-                  `<p style="color:#555; margin:4px 0;"><i>${lang}: ${ex}</i></p>`
+                  `<p style="color:#555; margin:4px 0;"><i>${lang}: ${ex}</i></p>`,
               )
               .join("")}
         </div>`
@@ -155,6 +155,9 @@ export async function sendSummary(
       <!-- Footer -->
       <p style="font-size:12px; color:#777; text-align:center;">
         💡 Pro tip: Reviewing 5 minutes a day beats cramming once a week. Keep your streak alive!  
+      </p>
+      <p style="font-size:11px; color:#999; text-align:center; margin-top:20px;">
+        To stop receiving these email summaries, you can cancel them from your <a href="https://lasu.app/dashboard/profile" style="color:#999; text-decoration:underline;">Profile Settings</a>.
       </p>
     </div>
   `;

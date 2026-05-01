@@ -7,6 +7,7 @@ export interface IUser extends Document {
   selectedLanguages: string[];
   translationType: string;
   createdAt: Date;
+  emailSummary: boolean;
 }
 
 const userSchema = new Schema({
@@ -15,6 +16,7 @@ const userSchema = new Schema({
   image: String,
   selectedLanguages: { type: [String], default: ["english", "spanish"] },
   translationType: { type: String, default: "formal" },
+  emailSummary: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 });
 
