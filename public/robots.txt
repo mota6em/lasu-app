@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://lasu.app
+Host: https://lasu.online
 
 # Sitemaps
-Sitemap: https://lasu.app/sitemap.xml
+Sitemap: https://lasu.online/sitemap.xml

@@ -23,7 +23,7 @@ export default function Footer() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("support@lasu.app");
+    navigator.clipboard.writeText("support@lasu.online");
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -122,7 +122,7 @@ export default function Footer() {
                 </Button>
 
                 <Button asChild variant="outline" className="w-full">
-                  <a href="mailto:support@lasu.app">Send us an email</a>
+                  <a href="mailto:support@lasu.online">Send us an email</a>
                 </Button>
               </div>
             </DialogContent>
@@ -150,8 +150,8 @@ export default function Footer() {
                   </h4>
                   <ul className="list-disc pl-5 space-y-1">
                     <li>
-                      Account info (name, email) for user login and sending translation
-                      history via email
+                      Account info (name, email) for user login and sending
+                      translation history via email
                     </li>
                     <li>
                       Translation history (text + results) to show past items,
@@ -164,9 +164,7 @@ export default function Footer() {
                     Storage & control
                   </h4>
                   <ul className="list-disc pl-5 space-y-1">
-                    <li>
-                      Data is stored securely in our database.
-                    </li>
+                    <li>Data is stored securely in our database.</li>
                     <li>
                       Access to your data is limited to authorized team members
                       only

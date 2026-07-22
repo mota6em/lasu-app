@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     title: "Language Stats | LaSu",
     description:
       "Your translation activity visualized. Monitor your learning trends and top languages with real-time insights.",
-    url: "https://lasu.app/dashboard/stats",
+    url: "https://lasu.online/dashboard/stats",
     siteName: "LaSu - Your AI Language Support",
     type: "website",
   },

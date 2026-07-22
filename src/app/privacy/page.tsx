@@ -102,10 +102,10 @@ export default function PrivacyPage() {
           </p>
           <div className="mt-4">
             <a
-              href="mailto:team.lasu.app@gmail.com"
+              href="mailto:team.lasu.online@gmail.com"
               className="text-purple-600 dark:text-purple-400 font-medium underline underline-offset-4 hover:text-purple-500 transition-colors"
             >
-              team.lasu.app@gmail.com
+              team.lasu.online@gmail.com
             </a>
           </div>
         </section>

@@ -147,7 +147,7 @@ export async function sendSummary(
 
       <!-- CTA -->
       <div style="text-align:center; margin:30px 0;">
-        <a href="https://lasu.app/dashboard/history" style="display:inline-block; background:#4cafef; color:#fff; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">
+        <a href="https://lasu.online/dashboard/history" style="display:inline-block; background:#4cafef; color:#fff; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">
           🔎 See all your words & phrases
         </a>
       </div>
@@ -157,7 +157,7 @@ export async function sendSummary(
         💡 Pro tip: Reviewing 5 minutes a day beats cramming once a week. Keep your streak alive!  
       </p>
       <p style="font-size:11px; color:#999; text-align:center; margin-top:20px;">
-        To stop receiving these email summaries, you can cancel them from your <a href="https://lasu.app/dashboard/profile" style="color:#999; text-decoration:underline;">Profile Settings</a>.
+        To stop receiving these email summaries, you can cancel them from your <a href="https://lasu.online/dashboard/profile" style="color:#999; text-decoration:underline;">Profile Settings</a>.
       </p>
     </div>
   `;

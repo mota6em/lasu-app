@@ -33,20 +33,20 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  authors: [{ name: "Motasem Abubaraka", url: "https://lasu.app" }],
+  authors: [{ name: "Motasem Abubaraka", url: "https://lasu.online" }],
   creator: "Motasem Abubaraka",
-  metadataBase: new URL("https://lasu.app"),
+  metadataBase: new URL("https://lasu.online"),
   openGraph: {
     title: "LaSu - Your AI Language Support",
     description:
       "Translate, understand, and learn languages as you browse. The ultimate tool for polyglots and learners.",
-    url: "https://lasu.app",
+    url: "https://lasu.online",
     siteName: "LaSu - Your AI Language Support",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "https://lasu.app/meta-img.png",
+        url: "https://lasu.online/meta-img.png",
         width: 1200,
         height: 630,
         alt: "LaSu AI Language Support Preview",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     title: "LaSu - Your AI Language Support",
     description:
       "AI-powered Chrome extension for smarter language learning and browsing.",
-    images: ["https://lasu.app/meta-img.png"],
+    images: ["https://lasu.online/meta-img.png"],
     creator: "@mota6em",
   },
 };
@@ -75,7 +75,7 @@ export default function RootLayout({
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "LaSu - Your AI Language Support",
-          url: "https://lasu.app",
+          url: "https://lasu.online",
           description:
             "Learn languages effortlessly with LaSu - the Chrome extension that offers AI-powered translations, real-life examples, and contextual understanding as you browse.",
         })}

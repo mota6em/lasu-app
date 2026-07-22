@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://lasu.app",
+  siteUrl: "https://lasu.online",
   generateRobotsTxt: true,
   generateIndexSitemap: true,
 };

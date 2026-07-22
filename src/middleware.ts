@@ -3,8 +3,8 @@ import type { NextRequest } from "next/server";
 import { rateLimit } from "./lib/rateLimit";
 
 const allowedOrigins = [
-  "https://lasu.app",
-  "https://www.lasu.app",
+  "https://lasu.online",
+  "https://www.lasu.online",
   "http://localhost:3000",
 ];
 
@@ -29,7 +29,7 @@ export async function middleware(req: NextRequest) {
     headers.set("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
     headers.set(
       "Access-Control-Allow-Headers",
-      "Content-Type, lasu-api-sec-key, x-device-id"
+      "Content-Type, lasu-api-sec-key, x-device-id",
     );
     return new NextResponse(null, { status: 204, headers });
   }
@@ -52,7 +52,7 @@ export async function middleware(req: NextRequest) {
     if (apiKey !== SEC_KEY) {
       return NextResponse.json(
         { error: "Forbidden: untrusted origin", origin },
-        { status: 403 }
+        { status: 403 },
       );
     }
     return NextResponse.next();
@@ -86,7 +86,7 @@ export async function middleware(req: NextRequest) {
   if (!minute.ok) {
     return NextResponse.json(
       { error: "Too many requests (minute limit)" },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
