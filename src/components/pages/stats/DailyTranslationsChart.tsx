@@ -1,69 +1,103 @@
+"use client";
+
 import {
-  LineChart,
-  Line,
+  Area,
+  AreaChart,
   CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { useTheme } from "next-themes";
+import type { DayPoint } from "@/lib/series";
 
 interface DailyTranslationsChartProps {
-  chartData: { date: string; count: number }[];
+  chartData: DayPoint[];
   isMobile: boolean;
 }
 
-const DailyTranslationsChart = ({
+function formatTick(value: string) {
+  const date = new Date(value);
+  return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+}
+
+function ChartTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-[var(--shadow-lift)]">
+      <p className="text-[11px] text-muted-foreground">
+        {new Date(label).toLocaleDateString(undefined, {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+        })}
+      </p>
+      <p className="font-display text-lg font-bold tabular-nums leading-tight">
+        {payload[0].value}
+        <span className="ms-1 text-xs font-normal text-muted-foreground">
+          {payload[0].value === 1 ? "translation" : "translations"}
+        </span>
+      </p>
+    </div>
+  );
+}
+
+export default function DailyTranslationsChart({
   chartData,
   isMobile,
-}: DailyTranslationsChartProps) => {
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+}: DailyTranslationsChartProps) {
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart
+    <ResponsiveContainer width="100%" height={260}>
+      <AreaChart
         data={chartData}
-        margin={
-          isMobile
-            ? { top: 2, right: 2, left: 0, bottom: 0 }
-            : { top: 10, right: 30, left: 0, bottom: 0 }
-        }
+        margin={{ top: 8, right: 8, left: isMobile ? -24 : -12, bottom: 0 }}
       >
-        <Line
-          type="monotone"
-          dataKey="count"
-          stroke={isDark ? "#93C5FD" : "#4F46E5"}
-          strokeWidth={2}
-        />
+        <defs>
+          <linearGradient id="translationsFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-brand-500)" stopOpacity={0.4} />
+            <stop offset="100%" stopColor="var(--color-brand-500)" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+
         <CartesianGrid
-          strokeDasharray="3 3"
-          stroke={isDark ? "#444" : "#ccc"}
+          vertical={false}
+          stroke="var(--border)"
+          strokeDasharray="4 4"
         />
         <XAxis
           dataKey="date"
-          tick={{ fontSize: isMobile ? 10 : 12 }}
-          interval={isMobile ? "preserveStartEnd" : 0}
-          stroke={isDark ? "#aaa" : "#333"}
+          tickFormatter={formatTick}
+          tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+          tickLine={false}
+          axisLine={false}
+          minTickGap={isMobile ? 32 : 20}
         />
         <YAxis
-          tick={{ fontSize: isMobile ? 10 : 12 }}
-          stroke={isDark ? "#aaa" : "#333"}
-          hide={isMobile}
-        />{" "}
-        <Tooltip
-          contentStyle={{
-            backgroundColor: isDark ? "#1f2937" : "#fff", // bg-zinc-800
-            border: "none",
-            borderRadius: 8,
-            fontSize: 12,
-            color: isDark ? "#fff" : "#000",
-          }}
-          labelStyle={{ color: isDark ? "#ccc" : "#333" }}
+          allowDecimals={false}
+          width={40}
+          tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+          tickLine={false}
+          axisLine={false}
         />
-      </LineChart>
+        <Tooltip
+          content={<ChartTooltip />}
+          cursor={{ stroke: "var(--border-strong)", strokeDasharray: "4 4" }}
+        />
+        <Area
+          type="monotone"
+          dataKey="count"
+          stroke="var(--color-brand-500)"
+          strokeWidth={2.25}
+          fill="url(#translationsFill)"
+          activeDot={{
+            r: 4,
+            strokeWidth: 2,
+            stroke: "var(--surface)",
+            fill: "var(--color-brand-500)",
+          }}
+        />
+      </AreaChart>
     </ResponsiveContainer>
   );
-};
-
-export default DailyTranslationsChart;
+}

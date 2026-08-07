@@ -1,10 +1,23 @@
 export default function Loading() {
   return (
-    <div className="flex items-center gap-x-1 md:gap-x-2 justify-center min-h-[300px] animate-pulse">
-      <h1 className="text-ls md:text-2xl font-bold">
-        Loading Your LaSu Stats!
-      </h1>
-      <span className="loading loading-dots loading-xl"></span>
+    <div className="space-y-6">
+      <div>
+        <div className="shimmer h-9 w-32 rounded-lg" />
+        <div className="shimmer mt-2 h-4 w-56 rounded" />
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="shimmer h-28 rounded-xl" />
+        ))}
+      </div>
+
+      <div className="shimmer h-80 rounded-2xl" />
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <div className="shimmer h-56 rounded-2xl" />
+        <div className="shimmer h-56 rounded-2xl" />
+      </div>
     </div>
   );
 }
