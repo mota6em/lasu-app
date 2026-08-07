@@ -1,93 +1,122 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import Translation from "@/types/translation";
-import { availableLanguages } from "@/lib/languages";
+import { LOCAL_HISTORY_EVENT, readLocalHistory } from "@/lib/localHistory";
 import { useTranslationStats } from "./useTranslationStats";
 
-export interface OverviewCard {
-  title: string;
-  value: string | number;
+export interface OverviewData {
+  total: number;
+  thisWeek: number;
+  lastWeek: number;
+  mostUsedLang: string | null;
+  dailySeries: { date: string; count: number }[];
+  topLangs: [string, number][];
+}
+
+const EMPTY: OverviewData = {
+  total: 0,
+  thisWeek: 0,
+  lastWeek: 0,
+  mostUsedLang: null,
+  dailySeries: [],
+  topLangs: [],
+};
+
+const DAY = 86_400_000;
+
+function dayKey(date: Date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+function buildFromLocal(history: Translation[]): OverviewData {
+  const now = Date.now();
+  const langCount: Record<string, number> = {};
+  const dayCount: Record<string, number> = {};
+  let thisWeek = 0;
+  let lastWeek = 0;
+
+  for (const item of history) {
+    const time = new Date(item.createdAt).getTime();
+    if (time > now - 7 * DAY) thisWeek += 1;
+    else if (time > now - 14 * DAY) lastWeek += 1;
+
+    for (const lang of Object.keys(item.result?.translations ?? {})) {
+      langCount[lang] = (langCount[lang] || 0) + 1;
+    }
+
+    const key = dayKey(new Date(item.createdAt));
+    dayCount[key] = (dayCount[key] || 0) + 1;
+  }
+
+  const topLangs = (Object.entries(langCount) as [string, number][]).sort(
+    (a, b) => b[1] - a[1]
+  );
+
+  return {
+    total: history.length,
+    thisWeek,
+    lastWeek,
+    mostUsedLang: topLangs[0]?.[0] ?? null,
+    topLangs,
+    dailySeries: Object.entries(dayCount)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date)),
+  };
 }
 
 export function useOverviewCards() {
   const { data: session, status } = useSession();
-  const { data: stats, isLoading: statsLoading } = useTranslationStats(
-    session?.user?.id
-  );
-  const [localCards, setLocalCards] = useState<OverviewCard[] | null>(null);
-  const [loadingLocal, setLoadingLocal] = useState(false);
+  const userId = session?.user?.id;
+  const { data: stats, isLoading: statsLoading } = useTranslationStats(userId);
+  const [localHistory, setLocalHistory] = useState<Translation[] | null>(null);
 
   useEffect(() => {
-    if (session?.user?.id) return;
-    if (status === "loading") return;
+    if (userId || status === "loading") return;
 
-    // Local user → read stats from localStorage
-    setLoadingLocal(true);
-    try {
-      const raw = localStorage.getItem("lasu-history");
-      const parsed: Translation[] = raw ? JSON.parse(raw) : [];
+    const sync = () => setLocalHistory(readLocalHistory());
+    sync();
 
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        setLocalCards([
-          { title: "Total Translations", value: 0 },
-          { title: "This Week", value: 0 },
-          { title: "Most Used Lang", value: "-" },
-        ]);
-        return;
-      }
+    window.addEventListener(LOCAL_HISTORY_EVENT, sync);
+    return () => window.removeEventListener(LOCAL_HISTORY_EVENT, sync);
+  }, [userId, status]);
 
-      const total = parsed.length;
-      const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      const thisWeek = parsed.filter(
-        (t) => new Date(t.createdAt).getTime() > weekAgo
-      ).length;
+  const data = useMemo<OverviewData>(() => {
+    if (userId) {
+      if (!stats) return EMPTY;
 
-      const langCount: Record<string, number> = {};
-      for (const t of parsed) {
-        for (const [lang] of Object.entries(t.result?.translations ?? {})) {
-          langCount[lang] = (langCount[lang] || 0) + 1;
-        }
-      }
+      const series = stats.dailySeries ?? [];
+      const now = Date.now();
+      const inRange = (from: number, to: number) =>
+        series
+          .filter((d) => {
+            const time = new Date(d.date).getTime();
+            return time > now - from * DAY && time <= now - to * DAY;
+          })
+          .reduce((sum, d) => sum + d.count, 0);
 
-      const sortedLangs = Object.entries(langCount).sort((a, b) => b[1] - a[1]);
-      const mostLangValue = sortedLangs[0]?.[0];
-      const mostLang =
-        availableLanguages.find((l) => l.value === mostLangValue)?.label ??
-        mostLangValue ??
-        "-";
-
-      setLocalCards([
-        { title: "Total Translations", value: total },
-        { title: "This Week", value: thisWeek },
-        { title: "Most Used Lang", value: mostLang },
-      ]);
-    } finally {
-      setLoadingLocal(false);
+      return {
+        total: stats.totalTranslations ?? 0,
+        thisWeek: stats.thisWeekCount ?? 0,
+        lastWeek: inRange(14, 7),
+        mostUsedLang: stats.mostUsedLang?.lang ?? stats.mostUsedLang?._id ?? null,
+        topLangs: stats.topLangs ?? [],
+        dailySeries: series,
+      };
     }
-  }, [session, status]);
 
-  const cards: OverviewCard[] = session?.user?.id
-    ? stats
-      ? [
-          { title: "Total Translations", value: stats.totalTranslations },
-          { title: "This Week", value: stats.thisWeekCount },
-          {
-            title: "Most Used Lang",
-            value:
-              availableLanguages.find(
-                (l) =>
-                  l.value === (stats.mostUsedLang?.lang ?? stats.mostUsedLang?._id)
-              )?.label ?? "-",
-          },
-        ]
-      : []
-    : (localCards ?? []);
+    return localHistory ? buildFromLocal(localHistory) : EMPTY;
+  }, [userId, stats, localHistory]);
 
-  const isServerLoading = status === "loading" || (!!session?.user?.id && statsLoading);
-  const isLocalLoading = status === "unauthenticated" && loadingLocal;
-  const isCardsReady = cards.length > 0;
-  const showSkeleton = isServerLoading || isLocalLoading || !isCardsReady;
+  const isLoading =
+    status === "loading" ||
+    (!!userId && statsLoading) ||
+    (!userId && localHistory === null);
 
-  return { cards, showSkeleton };
+  return { data, isLoading };
 }

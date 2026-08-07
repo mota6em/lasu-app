@@ -1,24 +1,31 @@
-import Translation from "@/types/translation";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+"use client";
 
-async function fetchHistory(filter: "all" | "word" | "phrase") {
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { showUndoToast } from "@/components/fixedComponents/UndoToast";
+import {
+  LOCAL_HISTORY_EVENT,
+  readLocalHistory,
+  writeLocalHistory,
+} from "@/lib/localHistory";
+import Translation from "@/types/translation";
+
+const UNDO_WINDOW = 5000;
+
+type Filter = "all" | "word" | "phrase";
+
+async function fetchHistory(filter: Filter): Promise<Translation[]> {
   const res = await fetch(`/api/translation/history?filter=${filter}`);
   if (!res.ok) throw new Error("Failed to fetch history");
   return res.json();
 }
 
-async function deleteTranslation(itemId: string) {
-  await fetch(`/api/translation/history/${itemId}`, { method: "DELETE" });
-}
-
-export default function useTranslationHistory(
-  filter: "all" | "word" | "phrase"
-) {
+export default function useTranslationHistory(filter: Filter) {
   const { data: session, status } = useSession();
   const queryClient = useQueryClient();
   const [localHistory, setLocalHistory] = useState<Translation[]>([]);
+  const pendingDeletes = useRef(new Map<string, ReturnType<typeof setTimeout>>());
 
   const {
     data: history,
@@ -31,69 +38,80 @@ export default function useTranslationHistory(
   });
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      const local = localStorage.getItem("lasu-history");
-      if (local) {
-        const parsed = JSON.parse(local);
-        if (Array.isArray(parsed)) setLocalHistory(parsed);
-      }
-    }
+    if (status !== "unauthenticated") return;
+
+    const sync = () => setLocalHistory(readLocalHistory());
+    sync();
+
+    window.addEventListener(LOCAL_HISTORY_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(LOCAL_HISTORY_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
   }, [status]);
 
-  const filteredLocalHistory =
-    filter === "all"
-      ? localHistory
-      : localHistory.filter((item) => item.translationType === filter);
+  useEffect(() => {
+    const timers = pendingDeletes.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   const displayHistory: Translation[] =
-    status === "authenticated" ? (history ?? []) : filteredLocalHistory;
+    status === "authenticated"
+      ? history ?? []
+      : filter === "all"
+      ? localHistory
+      : localHistory.filter((item) => item.translationFilter === filter);
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteTranslation,
-    onMutate: async (itemId: string) => {
-      // remove it from the visible list immediately, don't wait on the network
-      await queryClient.cancelQueries({
-        queryKey: ["translation-history", filter],
-      });
-      const previous = queryClient.getQueryData<Translation[]>([
-        "translation-history",
-        filter,
-      ]);
-      queryClient.setQueryData<Translation[]>(
-        ["translation-history", filter],
-        (old) => old?.filter((i) => i._id !== itemId) ?? []
-      );
-      return { previous };
-    },
-    onError: (_err, _itemId, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(
-          ["translation-history", filter],
-          context.previous
-        );
+  // the row disappears straight away and the request only leaves once the undo
+  // window closes, so an accidental delete costs nothing
+  const handleDelete = useCallback(
+    (itemId: string) => {
+      if (status !== "authenticated") {
+        const previous = readLocalHistory();
+        writeLocalHistory(previous.filter((item) => item._id !== itemId));
+        showUndoToast("Translation deleted", () => writeLocalHistory(previous));
+        return;
       }
-    },
-  });
 
-  const handleDelete = async (itemId: string) => {
-    if (status === "authenticated") {
-      deleteMutation.mutate(itemId);
-    } else {
-      const updated = localHistory.filter((i) => i._id !== itemId);
-      setLocalHistory(updated);
-      localStorage.setItem("lasu-history", JSON.stringify(updated));
-    }
-  };
+      const keys: Filter[] = ["all", "word", "phrase"];
+      const snapshots = keys.map(
+        (key) =>
+          [key, queryClient.getQueryData<Translation[]>(["translation-history", key])] as const
+      );
+
+      keys.forEach((key) =>
+        queryClient.setQueryData<Translation[]>(["translation-history", key], (old) =>
+          old?.filter((item) => item._id !== itemId)
+        )
+      );
+
+      const commit = setTimeout(async () => {
+        pendingDeletes.current.delete(itemId);
+        await fetch(`/api/translation/history/${itemId}`, { method: "DELETE" });
+        queryClient.invalidateQueries({ queryKey: ["translation-stats"] });
+        queryClient.invalidateQueries({ queryKey: ["practice-words"] });
+      }, UNDO_WINDOW);
+
+      pendingDeletes.current.set(itemId, commit);
+
+      showUndoToast(
+        "Translation deleted",
+        () => {
+          clearTimeout(commit);
+          pendingDeletes.current.delete(itemId);
+          snapshots.forEach(([key, snapshot]) =>
+            queryClient.setQueryData(["translation-history", key], snapshot)
+          );
+        },
+        UNDO_WINDOW - 400
+      );
+    },
+    [status, queryClient]
+  );
 
   const isLoading =
     status === "loading" || (status === "authenticated" && isQueryLoading);
 
-  return {
-    displayHistory,
-    isLoading,
-    isError,
-    handleDelete,
-    session,
-    status,
-  };
+  return { displayHistory, isLoading, isError, handleDelete, session, status };
 }

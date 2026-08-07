@@ -43,13 +43,13 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
   }, [sUserId, publicUser, selfUser]);
 
   // stats and cards
-  const { cards } = useOverviewCards();
+  const { data: overview } = useOverviewCards();
   const { stats } = useUserStats(sUserId || sessionUser?.id || "");
 
   const user = sUserId ? publicUser ?? null : sessionUser;
   const totalTranslations = sUserId
-    ? (stats?.allTimeTranslations ?? "-")
-    : (cards.find((c) => c.title === "Total Translations")?.value ?? "-");
+    ? stats?.allTimeTranslations ?? 0
+    : overview.total;
 
   const saveMutation = useMutation({
     mutationFn: async () => {
