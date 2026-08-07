@@ -1,88 +1,48 @@
 "use client";
+
+import { useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signIn, signOut } from "next-auth/react";
-import { Home, History, BarChart, Settings, LogOut, Globe } from "lucide-react";
-import { useSettingsDialog } from "@/store/useSettingsDialog";
-import TranslationSettingDialog from "../pages/settings/TranslationSettingDialog";
-import { LuBookOpen } from "react-icons/lu";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Flame, LogOut, Settings, Sparkles, X, Zap } from "lucide-react";
+import NavIcon from "./NavIcon";
+import TranslationSettingDialog from "../pages/settings/TranslationSettingDialog";
+import { navItems, prefetchRoute } from "@/lib/nav";
+import { useSettingsDialog } from "@/store/useSettingsDialog";
+import { useUserStats } from "@/hooks/useUserStats";
+import { cn } from "@/lib/utils";
 
-import { useEffect, useState } from "react";
-import LogoAndMenuBtn from "../topbar/LogoAndMenuBtn";
+function StreakCard() {
+  const { data: session } = useSession();
+  const { stats, isMember } = useUserStats(session?.user?.id);
 
-// warm the cache for a nav destination on hover so the page has data the instant it mounts
-function usePrefetchOnHover(userId?: string) {
-  const queryClient = useQueryClient();
+  if (!session || !isMember) return null;
 
-  return (href: string) => () => {
-    if (href === "/dashboard/community") {
-      queryClient.prefetchQuery({
-        queryKey: ["community-stats"],
-        queryFn: async () => {
-          const res = await fetch("/api/community/stats");
-          const json = await res.json();
-          return json.data;
-        },
-      });
-      queryClient.prefetchQuery({
-        queryKey: ["community-live"],
-        queryFn: async () => {
-          const res = await fetch("/api/community/live");
-          return res.json();
-        },
-      });
-    } else if (href === "/dashboard/history" && userId) {
-      queryClient.prefetchQuery({
-        queryKey: ["translation-history", "all"],
-        queryFn: async () => {
-          const res = await fetch("/api/translation/history?filter=all");
-          return res.json();
-        },
-      });
-    } else if (href === "/dashboard/stats" && userId) {
-      queryClient.prefetchQuery({
-        queryKey: ["translation-stats", userId],
-        queryFn: async () => {
-          const res = await fetch("/api/translation/history?wantStats=1");
-          return res.json();
-        },
-      });
-    } else if (href === "/dashboard/practice" && userId) {
-      queryClient.prefetchQuery({
-        queryKey: ["practice-words"],
-        queryFn: async () => {
-          const res = await fetch(
-            "/api/translation/history?limit=50&filter=word"
-          );
-          return res.json();
-        },
-      });
-    }
-  };
+  return (
+    <Link
+      href="/dashboard/community"
+      className="lift block rounded-xl border border-brand-500/25 bg-gradient-to-br from-brand-500/12 to-iris-500/10 p-3"
+    >
+      <div className="flex items-center gap-2">
+        <Flame className="h-4 w-4 text-brand-500" />
+        <span className="font-display text-lg font-bold tabular-nums">
+          {stats.streak ?? 0}
+        </span>
+        <span className="text-xs text-muted-foreground">day streak</span>
+      </div>
+      <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          <Zap className="h-3 w-3 text-brand-500" />
+          {stats.xp ?? 0} XP
+        </span>
+        <span>Level {stats.level ?? 1}</span>
+      </div>
+    </Link>
+  );
 }
-
-const menu = [
-  { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
-  {
-    label: "Community",
-    href: "/dashboard/community",
-    icon: <Globe size={18} />,
-  },
-
-  {
-    label: "Practice Hub",
-    href: "/dashboard/practice",
-    icon: <LuBookOpen size={18} />,
-  },
-  { label: "History", href: "/dashboard/history", icon: <History size={18} /> },
-  { label: "Stats", href: "/dashboard/stats", icon: <BarChart size={18} /> },
-  {
-    label: "Settings",
-    href: "/dashboard/settings",
-    icon: <Settings size={18} />,
-  },
-];
 
 export function Sidebar({
   mobileOpen,
@@ -94,141 +54,172 @@ export function Sidebar({
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
-  const prefetchFor = usePrefetchOnHover(session?.user?.id);
+  const queryClient = useQueryClient();
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) =>
-      e.key === "Escape" && setMobileOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMobileOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [setMobileOpen]);
-  const showSettingsDialog = () => {
-    toggleSettingsDialog();
-  };
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  const prefetch = (href: string) => () =>
+    prefetchRoute(queryClient, href, session?.user?.id);
+
+  const visibleItems = navItems.filter(
+    (item) => !item.requiresAuth || status !== "unauthenticated"
+  );
 
   return (
     <>
-      {/* backdrop for mobile */}
+      <TranslationSettingDialog />
+
       <div
-        className={`fixed inset-0 z-50 bg-black/40 lg:hidden transition-opacity ${
-          mobileOpen ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
         onClick={() => setMobileOpen(false)}
+        className={cn(
+          "fixed inset-0 z-40 bg-background/70 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+          mobileOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
       />
+
       <aside
-        className={[
-          "fixed lg:sticky top-0 left-0 z-50 h-screen",
-          "bg-white dark:bg-[#121212] border-r",
-          "flex flex-col justify-between",
-          "transition-all duration-300",
-          "lg:w-48",
-          mobileOpen ? "w-56 translate-x-0" : "-translate-x-full w-56",
-          "lg:translate-x-0",
-          "px-4 lg:px-5 pt-1 lg:pt-7 py-6",
-        ].join(" ")}
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-e border-border bg-surface transition-transform duration-300 lg:translate-x-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+        style={{ transitionTimingFunction: "var(--ease-out-quint)" }}
       >
-        <div>
-          <TranslationSettingDialog />
-          {/* top row */}
+        <div className="flex items-center justify-between px-5 pb-4 pt-5">
           <Link
-            className="font-bold text-gray-800 dark:text-gray-200 lasu-logo-lg hidden lg:block"
             href="/dashboard"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-baseline gap-2"
           >
-            LaSu
+            <span className="lasu-logo-lg text-gradient">LaSu</span>
           </Link>
+          <button
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-surface-2 lg:hidden"
+          >
+            <X className="h-4.5 w-4.5" />
+          </button>
+        </div>
 
-          <div className="lg:hidden border-b w-full pb-1">
-            <LogoAndMenuBtn onMenuClick={() => setMobileOpen(!mobileOpen)} />
-          </div>
+        <nav className="flex-1 overflow-y-auto px-3">
+          <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Workspace
+          </p>
 
-          <nav className="space-y-2">
-            {menu.map((item) => {
+          <ul className="space-y-0.5">
+            {visibleItems.map((item) => {
               const isActive = pathname === item.href;
-
-              if (item.label === "Settings") {
-                return (
-                  <div
-                    key={item.href}
-                    onClick={() => showSettingsDialog()}
-                    className={`${
-                      isOpen
-                        ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-300 dark:border-gray-600"
-                        : ""
-                    } flex items-center gap-2 px-3 py-2 rounded-md transition text-sm font-medium  ${
-                      isActive
-                        ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-300 dark:border-gray-600"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    {item.icon}
-                    <span>Settings</span>
-                  </div>
-                );
-              }
-              if (
-                !session &&
-                status === "unauthenticated" &&
-                item.label === "Practice Hub"
-              ) {
-                return null;
-              }
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md transition text-sm font-medium ${
-                    isActive
-                      ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-300 dark:border-gray-600"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                  }`}
-                  onClick={() => setMobileOpen(false)}
-                  onMouseEnter={prefetchFor(item.href)}
-                  onFocus={prefetchFor(item.href)}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    onMouseEnter={prefetch(item.href)}
+                    onFocus={prefetch(item.href)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+                    )}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="sidebar-active"
+                        transition={{ type: "spring", stiffness: 400, damping: 34 }}
+                        className="absolute inset-0 rounded-lg border border-brand-500/25 bg-brand-500/10"
+                      />
+                    )}
+                    <NavIcon
+                      name={item.icon}
+                      className={cn(
+                        "relative h-[18px] w-[18px] shrink-0",
+                        isActive && "text-brand-600 dark:text-brand-400"
+                      )}
+                    />
+                    <span className="relative">{item.label}</span>
+                  </Link>
+                </li>
               );
             })}
 
-            {status === "unauthenticated" && !session && (
-              <div className="group left-5 w-45 lg:w-38">
-                <div className="space-y-4 group">
-                  <div className="flex flex-row gap-2 items-center ">
-                    <img
-                      src="/imgs/sad-lasu-icon.png"
-                      alt="Sad Owl"
-                      className="w-10 h-10 group-hover:hidden dark:bg-amber-600 rounded-2xl "
-                    />
-                    <img
-                      src="/imgs/happy-lasu-icon.png"
-                      alt="Happy Owl"
-                      className="w-10 h-10 hidden group-hover:block dark:bg-amber-500 rounded-xl"
-                    />
-                    <p className="text-xs text-gray-500 dark:text-gray-50 ">
-                      Please log in to use our full features & more.
-                    </p>
-                  </div>
-                  <button
-                    className="bg-black group-hover:bg-blue-950 dark:bg-amber-600 dark:group-hover:bg-amber-500  cursor-pointer text-white text-sm px-3 py-2 rounded-md w-full group"
-                    onClick={() => signIn("google")}
-                  >
-                    Login with Google
-                  </button>
-                </div>
-              </div>
-            )}
-          </nav>
-        </div>
+            <li>
+              <button
+                onClick={toggleSettingsDialog}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  isOpen
+                    ? "bg-surface-2 text-foreground"
+                    : "text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+                )}
+              >
+                <Settings className="h-[18px] w-[18px] shrink-0" />
+                <span>Preferences</span>
+              </button>
+            </li>
+          </ul>
 
-        {session && (
-          <button
-            onClick={() => signOut()}
-            className="flex items-center gap-2 text-sm cursor-pointer text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition mt-8"
-          >
-            <LogOut size={18} />
-            <span>Logout</span>{" "}
-          </button>
-        )}
+          {status === "unauthenticated" && (
+            <div className="mt-6 rounded-xl border border-border bg-surface-2 p-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-brand-500" />
+                <p className="text-sm font-semibold">Unlock everything</p>
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                Sign in to keep your history in sync, build a streak and drill words
+                in the Practice Hub.
+              </p>
+              <button
+                onClick={() => signIn("google")}
+                className="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98]"
+              >
+                Continue with Google
+              </button>
+            </div>
+          )}
+        </nav>
+
+        <div className="space-y-3 border-t border-border p-3">
+          <StreakCard />
+
+          {session?.user && (
+            <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
+              <Image
+                src={session.user.image || "/imgs/userIcon.jpg"}
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8 shrink-0 rounded-full object-cover"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{session.user.name}</p>
+                <p className="truncate text-[11px] text-muted-foreground">
+                  {session.user.email}
+                </p>
+              </div>
+              <button
+                onClick={() => signOut()}
+                title="Sign out"
+                aria-label="Sign out"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-2 hover:text-destructive"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </div>
       </aside>
     </>
   );

@@ -1,79 +1,86 @@
 "use client";
 
 import Link from "next/link";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { LogOut, Settings, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FaUser } from "react-icons/fa";
-import { LogOut } from "lucide-react";
+import { useSettingsDialog } from "@/store/useSettingsDialog";
 
 export function UserMenu() {
   const { data: session, status } = useSession();
+  const { toggleSettingsDialog } = useSettingsDialog();
   const user = session?.user;
 
   if (status === "loading") {
-    return (
-      <div className="flex items-center space-x-4">
-        <Skeleton className="h-8 w-8 rounded-full" />
-      </div>
-    );
+    return <Skeleton className="h-9 w-9 rounded-full" />;
   }
 
-  if (!user || status === "unauthenticated") {
+  if (!user) {
     return (
       <button
         onClick={() => signIn("google")}
-        className="text-xs md:text-sm px-4 py-2 rounded-md font-semibold bg-black dark:bg-amber-600 cursor-pointer hover:bg-blue-950 text-white"
+        className="rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-brand)] transition-transform active:scale-[0.97]"
       >
-        Login
+        Sign in
       </button>
     );
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer">
+      <DropdownMenuTrigger className="rounded-full outline-none ring-offset-2 ring-offset-background transition-shadow focus-visible:ring-2 focus-visible:ring-ring">
+        <Avatar className="h-9 w-9 border border-border">
           <AvatarImage src={user.image ?? ""} alt={user.name ?? "User"} />
-          <AvatarFallback>
-            {user.name?.slice(0, 2).toUpperCase() ?? "US"}
+          <AvatarFallback className="bg-surface-2 text-xs font-semibold">
+            {user.name?.slice(0, 2).toUpperCase() ?? "LS"}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="text-md text-black w-full text-center dark:text-white font-bold">
-          {user.name}
-        </DropdownMenuLabel>
-        <DropdownMenuLabel className="text-xs text-center text-gray-400">
-          {user.email}
-        </DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-60 p-1.5">
+        <div className="flex items-center gap-2.5 px-2 py-2">
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={user.image ?? ""} alt="" />
+            <AvatarFallback className="text-xs">
+              {user.name?.slice(0, 2).toUpperCase() ?? "LS"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">{user.name}</p>
+            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+          </div>
+        </div>
+
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
-          <Link
-            href="/dashboard/profile"
-            className="flex items-center gap-2 text-sm text-black dark:text-white"
-          >
-            <FaUser className="text-yellow-600" /> My Profile
+        <DropdownMenuItem asChild className="cursor-pointer gap-2">
+          <Link href="/dashboard/profile">
+            <User className="h-4 w-4" /> My profile
           </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onClick={toggleSettingsDialog}
+          className="cursor-pointer gap-2"
+        >
+          <Settings className="h-4 w-4" /> Preferences
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onClick={() => signOut()}
-          className="flex items-center gap-2 text-red-600 cursor-pointer"
+          className="cursor-pointer gap-2 text-destructive focus:text-destructive"
         >
-          <LogOut className="h-4 w-4" /> Logout
+          <LogOut className="h-4 w-4" /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
