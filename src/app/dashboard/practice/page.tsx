@@ -1,27 +1,38 @@
 "use client";
-import { Brain } from "lucide-react";
-import PracticeCard from "@/components/pages/practice/PracticeCard";
+
+import { useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
-const PracticePage = () => {
-  const { data: session } = useSession();
-  if (!session) {
-    signIn("google");
-  }
+import { Brain } from "lucide-react";
+import PracticeBoard from "@/components/pages/practice/PracticeBoard";
+
+export default function PracticePage() {
+  const { status } = useSession();
+
+  useEffect(() => {
+    if (status === "unauthenticated") signIn("google");
+  }, [status]);
+
   return (
-    <div className="flex flex-col pt-6 md:pt-4 items-center justify-center min-h-screen md:p-6 ">
-      <div className="mb-8 flex flex-col items-center text-center">
-        <h1 className="text-4xl font-bold flex items-center gap-2  text-indigo-800 dark:text-indigo-400">
-          <Brain className="w-8 h-8 text-indigo-800 dark:text-indigo-300" />
+    <div className="space-y-8">
+      <header className="text-center animate-fade-up">
+        <span className="inline-flex items-center gap-2 rounded-full border border-brand-500/25 bg-brand-500/10 px-3 py-1 text-xs font-medium text-brand-700 dark:text-brand-300">
+          <Brain className="h-3.5 w-3.5" />
           Practice Hub
-          <Brain className="w-8 h-8 text-indigo-800 dark:text-indigo-300" />
+        </span>
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl">
+          Make the words <span className="text-gradient">stick</span>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          ✨ Sharpen your memory, one word at a time ✨
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          Every single word you translate becomes a card. Run a quick round whenever
+          you have a minute.
         </p>
-      </div>
-      <PracticeCard />
+      </header>
+
+      {status === "loading" ? (
+        <div className="mx-auto h-64 w-full max-w-xl shimmer rounded-2xl" />
+      ) : (
+        <PracticeBoard />
+      )}
     </div>
   );
-};
-
-export default PracticePage;
+}
