@@ -1,12 +1,24 @@
+export interface TranslationResult {
+  translations: Record<string, string>;
+  example?: Record<string, string>;
+  exampleMeaning?: Record<string, string>;
+  romanization?: Record<string, string>;
+  sourceLanguage?: string;
+  kind?: "word" | "phrase";
+  meaning?: string;
+  partOfSpeech?: string;
+  difficulty?: string;
+  note?: string;
+  synonyms?: string[];
+}
+
 interface Translation {
   _id: string;
   sourceText: string;
   translationType: string;
+  translationFilter?: "word" | "phrase";
   createdAt: string;
-  result: {
-    translations: Record<string, string>;
-    example?: Record<string, string>;
-  };
+  result: TranslationResult;
 }
 
 export default Translation;
@@ -15,13 +27,11 @@ export interface TranslateHook {
   text: string;
   setText: (val: string) => void;
   resultLoading: boolean;
-  result: {
-    translations?: Record<string, string>;
-    example?: Record<string, string>;
-  };
+  error: string | null;
+  result: TranslationResult | null;
+  submittedText: string;
   handleTranslate: () => void;
   handlePasteInline: () => void;
-  copiedLang: string | null;
-  setCopiedLang: (val: string | null) => void;
+  reset: () => void;
   toggleSettingsDialog: () => void;
 }

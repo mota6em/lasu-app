@@ -86,15 +86,14 @@ export default async function handler(
   if (filter !== "all") query.translationFilter = filter;
 
   let cursor = Translation.find(query)
-    .select("sourceText translationType result.translations result.example createdAt")
+    .select("sourceText translationType translationFilter result createdAt")
     .sort({ createdAt: -1 });
 
   // only apply pagination if limit is provided
   if (limit) {
-    const pageNum = parseInt(page as string, 10);
-    const limitNum = parseInt(limit as string, 10);
-    const skip = pageNum * limitNum;
-    cursor = cursor.skip(skip).limit(limitNum);
+    const limitNum = Math.min(Math.max(parseInt(limit as string, 10) || 50, 1), 200);
+    const pageNum = Math.max(parseInt(page as string, 10) || 0, 0);
+    cursor = cursor.skip(pageNum * limitNum).limit(limitNum);
   } else {
     cursor = cursor.limit(200);
   }
