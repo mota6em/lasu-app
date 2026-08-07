@@ -1,34 +1,41 @@
-"use client";
-
 import Link from "next/link";
-import { FaRobot } from "react-icons/fa";
-import { MdOutlineTranslate } from "react-icons/md";
-import { AiOutlineSearch } from "react-icons/ai";
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-sky-900 to-indigo-800 text-center p-5">
-      <FaRobot className="text-8xl md:text-[120px] text-yellow-400 mb-4 animate-bounce" />
-      <h2 className="text-3xl md:text-5xl font-bold text-yellow-300 mb-3">
-        Oops! Language lost in translation...
-      </h2>
-      <p className="text-md md:text-xl text-white/80 mb-6 max-w-md flex flex-col items-center gap-2">
-        <span>
-          The page you're looking for doesn't exist. Maybe it's stuck in another
-          language!
-        </span>
-        <MdOutlineTranslate className="text-3xl text-white/50 animate-spin mt-2" />
-      </p>
-      <Link
-        href="/dashboard"
-        className="flex items-center gap-2 px-6 py-3 bg-amber-400 text-sky-900 font-semibold rounded-lg hover:bg-amber-500 transition"
-      >
-        <AiOutlineSearch className="text-xl" /> Return to Dashboard
-      </Link>
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
+      <div aria-hidden className="absolute inset-0 grid-bg" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-brand-400/25 blur-3xl animate-aurora"
+      />
 
-      <div className="mt-10 text-white/50 animate-pulse flex items-center gap-2">
-        <AiOutlineSearch /> Try translating something new instead!
+      <div className="relative">
+        <p className="font-display text-[6rem] font-extrabold leading-none tracking-tighter text-gradient md:text-[9rem]">
+          404
+        </p>
+        <h1 className="mt-2 font-display text-2xl font-bold tracking-tight md:text-3xl">
+          Lost in translation
+        </h1>
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          This page does not exist in any of our 74 languages. Let&apos;s get you back
+          to something useful.
+        </p>
+
+        <div className="mt-7 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
+          <Link
+            href="/dashboard"
+            className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-brand)] transition-transform active:scale-[0.97]"
+          >
+            Back to translating
+          </Link>
+          <Link
+            href="/dashboard/history"
+            className="rounded-lg border border-border bg-surface px-5 py-2.5 text-sm font-medium transition-colors hover:bg-surface-2"
+          >
+            Open my history
+          </Link>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

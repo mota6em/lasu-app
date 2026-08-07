@@ -1,23 +1,24 @@
 "use client";
+
+import { useEffect } from "react";
 import Image from "next/image";
+import { Camera, Check, Loader2, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FaUserEdit, FaCrown, FaLock, FaCamera } from "react-icons/fa";
-import { MdOutlineEmail } from "react-icons/md";
-import { Loader2 } from "lucide-react";
 import useProfile from "@/hooks/useProfile";
-import { useEffect } from "react";
+import { levelProgress } from "@/lib/xp";
+import { cn } from "@/lib/utils";
 
-const Hero = () => {
+export default function Hero() {
   const {
     user,
     allStats,
@@ -31,139 +32,169 @@ const Hero = () => {
     loading,
     handleSave,
   } = useProfile();
+
   useEffect(() => {
     if (user) {
       setName(user.name || "");
-      setIcon(user.image || "/imgs/userIcon.png");
+      setIcon(user.image || "/imgs/userIcon.jpg");
     }
-  }, [user]);
+  }, [user, setName, setIcon]);
+
+  const xp = Number(allStats.xp) || 0;
+  const progress = levelProgress(xp);
+  const unlocked = icons.filter((item) => xp >= item.requiredXP);
+  const locked = icons.filter((item) => xp < item.requiredXP);
+
   return (
-    <Card className="shadow-md border border-yellow-100 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-900/10">
-      <CardContent className="flex flex-col sm:flex-row items-center gap-6 p-6">
-        <div className="relative flex flex-col items-center">
-          <div className="relative group">
+    <section className="surface-card overflow-hidden">
+      <div className="relative h-24 bg-gradient-to-r from-brand-500/25 via-brand-400/15 to-iris-500/25">
+        <div aria-hidden className="absolute inset-0 grid-bg opacity-60" />
+      </div>
+
+      <div className="px-5 pb-5 md:px-6">
+        <div className="-mt-12 flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="relative w-fit">
             <Image
-              src={icon}
-              alt="Profile Icon"
-              width={120}
-              height={120}
-              className="rounded-full border-4 border-yellow-600 shadow-lg bg-white transition-all group-hover:brightness-95"
+              src={icon || "/imgs/userIcon.jpg"}
+              alt=""
+              width={96}
+              height={96}
+              className="h-24 w-24 rounded-2xl border-4 border-surface bg-surface object-cover shadow-[var(--shadow-lift)]"
             />
 
             <Dialog>
               <DialogTrigger asChild>
                 <button
-                  className="absolute bottom-0 right-0 p-2 bg-yellow-600 text-white rounded-full shadow-md 
-                            hover:bg-yellow-700 transition-all duration-200"
-                  title="Change Icon"
+                  title="Change avatar"
+                  className="absolute -bottom-1 -end-1 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[var(--shadow-brand)] transition-transform hover:scale-105"
                 >
-                  <FaCamera className="h-4 w-4 cursor-pointer" />
+                  <Camera className="h-4 w-4" />
                 </button>
               </DialogTrigger>
 
-              <DialogContent className="max-w-lg">
+              <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-yellow-600 font-bold text-xl">
-                    Choose Your Icon
+                  <DialogTitle className="font-display text-xl">
+                    Choose your avatar
                   </DialogTitle>
+                  <DialogDescription>
+                    New avatars unlock as you earn XP. You have {xp} XP.
+                  </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-4">
-                  {/* Available */}
-                  <section>
-                    <h3 className="font-semibold text-yellow-700 mb-2">
-                      Available
-                    </h3>
-                    <div className="grid grid-cols-4 gap-3">
-                      {icons
-                        .filter((ic) => (allStats.xp || 0) >= ic.requiredXP)
-                        .map((ic) => (
-                          <Image
-                            key={ic.id}
-                            src={ic.src}
-                            alt={ic.label}
-                            width={70}
-                            height={70}
-                            onClick={() => setIcon(ic.src)}
-                            className={`cursor-pointer rounded-full border-2 transition bg-white ${
-                              icon === ic.src
-                                ? "border-yellow-600 scale-110"
-                                : "border-transparent hover:opacity-80"
-                            }`}
-                          />
-                        ))}
-                    </div>
-                  </section>
-
-                  {/* Locked */}
-                  <section>
-                    <h3 className="font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                      <FaLock /> Locked (Need more XP)
-                    </h3>
-                    <div className="grid grid-cols-4 gap-3 opacity-50">
-                      {icons
-                        .filter((ic) => (allStats.xp || 0) < ic.requiredXP)
-                        .map((ic) => (
-                          <div
-                            key={ic.id}
-                            className="relative flex items-center justify-center cursor-no-drop"
-                          >
-                            <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden">
-                              <Image
-                                src={ic.src}
-                                alt={ic.label}
-                                fill
-                                className="object-cover grayscale bg-white"
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold bg-black/50 text-white">
-                                {ic.requiredXP} XP
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </section>
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Unlocked
+                  </h3>
+                  <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
+                    {unlocked.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => setIcon(item.src)}
+                        className={cn(
+                          "relative overflow-hidden rounded-xl border-2 transition-all",
+                          icon === item.src
+                            ? "border-brand-500 shadow-[var(--shadow-brand)]"
+                            : "border-transparent hover:border-border-strong"
+                        )}
+                      >
+                        <Image
+                          src={item.src}
+                          alt={item.label}
+                          width={80}
+                          height={80}
+                          className="h-full w-full object-cover"
+                        />
+                        {icon === item.src && (
+                          <span className="absolute end-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                            <Check className="h-3 w-3" />
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
+                {locked.length > 0 && (
+                  <div>
+                    <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      <Lock className="h-3 w-3" /> Locked
+                    </h3>
+                    <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
+                      {locked.map((item) => (
+                        <div
+                          key={item.id}
+                          className="relative overflow-hidden rounded-xl border border-border"
+                        >
+                          <Image
+                            src={item.src}
+                            alt=""
+                            width={80}
+                            height={80}
+                            className="h-full w-full object-cover grayscale"
+                          />
+                          <span className="absolute inset-0 flex items-center justify-center bg-background/70 text-[11px] font-semibold">
+                            {item.requiredXP} XP
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </DialogContent>
             </Dialog>
           </div>
+
+          <div className="flex-1 pb-1">
+            <p className="font-display text-xl font-bold">{name || user?.name}</p>
+            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Mail className="h-3.5 w-3.5" />
+              {user?.email || "no email"}
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-3 flex-1 w-full">
-          <div className="flex items-center gap-2">
-            <FaUserEdit className="text-yellow-600" />
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border-gray-300"
+        <div className="mt-5 max-w-sm">
+          <div className="flex items-baseline justify-between text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">Level {progress.level}</span>
+            <span>{progress.remaining} XP to go</span>
+          </div>
+          <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-3">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-iris-500 transition-[width] duration-700"
+              style={{ width: `${progress.percent}%` }}
             />
           </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <MdOutlineEmail className="text-yellow-600" />
-            <span>{user?.email || "no email"}</span>
+        </div>
+
+        <div className="mt-6 grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+              Display name
+            </label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-          <div className="flex items-center justify-between w-full max-w-[300px] mt-1 border p-2 rounded-lg">
-            <div className="flex flex-col">
-              <span className="text-sm">Email Summaries</span>
-            </div>
+
+          <label className="flex cursor-pointer items-center justify-between gap-3 self-end rounded-lg border border-border bg-surface-2 px-3 py-2">
+            <span>
+              <span className="block text-sm font-medium">Email summaries</span>
+              <span className="block text-[11px] text-muted-foreground">
+                A recap of what you learned
+              </span>
+            </span>
             <Switch
               checked={emailSummary}
               onCheckedChange={setEmailSummary}
-              className="data-[state=checked]:bg-yellow-600"
+              className="data-[state=checked]:bg-primary"
             />
-          </div>
-          <Button
-            onClick={handleSave}
-            disabled={loading}
-            className="bg-yellow-600 hover:bg-yellow-600 text-white w-fit mt-2 flex items-center gap-2"
-          >
-            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {loading ? "Saving..." : "Save Changes"}
-          </Button>
+          </label>
         </div>
-      </CardContent>
-    </Card>
-  );
-};
 
-export default Hero;
+        <Button onClick={handleSave} disabled={loading} className="mt-4 gap-2">
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {loading ? "Saving…" : "Save changes"}
+        </Button>
+      </div>
+    </section>
+  );
+}
