@@ -1,23 +1,36 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/topbar/AuthProvider";
 import { ThemeProvider } from "@/components/topbar/theme-provider";
 import Providers from "./providers";
+import ToastHub from "@/components/fixedComponents/ToastHub";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "LaSu - Your AI Language Support",
+  title: {
+    default: "LaSu - Your AI Language Support",
+    template: "%s | LaSu",
+  },
   description:
     "Learn languages effortlessly with LaSu - the Chrome extension that offers AI-powered translations, real-life examples, and contextual understanding as you browse.",
   keywords: [
@@ -63,6 +76,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fdfcfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#111114" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -82,7 +105,7 @@ export default function RootLayout({
       </script>
 
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -92,6 +115,7 @@ export default function RootLayout({
         >
           <Providers>
             <AuthProvider>{children}</AuthProvider>
+            <ToastHub />
             <Analytics />
           </Providers>
         </ThemeProvider>
