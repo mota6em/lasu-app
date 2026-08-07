@@ -1,11 +1,8 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
 
-interface TranslationResult {
-  translations: Record<string, string>;
-  example: Record<string, string>;
-}
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { TranslationResult } from "@/types/translation";
 
 export interface CommunityTranslation {
   userId: string;
@@ -28,73 +25,46 @@ export function useCommunityLive() {
   const { data, isLoading } = useQuery({
     queryKey: ["community-live"],
     queryFn: fetchLiveTranslations,
-    refetchInterval: 10000,
+    refetchInterval: 10_000,
   });
-  const translations = data ?? [];
 
+  const translations = data ?? [];
   const [newCards, setNewCards] = useState<Set<string>>(new Set());
-  const seenCardIds = useRef<Set<string>>(new Set());
+  const [selectedLangs, setSelectedLangs] = useState<Record<string, string>>({});
+  const seen = useRef<Set<string>>(new Set());
+  const firstLoad = useRef(true);
 
   useEffect(() => {
     if (!data) return;
 
-    const currentIds = new Set(
-      data.map((t) => t.userId.toString() + t.sourceText)
-    );
-    const newIds = Array.from(currentIds).filter(
-      (id) => !seenCardIds.current.has(id)
-    );
+    const ids = data.map((t) => t.userId.toString() + t.sourceText);
 
-    if (newIds.length > 0) {
-      setNewCards((prev) => new Set([...prev, ...newIds]));
-
-      const timeout = setTimeout(() => {
-        setNewCards((prev) => {
-          const copy = new Set(prev);
-          newIds.forEach((id) => copy.delete(id));
-          return copy;
-        });
-      }, 3500);
-
-      seenCardIds.current = new Set([...seenCardIds.current, ...currentIds]);
-      return () => clearTimeout(timeout);
+    // the very first payload is history, not news, so nothing is highlighted
+    if (firstLoad.current) {
+      firstLoad.current = false;
+      seen.current = new Set(ids);
+      return;
     }
 
-    seenCardIds.current = new Set([...seenCardIds.current, ...currentIds]);
+    const fresh = ids.filter((id) => !seen.current.has(id));
+    seen.current = new Set([...seen.current, ...ids]);
+    if (!fresh.length) return;
+
+    setNewCards((prev) => new Set([...prev, ...fresh]));
+    const timeout = setTimeout(() => {
+      setNewCards((prev) => {
+        const copy = new Set(prev);
+        fresh.forEach((id) => copy.delete(id));
+        return copy;
+      });
+    }, 6000);
+
+    return () => clearTimeout(timeout);
   }, [data]);
 
-  const [selectedLangs, setSelectedLangs] = useState<Record<string, string>>(
-    {}
-  );
-  const [audioLoading, setAudioLoading] = useState<Record<string, boolean>>({});
-
-  const selectLanguage = (cardId: string, lang: string) => {
+  const selectLanguage = useCallback((cardId: string, lang: string) => {
     setSelectedLangs((prev) => ({ ...prev, [cardId]: lang }));
-  };
+  }, []);
 
-  const speakText = (text: string, lang: string, cardId: string) => {
-    if ("speechSynthesis" in window) {
-      setAudioLoading((prev) => ({ ...prev, [cardId]: true }));
-      const utterance = new SpeechSynthesisUtterance(text);
-      const voice = speechSynthesis
-        .getVoices()
-        .find((v) =>
-          v.lang.toLowerCase().includes(lang.toLowerCase().substring(0, 2))
-        );
-      if (voice) utterance.voice = voice;
-      utterance.onend = utterance.onerror = () =>
-        setAudioLoading((prev) => ({ ...prev, [cardId]: false }));
-      speechSynthesis.speak(utterance);
-    }
-  };
-
-  return {
-    translations,
-    isLoading,
-    newCards,
-    selectedLangs,
-    audioLoading,
-    selectLanguage,
-    speakText,
-  };
+  return { translations, isLoading, newCards, selectedLangs, selectLanguage };
 }

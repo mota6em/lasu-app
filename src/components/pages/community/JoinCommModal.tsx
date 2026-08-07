@@ -1,138 +1,89 @@
+"use client";
+
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import { CiCircleQuestion } from "react-icons/ci";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useSession } from "next-auth/react";
+import PrivacyToggles, { type PrivacyState } from "./PrivacyToggles";
 
-const JoinCommModal = () => {
+export default function JoinCommModal() {
+  const [open, setOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
-  const [showName, setShowName] = useState(true);
-  const [showPicture, setShowPicture] = useState(true);
-  const [shareTranslations, setShareTranslations] = useState(true);
-
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
+  const [privacy, setPrivacy] = useState<PrivacyState>({
+    showName: true,
+    showPicture: true,
+    shareTranslations: true,
+  });
+  const router = useRouter();
 
   const joinCommunity = async () => {
-    if (!session) return;
     setLoading(true);
     try {
       const res = await fetch("/api/community/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ showName, showPicture, shareTranslations }),
+        body: JSON.stringify(privacy),
       });
-    } catch (err) {
-      console.error(err);
+      if (!res.ok) throw new Error();
+
+      toast.success("You're in — welcome to the community");
+      setOpen(false);
+      router.refresh();
+    } catch {
+      toast.error("Could not join right now. Try again in a moment.");
     } finally {
       setLoading(false);
-      window.location.reload();
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-white mt-4 ms-3 text-purple-600 hover:bg-white/90 shadow-md animate-bounce">
-          Join Now
-        </Button>
+        <Button size="lg">Join the community</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg bg-accent dark:bg-[#161616]">
+
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-[#161616] dark:text-yellow-100">
-            Welcome to{" "}
-            <span className="text-yellow-600 dark:text-yellow-400 newyork text-4xl">LaSu</span>{" "}
-            Community!
+          <DialogTitle className="font-display text-xl">
+            Welcome to the{" "}
+            <span className="newyork text-2xl text-brand-600 dark:text-brand-400">
+              LaSu
+            </span>{" "}
+            community
           </DialogTitle>
           <DialogDescription>
-            Please review our terms and choose your privacy preferences.
+            Choose what other learners can see. You can change all of this later.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <p className="text-sm text-gray-500">
-            Your raw texts will never be shared—only translated words and
-            phrases.
-          </p>
+        <PrivacyToggles value={privacy} onChange={setPrivacy} />
 
-          <div
-            onClick={() => setShowName(!showName)}
-            className="flex items-center justify-between"
-          >
-            <span>Show your name in the community?</span>
-            <Switch checked={showName} className="cursor-pointer" />
-          </div>
-
-          <div
-            onClick={() => setShowPicture(!showPicture)}
-            className="flex items-center justify-between"
-          >
-            <span>Show your profile picture?</span>
-            <Switch checked={showPicture} className="cursor-pointer" />
-          </div>
-
-          <div
-            onClick={() => setShareTranslations(!shareTranslations)}
-            className="flex items-center justify-between"
-          >
-            <Tooltip>
-              <TooltipTrigger>
-                <span>
-                  Share your translated words publicly?{" "}
-                  <CiCircleQuestion
-                    className="inline-block cursor-pointer mb-0.5"
-                    size={18}
-                  />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                Only the translated words are visible, nothing else you type.
-                <span className="block font-semibold">
-                  Translated phrases are NOT shared!
-                </span>
-              </TooltipContent>
-            </Tooltip>
-            <Switch checked={shareTranslations} className="cursor-pointer" />
-          </div>
-          <div
-            className="flex items-center gap-2 justify-end cursor-pointer"
-            onClick={() => setAgreed(!agreed)}
-          >
-            <Checkbox checked={agreed} className="cursor-pointer"></Checkbox>
-            <p className="text-sm text-gray-800 dark:text-gray-500">
-              {" "}
-              I agree to the Terms & Conditions
-            </p>
-          </div>
-        </div>
+        <label className="flex cursor-pointer items-center justify-end gap-2 text-sm text-muted-foreground">
+          <Checkbox
+            checked={agreed}
+            onCheckedChange={(checked) => setAgreed(checked === true)}
+            className="cursor-pointer"
+          />
+          I agree to the terms &amp; conditions
+        </label>
 
         <DialogFooter>
-          <Button
-            disabled={!agreed || loading}
-            className="bg-purple-800 dark:bg-purple-600 text-white hover:bg-purple-700"
-            onClick={joinCommunity}
-          >
-            {loading ? "Joining..." : "Enter Community"}
+          <Button disabled={!agreed || loading} onClick={joinCommunity}>
+            {loading ? "Joining…" : "Enter community"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default JoinCommModal;
+}

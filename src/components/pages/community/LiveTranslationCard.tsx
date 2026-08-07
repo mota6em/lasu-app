@@ -1,117 +1,119 @@
-import { FaVolumeUp, FaSpinner } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import CopyButton from "@/components/ui/copy-button";
+import SpeakButton from "@/components/ui/speak-button";
+import { getLanguage, isRTL, langName } from "@/lib/languages";
+import { cn } from "@/lib/utils";
+import type { CommunityTranslation } from "@/hooks/useCommunityLive";
 
-interface TranslationResult {
-  translations: Record<string, string>;
-  example: Record<string, string>;
-}
-
-interface CommunityTranslation {
-  userId: string;
-  userName: string;
-  userImage: string;
-  sourceText: string;
-  translationType: string;
-  translationFilter: string;
-  result: TranslationResult;
-  createdAt: string | Date;
-}
-
-interface TranslationCardProps {
-  t: CommunityTranslation;
-  idx: number;
-  langs: string[];
+interface LiveTranslationCardProps {
+  translation: CommunityTranslation;
+  cardId: string;
+  isNew: boolean;
   selectedLang: string;
-  translation: string;
-  example?: string;
-  selectLanguage: (cardId: string, lang: string) => void;
-  audioLoading: Record<string, boolean>;
-  speakText: (text: string, lang: string, cardId: string) => void;
-  newCards: Set<string>;
+  onSelectLang: (lang: string) => void;
 }
 
 export default function LiveTranslationCard({
-  t,
-  idx,
-  langs,
-  selectedLang,
   translation,
-  example,
-  selectLanguage,
-  audioLoading,
-  speakText,
-  newCards,
-}: TranslationCardProps) {
+  cardId,
+  isNew,
+  selectedLang,
+  onSelectLang,
+}: LiveTranslationCardProps) {
+  const langs = Object.keys(translation.result?.translations ?? {});
+  const active = selectedLang || langs[0];
+  const text = translation.result?.translations?.[active] ?? "";
+  const example = translation.result?.example?.[active];
+  const displayName = translation.userName?.split(" ")[0] || "Anonymous";
+
   return (
-    <div
-      key={idx}
-      className={`relative p-4 border rounded-xl shadow hover:shadow-lg transition ${
-        newCards.has(t.userId.toString() + t.sourceText)
-          ? "border-yellow-700 dark:border-yellow-400 shadow-lg animate-pulse"
-          : "bg-blue-950/5 dark:bg-blue-950/10"
-      }`}
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        "surface-card lift group flex flex-col overflow-hidden",
+        isNew && "border-brand-500/60 shadow-[var(--shadow-brand)]"
+      )}
     >
-      <div className="mb-3 flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold text-foreground">
-            {t.sourceText[0].toUpperCase() + t.sourceText.slice(1)}
+      <div className="flex items-start justify-between gap-2 px-4 pt-4">
+        <div className="min-w-0">
+          <h3 className="truncate font-display text-lg font-semibold leading-tight">
+            {translation.sourceText.charAt(0).toUpperCase() +
+              translation.sourceText.slice(1)}
           </h3>
-          <p className="text-xs text-muted-foreground">
-            {t.translationType} • {t.translationFilter}
+          <p className="mt-0.5 text-[11px] capitalize text-muted-foreground">
+            {translation.translationType}
+            {isNew && (
+              <span className="ms-2 inline-flex items-center gap-1 font-medium text-brand-600 dark:text-brand-400">
+                <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" />
+                just now
+              </span>
+            )}
           </p>
         </div>
-        <div className="flex flex-row gap-x-1 items-center justify-center text-xs text-muted-foreground">
+
+        <Link
+          href={`/dashboard/profile/${translation.userId}`}
+          className="flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-surface-2 py-1 pe-2.5 ps-1 text-[11px] font-medium transition-colors hover:border-border-strong"
+        >
           <Image
-            src={t.userImage ?? "/imgs/userIcon.jpg"}
-            alt="User Avatar"
-            width={20}
-            height={20}
-            className="rounded-full"
+            src={translation.userImage || "/imgs/userIcon.jpg"}
+            alt=""
+            width={18}
+            height={18}
+            className="h-[18px] w-[18px] rounded-full object-cover"
           />
-          <span className="font-semibold">{t.userName! || "Anonymous"}</span>
-        </div>
+          <span className="max-w-20 truncate">{displayName}</span>
+        </Link>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-3">
-        {langs.map((lang: string) => (
-          <Button
+      <div className="mt-3 flex flex-wrap gap-1 px-4">
+        {langs.map((lang) => (
+          <button
             key={lang}
-            className="text-xs px-2 py-0.5"
-            variant={selectedLang === lang ? "default" : "outline"}
-            onClick={() => selectLanguage(idx.toString(), lang)}
+            onClick={() => onSelectLang(lang)}
+            className={cn(
+              "rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
+              active === lang
+                ? "bg-primary text-primary-foreground"
+                : "bg-surface-2 text-muted-foreground hover:text-foreground"
+            )}
           >
-            {lang}
-          </Button>
+            <span aria-hidden>{getLanguage(lang)?.flag ?? "🌐"}</span>{" "}
+            {langName(lang)}
+          </button>
         ))}
       </div>
 
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <span className="font-semibold text-yellow-700 dark:text-yellow-500/80">
-            {selectedLang}
-          </span>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => speakText(translation, selectedLang, idx.toString())}
-            disabled={audioLoading[idx]}
+      <div className="mt-3 flex-1 border-t border-border px-4 py-3">
+        <div className="flex items-start justify-between gap-2">
+          <p
+            dir={isRTL(active) ? "rtl" : "ltr"}
+            className="font-display text-xl font-semibold leading-snug break-words"
           >
-            {audioLoading[idx] ? (
-              <FaSpinner className="animate-spin" />
-            ) : (
-              <FaVolumeUp />
-            )}
-          </Button>
+            {text}
+          </p>
+          <div className="flex shrink-0 items-center opacity-60 transition-opacity group-hover:opacity-100">
+            <SpeakButton text={text} lang={active} size={14} />
+            <CopyButton value={text} size={14} />
+          </div>
         </div>
 
-        <div className="text-lg font-bold">{translation}</div>
         {example && (
-          <div className="text-sm text-muted-foreground border-l-4  dark:border-yellow-400 border-yellow-600 pl-2">
-            "{example}"
-          </div>
+          <p
+            dir={isRTL(active) ? "rtl" : "ltr"}
+            className="mt-2 border-s-2 border-brand-400 ps-2.5 text-xs leading-relaxed text-muted-foreground"
+          >
+            {example}
+          </p>
         )}
       </div>
-    </div>
+    </motion.article>
   );
 }

@@ -1,39 +1,27 @@
-export default function LiveTranslationsSkeleton({
-  count = 6,
-}: {
-  count?: number;
-}) {
+export default function LiveTranslationsSkeleton() {
   return (
-    <div className="px-3 justify-center items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {Array.from({ length: count }).map((_, i) => (
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="relative p-4 border rounded-xl shadow animate-pulse bg-gray-200 dark:bg-neutral-800/20"
+          className="surface-card animate-fade-up p-4"
+          style={{ animationDelay: `${i * 60}ms` }}
         >
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <div className="h-4 bg-gray-300 dark:bg-neutral-700 rounded w-16 mb-1"></div>
-              <div className="h-3 bg-gray-300 dark:bg-neutral-700 rounded w-10"></div>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 space-y-2">
+              <div className="shimmer h-5 w-2/5 rounded" />
+              <div className="shimmer h-3 w-16 rounded" />
             </div>
-            <div className="flex flex-row gap-x-1 items-center">
-              <div className="w-5 h-5 rounded-full bg-gray-300 dark:bg-neutral-700"></div>
-              <div className="h-3 bg-gray-300 dark:bg-neutral-700 rounded w-16"></div>
-            </div>
+            <div className="shimmer h-6 w-20 rounded-full" />
           </div>
-
-          <div className="flex flex-wrap gap-2 mb-3">
-            {Array.from({ length: 3 }).map((_, j) => (
-              <div
-                key={j}
-                className="h-6 w-12 rounded bg-gray-300 dark:bg-neutral-700"
-              ></div>
+          <div className="mt-3 flex gap-1.5">
+            {[0, 1, 2].map((j) => (
+              <div key={j} className="shimmer h-6 w-16 rounded-full" />
             ))}
           </div>
-
-          <div className="space-y-2">
-            <div className="h-3 bg-gray-300 dark:bg-neutral-700 rounded w-16"></div>
-            <div className="h-6 bg-gray-300 dark:bg-neutral-700 rounded w-full mt-2"></div>
-            <div className="h-4 bg-gray-300 dark:bg-neutral-700 rounded w-3/4"></div>
+          <div className="mt-4 space-y-2 border-t border-border pt-3">
+            <div className="shimmer h-6 w-3/5 rounded" />
+            <div className="shimmer h-3 w-4/5 rounded" />
           </div>
         </div>
       ))}

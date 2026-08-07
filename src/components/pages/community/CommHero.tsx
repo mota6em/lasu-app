@@ -1,7 +1,11 @@
 "use client";
-import { MdOutlineCelebration } from "react-icons/md";
 
-import UserStats from "./UserStats";
+import { motion } from "framer-motion";
+import CountUp from "react-countup";
+import { Flame, Trophy, Zap } from "lucide-react";
+import UserRanks from "./UserRanks";
+import { useUserStats } from "@/hooks/useUserStats";
+import { levelProgress } from "@/lib/xp";
 
 export default function CommHero({
   userName,
@@ -10,22 +14,76 @@ export default function CommHero({
   userName: string;
   userId: string;
 }) {
+  const { stats, loading } = useUserStats(userId);
+  const progress = levelProgress(stats.xp ?? 0);
+
+  const tiles = [
+    { label: "XP", value: stats.xp ?? 0, icon: Zap },
+    { label: "Streak", value: stats.streak ?? 0, icon: Flame, suffix: " days" },
+    { label: "Translations", value: stats.allTimeTranslations ?? 0, icon: Trophy },
+  ];
+
   return (
-    <div className="p-6 text-center flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-semibold flex items-center gap-2 animate-bounce">
-        Hi{" "}
-        <span className="italic text-yellow-600 dark:text-yellow-500">
-          {userName.split(" ")[0]}
-        </span>{" "}
-        <MdOutlineCelebration className="" />
-      </h1>
-      <p className="text-lg text-gray-500 dark:text-gray-400">
-        Here's what your mates are learning —{" "}
-        <span className="text-yellow-600 dark:text-yellow-500">
-          join the fun!
-        </span>
-      </p>
-      <UserStats userId={userId} />
-    </div>
+    <section className="surface-card relative overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-brand-400/20 blur-3xl animate-aurora"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 -left-20 h-64 w-64 rounded-full bg-iris-400/15 blur-3xl animate-aurora"
+      />
+
+      <div className="relative p-6 md:p-8">
+        <p className="text-sm text-muted-foreground">Welcome back,</p>
+        <h1 className="mt-0.5 font-display text-3xl font-bold tracking-tight md:text-4xl">
+          {userName.split(" ")[0]}{" "}
+          <span className="text-gradient">level {progress.level}</span>
+        </h1>
+
+        <div className="mt-5 max-w-md">
+          <div className="flex items-baseline justify-between text-xs text-muted-foreground">
+            <span>
+              {progress.into} / {progress.needed} XP
+            </span>
+            <span>{progress.remaining} XP to level {progress.level + 1}</span>
+          </div>
+          <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-surface-3">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: loading ? "0%" : `${progress.percent}%` }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-iris-500"
+            />
+          </div>
+        </div>
+
+        <div className="mt-6 grid max-w-md grid-cols-3 gap-2">
+          {tiles.map(({ label, value, icon: Icon, suffix }) => (
+            <div
+              key={label}
+              className="rounded-xl border border-border bg-surface-2/70 px-3 py-2.5"
+            >
+              <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <Icon className="h-3 w-3 text-brand-500" />
+                {label}
+              </span>
+              <span className="mt-0.5 block font-display text-xl font-bold tabular-nums">
+                {loading ? "—" : <CountUp end={value} duration={1.2} />}
+                {!loading && suffix && (
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {suffix}
+                  </span>
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5">
+          <UserRanks userId={userId} />
+        </div>
+      </div>
+    </section>
   );
 }

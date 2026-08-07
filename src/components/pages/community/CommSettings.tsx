@@ -1,163 +1,93 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
+import { Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CiSettings, CiCircleQuestion } from "react-icons/ci";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useSession } from "next-auth/react";
+import PrivacyToggles, { type PrivacyState } from "./PrivacyToggles";
 
-const CommSettings = () => {
+export default function CommSettings() {
   const { data: session } = useSession();
-  const [showName, setShowName] = useState(true);
-  const [showPicture, setShowPicture] = useState(true);
-  const [shareTranslations, setShareTranslations] = useState(true);
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [privacy, setPrivacy] = useState<PrivacyState>({
+    showName: true,
+    showPicture: true,
+    shareTranslations: true,
+  });
 
-  // fetch current settings
   useEffect(() => {
-    const fetchSettings = async () => {
-      if (!session?.user?.id) return;
-      try {
-        const res = await fetch(`/api/community/users/${session.user.id}`);
-        if (!res.ok) return;
-        const data = await res.json();
+    if (!session?.user?.id) return;
 
-        setShowName(data.showName);
-        setShowPicture(data.showPicture);
-        setShareTranslations(data.shareTranslations);
-      } catch (err) {
-        console.error("Failed to fetch community user:", err);
-      }
-    };
-    fetchSettings();
+    fetch(`/api/community/users/${session.user.id}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data) return;
+        setPrivacy({
+          showName: data.showName ?? true,
+          showPicture: data.showPicture ?? true,
+          shareTranslations: data.shareTranslations ?? true,
+        });
+      })
+      .catch(() => null);
   }, [session]);
 
-  // update settings
-  const updateSettings = async () => {
+  const save = async () => {
     if (!session?.user?.id) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/community/users/${session.user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          showName,
-          showPicture,
-          shareTranslations,
-        }),
+        body: JSON.stringify(privacy),
       });
-      if (res.ok) {
-        setOpen(false);
-      }
-    } catch (err) {
-      console.error("Error updating settings:", err);
+      if (!res.ok) throw new Error();
+      toast.success("Community settings updated");
+      setOpen(false);
+    } catch {
+      toast.error("Could not save those settings.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="absolute right-3">
-      <Dialog open={open} onOpenChange={setOpen}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setOpen(!open)}
-                variant="ghost"
-                className="bg-transparent hover:bg-transparent focus-visible:ring-0 focus:outline-none shadow-none"
-              >
-                <CiSettings className="!w-8 !h-8 cursor-pointer" />
-              </Button>
-            </DialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="left">
-            <p>LaSu Community Settings</p>
-          </TooltipContent>
-        </Tooltip>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Settings2 className="h-3.5 w-3.5" />
+          Privacy
+        </Button>
+      </DialogTrigger>
 
-        <DialogContent className="sm:max-w-lg bg-accent dark:bg-[#161616]">
-          <DialogHeader>
-            <DialogTitle className="text-yellow-800 dark:text-yellow-100">
-              LaSu Community Settings
-            </DialogTitle>
-            <DialogDescription>
-              Update your visibility preferences in our Community.
-            </DialogDescription>
-          </DialogHeader>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="font-display text-xl">
+            Community privacy
+          </DialogTitle>
+          <DialogDescription>
+            Control what other learners see about you.
+          </DialogDescription>
+        </DialogHeader>
 
-          <div className="space-y-4">
-            <div
-              onClick={() => setShowName(!showName)}
-              className="flex items-center justify-between"
-            >
-              <span>Show your name in the community?</span>
-              <Switch checked={showName} className="cursor-pointer" />
-            </div>
+        <PrivacyToggles value={privacy} onChange={setPrivacy} />
 
-            <div
-              onClick={() => setShowPicture(!showPicture)}
-              className="flex items-center justify-between"
-            >
-              <span>Show your profile picture?</span>
-              <Switch checked={showPicture} className="cursor-pointer" />
-            </div>
-
-            <div
-              onClick={() => setShareTranslations(!shareTranslations)}
-              className="flex items-center justify-between"
-            >
-              <Tooltip>
-                <TooltipTrigger>
-                  <span>
-                    Share your translated words publicly?{" "}
-                    <CiCircleQuestion
-                      className="inline-block cursor-pointer mb-0.5"
-                      size={18}
-                    />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Only translated words are visible, nothing else you type.
-                  <span className="block font-semibold">
-                    Translated phrases are NOT shared!
-                  </span>
-                </TooltipContent>
-              </Tooltip>
-              <Switch checked={shareTranslations} className="cursor-pointer" />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              disabled={loading}
-              onClick={updateSettings}
-              className="bg-purple-600 text-white hover:bg-purple-700"
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        <DialogFooter>
+          <Button disabled={loading} onClick={save}>
+            {loading ? "Saving…" : "Save changes"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
-};
-
-export default CommSettings;
+}
