@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 interface UserRanks {
   daily: number | null;
@@ -6,42 +6,24 @@ interface UserRanks {
   allTime: number | null;
 }
 
+async function fetchUserRanks(userId: string): Promise<UserRanks> {
+  const res = await fetch(`/api/community/users/userRank?userId=${userId}`);
+  if (!res.ok) throw new Error("Failed to fetch user ranks");
+  const data = await res.json();
+  return { daily: data.daily, monthly: data.monthly, allTime: data.allTime };
+}
+
 export function useUserRanks(userId: string) {
-  const [userRanks, setUserRanks] = useState<UserRanks>({
-    daily: null,
-    monthly: null,
-    allTime: null,
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["user-ranks", userId],
+    queryFn: () => fetchUserRanks(userId),
+    enabled: !!userId,
+    refetchInterval: 60_000,
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!userId) return;
-    const fetchRanks = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/community/users/userRank?userId=${userId}`);
-        if (!res.ok) throw new Error("Failed to fetch user ranks");
-        const data = await res.json();
-        setUserRanks({
-          daily: data.daily,
-          monthly: data.monthly,
-          allTime: data.allTime,
-        });
-        
-      } catch (err: any) {
-        console.error(err);
-        setError(err.message || "Unknown error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchRanks();
-
-    // refresh every minute
-    const interval = setInterval(fetchRanks, 60_000);
-    return () => clearInterval(interval);
-  }, [userId]);
-
-  return { userRanks, isLoading, error };
+  return {
+    userRanks: data ?? { daily: null, monthly: null, allTime: null },
+    isLoading,
+    error: error instanceof Error ? error.message : null,
+  };
 }

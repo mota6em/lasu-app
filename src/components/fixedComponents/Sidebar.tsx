@@ -6,9 +6,61 @@ import { Home, History, BarChart, Settings, LogOut, Globe } from "lucide-react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import TranslationSettingDialog from "../pages/settings/TranslationSettingDialog";
 import { LuBookOpen } from "react-icons/lu";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useEffect, useState } from "react";
 import LogoAndMenuBtn from "../topbar/LogoAndMenuBtn";
+
+// warm the cache for a nav destination on hover so the page has data the instant it mounts
+function usePrefetchOnHover(userId?: string) {
+  const queryClient = useQueryClient();
+
+  return (href: string) => () => {
+    if (href === "/dashboard/community") {
+      queryClient.prefetchQuery({
+        queryKey: ["community-stats"],
+        queryFn: async () => {
+          const res = await fetch("/api/community/stats");
+          const json = await res.json();
+          return json.data;
+        },
+      });
+      queryClient.prefetchQuery({
+        queryKey: ["community-live"],
+        queryFn: async () => {
+          const res = await fetch("/api/community/live");
+          return res.json();
+        },
+      });
+    } else if (href === "/dashboard/history" && userId) {
+      queryClient.prefetchQuery({
+        queryKey: ["translation-history", "all"],
+        queryFn: async () => {
+          const res = await fetch("/api/translation/history?filter=all");
+          return res.json();
+        },
+      });
+    } else if (href === "/dashboard/stats" && userId) {
+      queryClient.prefetchQuery({
+        queryKey: ["translation-stats", userId],
+        queryFn: async () => {
+          const res = await fetch("/api/translation/history?wantStats=1");
+          return res.json();
+        },
+      });
+    } else if (href === "/dashboard/practice" && userId) {
+      queryClient.prefetchQuery({
+        queryKey: ["practice-words"],
+        queryFn: async () => {
+          const res = await fetch(
+            "/api/translation/history?limit=50&filter=word"
+          );
+          return res.json();
+        },
+      });
+    }
+  };
+}
 
 const menu = [
   { label: "Overview", href: "/dashboard", icon: <Home size={18} /> },
@@ -42,6 +94,7 @@ export function Sidebar({
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
+  const prefetchFor = usePrefetchOnHover(session?.user?.id);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) =>
       e.key === "Escape" && setMobileOpen(false);
@@ -128,6 +181,8 @@ export function Sidebar({
                       : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   onClick={() => setMobileOpen(false)}
+                  onMouseEnter={prefetchFor(item.href)}
+                  onFocus={prefetchFor(item.href)}
                 >
                   {item.icon}
                   <span>{item.label}</span>

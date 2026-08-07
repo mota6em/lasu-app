@@ -1,34 +1,34 @@
 import Translation from "@/types/translation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+async function fetchHistory(filter: "all" | "word" | "phrase") {
+  const res = await fetch(`/api/translation/history?filter=${filter}`);
+  if (!res.ok) throw new Error("Failed to fetch history");
+  return res.json();
+}
+
+async function deleteTranslation(itemId: string) {
+  await fetch(`/api/translation/history/${itemId}`, { method: "DELETE" });
+}
 
 export default function useTranslationHistory(
   filter: "all" | "word" | "phrase"
 ) {
-  const [history, setHistory] = useState<Translation[]>([]);
-  const [localHistory, setLocalHistory] = useState<Translation[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
   const { data: session, status } = useSession();
+  const queryClient = useQueryClient();
+  const [localHistory, setLocalHistory] = useState<Translation[]>([]);
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      if (status !== "authenticated") return;
-      try {
-        setIsLoading(true);
-        const res = await fetch(`/api/translation/history?filter=${filter}`);
-        if (!res.ok) throw new Error("Failed to fetch history");
-        const data = await res.json();
-        setHistory(data);
-        console.log("data in useTranslationHistory", data.length);
-      } catch {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchAll();
-  }, [filter, status]);
+  const {
+    data: history,
+    isLoading: isQueryLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["translation-history", filter],
+    queryFn: () => fetchHistory(filter),
+    enabled: status === "authenticated",
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -37,7 +37,6 @@ export default function useTranslationHistory(
         const parsed = JSON.parse(local);
         if (Array.isArray(parsed)) setLocalHistory(parsed);
       }
-      setIsLoading(false);
     }
   }, [status]);
 
@@ -46,19 +45,48 @@ export default function useTranslationHistory(
       ? localHistory
       : localHistory.filter((item) => item.translationType === filter);
 
-  const displayHistory =
-    status === "authenticated" ? history : filteredLocalHistory;
+  const displayHistory: Translation[] =
+    status === "authenticated" ? (history ?? []) : filteredLocalHistory;
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTranslation,
+    onMutate: async (itemId: string) => {
+      // remove it from the visible list immediately, don't wait on the network
+      await queryClient.cancelQueries({
+        queryKey: ["translation-history", filter],
+      });
+      const previous = queryClient.getQueryData<Translation[]>([
+        "translation-history",
+        filter,
+      ]);
+      queryClient.setQueryData<Translation[]>(
+        ["translation-history", filter],
+        (old) => old?.filter((i) => i._id !== itemId) ?? []
+      );
+      return { previous };
+    },
+    onError: (_err, _itemId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(
+          ["translation-history", filter],
+          context.previous
+        );
+      }
+    },
+  });
 
   const handleDelete = async (itemId: string) => {
     if (status === "authenticated") {
-      await fetch(`/api/translation/history/${itemId}`, { method: "DELETE" });
-      setHistory((prev) => prev.filter((i) => i._id !== itemId));
+      deleteMutation.mutate(itemId);
     } else {
       const updated = localHistory.filter((i) => i._id !== itemId);
       setLocalHistory(updated);
       localStorage.setItem("lasu-history", JSON.stringify(updated));
     }
   };
+
+  const isLoading =
+    status === "loading" || (status === "authenticated" && isQueryLoading);
 
   return {
     displayHistory,

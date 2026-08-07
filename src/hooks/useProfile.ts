@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useOverviewCards } from "./useOverviewCards";
 import { useUserStats } from "./useUserStats";
 
@@ -8,92 +9,76 @@ interface UseProfileProps {
   sUserId?: string; // optional, for public profiles
 }
 
+async function fetchUser(userId: string) {
+  const res = await fetch(`/api/users/${userId}`);
+  if (!res.ok) throw new Error("Failed to fetch user");
+  return res.json();
+}
+
 const useProfile = ({ sUserId }: UseProfileProps = {}) => {
   const { data: session, update } = useSession();
   const sessionUser = session?.user;
-  const [publicUser, setPublicUser] = useState<any>(null);
-  const [publicUserLoading, setPublicUserLoading] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: publicUser, isLoading: publicUserLoading } = useQuery({
+    queryKey: ["profile-user", sUserId],
+    queryFn: () => fetchUser(sUserId as string),
+    enabled: !!sUserId,
+  });
+
+  const { data: selfUser } = useQuery({
+    queryKey: ["profile-user", sessionUser?.id],
+    queryFn: () => fetchUser(sessionUser!.id),
+    enabled: !sUserId && !!sessionUser?.id,
+  });
+
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [emailSummary, setEmailSummary] = useState(true);
-  const [loading, setLoading] = useState(false);
+
+  // seed the editable emailSummary toggle once the owning user's data lands
+  useEffect(() => {
+    const source = sUserId ? publicUser : selfUser;
+    if (source) setEmailSummary(source.emailSummary ?? true);
+  }, [sUserId, publicUser, selfUser]);
 
   // stats and cards
   const { cards } = useOverviewCards();
   const { stats } = useUserStats(sUserId || sessionUser?.id || "");
 
-  useEffect(() => {
-    if (!sUserId) {
-      setPublicUser(null);
-      setPublicUserLoading(false);
-
-      if (sessionUser?.id) {
-        fetch(`/api/users/${sessionUser.id}`)
-          .then((res) => res.json())
-          .then((data) => {
-            setEmailSummary(data.emailSummary ?? true);
-          });
-      }
-      return;
-    }
-
-    let active = true;
-    const fetchPublicUser = async () => {
-      if (active) setPublicUserLoading(true);
-      try {
-        const res = await fetch(`/api/users/${sUserId}`);
-        if (!res.ok) throw new Error("Failed to fetch user");
-        const data = await res.json();
-        if (active) {
-          setPublicUser(data);
-          setEmailSummary(data.emailSummary ?? true);
-        }
-      } catch {
-        if (active) setPublicUser(null);
-      } finally {
-        if (active) setPublicUserLoading(false);
-      }
-    };
-
-    fetchPublicUser();
-    return () => {
-      active = false;
-    };
-  }, [sUserId]);
-
-  const user = sUserId ? publicUser : sessionUser;
+  const user = sUserId ? publicUser ?? null : sessionUser;
   const totalTranslations = sUserId
     ? (stats?.allTimeTranslations ?? "-")
     : (cards.find((c) => c.title === "Total Translations")?.value ?? "-");
 
-  const handleSave = async () => {
-    const userId = sessionUser?.id;
-    if (!userId) return;
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      const userId = sessionUser?.id;
+      if (!userId) throw new Error("Not signed in");
 
-    try {
-      setLoading(true);
       const res = await fetch(`/api/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, image: icon, emailSummary }),
       });
-
       const data = await res.json();
-      if (data.success) {
-        await update?.({
-          name: data.user.name,
-          image: data.user.image,
-        });
+      if (!data.success) throw new Error(data.error || "Update failed");
+      return data.user;
+    },
+    onSuccess: async (updatedUser) => {
+      await update?.({ name: updatedUser.name, image: updatedUser.image });
+      queryClient.invalidateQueries({
+        queryKey: ["profile-user", sessionUser?.id],
+      });
+      toast.success("Profile updated successfully 🎉");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Error updating profile ⚠️");
+    },
+  });
 
-        toast.success("Profile updated successfully 🎉");
-      } else {
-        toast.error(data.error || "Update failed ❌");
-      }
-    } catch (err) {
-      toast.error("Error updating profile ⚠️");
-    } finally {
-      setLoading(false);
-    }
+  const handleSave = () => {
+    saveMutation.mutate();
   };
 
   const allStats = {
@@ -136,7 +121,7 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
     setIcon,
     emailSummary,
     setEmailSummary,
-    loading,
+    loading: saveMutation.isPending,
     publicUserLoading,
     handleSave,
   };

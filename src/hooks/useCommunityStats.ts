@@ -1,8 +1,18 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+
+async function fetchCommunityStats() {
+  const res = await fetch("/api/community/stats");
+  if (!res.ok) throw new Error("Failed to fetch community stats");
+  const json = await res.json();
+  return json.data;
+}
 
 export function useCommunityStats() {
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [stats, setStats] = useState<any | null>(null);
+  const { data: stats, isLoading: loadingStats } = useQuery({
+    queryKey: ["community-stats"],
+    queryFn: fetchCommunityStats,
+  });
 
   // ui toggles
   const [showTopLearnersTable, setShowTopLearnersTable] = useState(false);
@@ -14,23 +24,6 @@ export function useCommunityStats() {
     showTopLangsTable,
   };
 
-  async function fetchStats() {
-    try {
-      setLoadingStats(true);
-      const res = await fetch("/api/community/stats");
-      const json = await res.json();
-      const data = json.data;
-      setStats(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingStats(false);
-    }
-  }
-  //auto first fetch
-  useEffect(() => {
-    fetchStats();
-  }, []);
   const handleShowWords = () => {
     setShowTopWordsTable((v) => {
       const nv = !v;

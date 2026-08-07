@@ -1,4 +1,5 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 interface TranslationResult {
@@ -17,60 +18,50 @@ export interface CommunityTranslation {
   createdAt: string | Date;
 }
 
+async function fetchLiveTranslations(): Promise<CommunityTranslation[]> {
+  const res = await fetch("/api/community/live");
+  if (!res.ok) throw new Error("Failed to fetch live translations");
+  return res.json();
+}
+
 export function useCommunityLive() {
-  const [translations, setTranslations] = useState<CommunityTranslation[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data, isLoading } = useQuery({
+    queryKey: ["community-live"],
+    queryFn: fetchLiveTranslations,
+    refetchInterval: 10000,
+  });
+  const translations = data ?? [];
+
   const [newCards, setNewCards] = useState<Set<string>>(new Set());
   const seenCardIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    let firstLoad = true;
+    if (!data) return;
 
-    const fetchTranslations = async () => {
-      try {
-        if (firstLoad) setIsLoading(true);
+    const currentIds = new Set(
+      data.map((t) => t.userId.toString() + t.sourceText)
+    );
+    const newIds = Array.from(currentIds).filter(
+      (id) => !seenCardIds.current.has(id)
+    );
 
-        const res = await fetch("/api/community/live");
-        const data: CommunityTranslation[] = await res.json();
+    if (newIds.length > 0) {
+      setNewCards((prev) => new Set([...prev, ...newIds]));
 
-        const currentIds = new Set(
-          data.map((t) => t.userId.toString() + t.sourceText)
-        );
-        const newIds = Array.from(currentIds).filter(
-          (id) => !seenCardIds.current.has(id)
-        );
+      const timeout = setTimeout(() => {
+        setNewCards((prev) => {
+          const copy = new Set(prev);
+          newIds.forEach((id) => copy.delete(id));
+          return copy;
+        });
+      }, 3500);
 
-        if (newIds.length > 0) {
-          setNewCards((prev) => {
-            const updated = new Set([...prev, ...newIds]);
-            return updated;
-          });
+      seenCardIds.current = new Set([...seenCardIds.current, ...currentIds]);
+      return () => clearTimeout(timeout);
+    }
 
-          setTimeout(() => {
-            setNewCards((prev) => {
-              const copy = new Set(prev);
-              newIds.forEach((id) => copy.delete(id));
-              return copy;
-            });
-          }, 3500);
-        }
-
-        seenCardIds.current = new Set([...seenCardIds.current, ...currentIds]);
-        setTranslations(data);
-
-        if (firstLoad) setIsLoading(false);
-        firstLoad = false;
-      } catch (err) {
-        console.error(err);
-        if (firstLoad) setIsLoading(false);
-        firstLoad = false;
-      }
-    };
-
-    fetchTranslations();
-    const interval = setInterval(fetchTranslations, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    seenCardIds.current = new Set([...seenCardIds.current, ...currentIds]);
+  }, [data]);
 
   const [selectedLangs, setSelectedLangs] = useState<Record<string, string>>(
     {}

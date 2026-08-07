@@ -3,7 +3,32 @@
     "allow": [
       "Bash(xargs -I{} echo {})",
       "Bash(npx eslint *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(break)",
+      "Bash(curl -s -o /dev/null -w \"home: %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"community: %{http_code}\\\\n\" http://localhost:3000/dashboard/community)",
+      "Bash(curl -s -o /dev/null -w \"history: %{http_code}\\\\n\" http://localhost:3000/dashboard/history)",
+      "Bash(curl -s -o /dev/null -w \"stats: %{http_code}\\\\n\" http://localhost:3000/dashboard/stats)",
+      "Bash(curl -s -o /dev/null -w \"practice: %{http_code}\\\\n\" http://localhost:3000/dashboard/practice)",
+      "Bash(pkill -f \"next-server\")",
+      "Bash(pkill -f \"npm run dev\")",
+      "Bash(fuser -k 3000/tcp)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(npm install *)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(pkill -f \"node_modules/.bin/next\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(npm pack *)",
+      "Bash(set -e)",
+      "Bash(mkdir -p __TRACKED_VAR__/lightningcss-linux-x64-gnu)",
+      "Bash(tar -xzf __TRACKED_VAR__/lightningcss-linux-x64-gnu-1.30.1.tgz -C __TRACKED_VAR__/lightningcss-linux-x64-gnu --strip-components=1)",
+      "Bash(mkdir -p __TRACKED_VAR__/@tailwindcss/oxide-linux-x64-gnu)",
+      "Bash(tar -xzf __TRACKED_VAR__/tailwindcss-oxide-linux-x64-gnu-4.1.11.tgz -C __TRACKED_VAR__/@tailwindcss/oxide-linux-x64-gnu --strip-components=1)",
+      "Bash(node -e \"const lc=require\\('lightningcss'\\); console.log\\('lightningcss OK, transform:', typeof lc.transform\\);\")",
+      "Bash(node -e \"const ox=require\\('@tailwindcss/oxide'\\); console.log\\('oxide OK, keys:', Object.keys\\(ox\\).slice\\(0,5\\).join\\(','\\)\\);\")",
+      "Bash(curl -s -o /dev/null -w \"port 3000 from WSL: %{http_code}\\\\n\" --max-time 5 http://localhost:3000/)"
     ]
   }
 }
