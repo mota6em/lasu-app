@@ -1,12 +1,12 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { Copy, Check } from "lucide-react";
-import { MdDelete } from "react-icons/md";
 import { useState } from "react";
-import { availableLanguages } from "@/lib/languages";
+import { ChevronDown, Trash2 } from "lucide-react";
+import CopyButton from "@/components/ui/copy-button";
+import SpeakButton from "@/components/ui/speak-button";
+import { getLanguage, isRTL, langName } from "@/lib/languages";
+import { shortTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import Translation from "@/types/translation";
 
 interface HistoryCardProps {
@@ -14,100 +14,115 @@ interface HistoryCardProps {
   onDelete: (id: string) => void;
 }
 
-const HistoryCard = ({ item, onDelete }: HistoryCardProps) => {
-  const [copiedLang, setCopiedLang] = useState<string | null>(null);
+export default function HistoryCard({ item, onDelete }: HistoryCardProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  const entries = Object.entries(item.result?.translations ?? {});
+  const examples = item.result?.example ?? {};
+  const hasExtras =
+    Object.keys(examples).length > 0 || !!item.result?.note || !!item.result?.meaning;
 
   return (
-    <Card
-      className={cn(
-        "border-yellow-900 py-0 dark:border-yellow-700 bg-accent rounded-xl dark:bg-zinc-900 border-l-2 border-b-2 border-y-0 border-r-0  w-full"
-      )}
-    >
-      <CardContent className="px-3 py-2 lg:px-5 lg:py-2 space-y-4">
-        <div className="flex justify-between items-center">
-          <div className="text-blue-950/90 dark:text-white/60 text-sm">
-            {new Date(item.createdAt).toLocaleString().slice(0, -3)}
-          </div>
-          <div className="flex items-center">
-            <Badge>{item.translationType}</Badge>
-            <MdDelete
-              onClick={() => onDelete(item._id.toString())}
-              size={23}
-              className="float-right ms-2 cursor-pointer text-red-600 dark:text-red-500 hover:text-red-500 dark:hover:text-red-400 transition duration-300 ease-in-out"
-            />
+    <article className="surface-card lift group flex flex-col overflow-hidden">
+      <div className="flex items-start justify-between gap-2 px-4 pt-3.5">
+        <div className="min-w-0">
+          <h3 className="truncate font-display text-lg font-semibold leading-tight">
+            {item.sourceText}
+          </h3>
+          <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+            <span>{shortTime(item.createdAt)}</span>
+            <span aria-hidden>·</span>
+            <span className="capitalize">{item.translationType}</span>
+            {item.result?.difficulty && (
+              <>
+                <span aria-hidden>·</span>
+                <span>{item.result.difficulty}</span>
+              </>
+            )}
           </div>
         </div>
 
-        <div>
-          <p className="text-muted-foreground text-sm mb-1">Source Text:</p>
-          <p className="text-md font-semibold">{item.sourceText}</p>
-        </div>
+        <button
+          onClick={() => onDelete(item._id.toString())}
+          aria-label="Delete translation"
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
 
-        <div className="grid gap-3 bg-accent dark:bg-zinc-900">
-          {Object.entries(item.result.translations).map(([lang, text]) => (
-            <div
-              key={lang}
-              className="rounded-md border p-3 bg-muted/10 dark:bg-zinc-850"
-            >
-              <div className="space-x-1 flex flex-row items-center">
-                <p className="font-medium text-md">
-                  {availableLanguages.find((l) => l.value === lang)?.label ||
-                    lang}
-                  :
-                </p>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold">
-                    {String(text)}
-                  </p>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(String(text));
-                      setCopiedLang(lang);
-                      setTimeout(() => setCopiedLang(null), 2000);
-                    }}
-                    className="text-muted-foreground hover:text-primary transition"
-                  >
-                    {copiedLang === lang ? (
-                      <Check size={16} className="text-green-500" />
-                    ) : (
-                      <Copy size={16} />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {item.result.example?.[lang] && (
-                <p className="text-sm text-muted-foreground mt-2 italic flex flex-row gap-x-2">
-                  💡 Example:
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm text-muted-foreground">
-                      {item.result.example?.[lang]}
-                    </p>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(
-                          item.result.example?.[lang] || ""
-                        );
-                        setCopiedLang(lang + "-example");
-                        setTimeout(() => setCopiedLang(null), 2000);
-                      }}
-                      className="text-muted-foreground hover:text-primary transition"
-                    >
-                      {copiedLang === lang + "-example" ? (
-                        <Check size={13} className="text-green-500" />
-                      ) : (
-                        <Copy size={13} />
-                      )}
-                    </button>
-                  </div>
+      <div className="mt-3 divide-y divide-border border-t border-border">
+        {entries.map(([lang, text]) => (
+          <div key={lang} className="flex items-center gap-3 px-4 py-2.5">
+            <span className="w-6 shrink-0 text-center text-sm" aria-hidden>
+              {getLanguage(lang)?.flag ?? "🌐"}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p
+                dir={isRTL(lang) ? "rtl" : "ltr"}
+                className="truncate text-sm font-medium"
+              >
+                {String(text)}
+              </p>
+              {item.result?.romanization?.[lang] && (
+                <p className="truncate font-mono text-[10px] text-muted-foreground">
+                  {item.result.romanization[lang]}
                 </p>
               )}
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+            <div className="flex shrink-0 items-center opacity-0 transition-opacity group-hover:opacity-100">
+              <SpeakButton text={String(text)} lang={lang} size={14} />
+              <CopyButton value={String(text)} size={14} />
+            </div>
+          </div>
+        ))}
+      </div>
 
-export default HistoryCard;
+      {hasExtras && (
+        <>
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="flex items-center justify-center gap-1 border-t border-border py-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
+          >
+            {expanded ? "Hide details" : "Examples & notes"}
+            <ChevronDown
+              className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
+            />
+          </button>
+
+          {expanded && (
+            <div className="space-y-3 border-t border-border bg-surface-2/50 px-4 py-3">
+              {item.result?.meaning && (
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  {item.result.meaning}
+                </p>
+              )}
+
+              {Object.entries(examples).map(([lang, sentence]) => (
+                <div key={lang} className="border-s-2 border-brand-400 ps-2.5">
+                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    {langName(lang)}
+                  </p>
+                  <p dir={isRTL(lang) ? "rtl" : "ltr"} className="text-xs leading-relaxed">
+                    {sentence}
+                  </p>
+                  {item.result?.exampleMeaning?.[lang] && (
+                    <p className="text-[11px] leading-relaxed text-muted-foreground">
+                      {item.result.exampleMeaning[lang]}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              {item.result?.note && (
+                <p className="rounded-lg bg-iris-500/10 px-2.5 py-2 text-[11px] leading-relaxed text-foreground/80">
+                  {item.result.note}
+                </p>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </article>
+  );
+}

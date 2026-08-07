@@ -1,31 +1,44 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const OPTIONS = [
+  { value: "all", label: "All" },
+  { value: "word", label: "Words" },
+  { value: "phrase", label: "Phrases" },
+] as const;
 
 interface HistoryFilterProps {
   filter: "all" | "word" | "phrase";
   setFilter: (filter: "all" | "word" | "phrase") => void;
 }
 
-const HistoryFilter = ({ filter, setFilter }: HistoryFilterProps) => {
+export default function HistoryFilter({ filter, setFilter }: HistoryFilterProps) {
   return (
-    <div className="flex gap-2 px-0 ms-8">
-      {["all", "word", "phrase"].map((f: string) => (
-        <button
-          key={f}
-          onClick={() => setFilter(f as "all" | "word" | "phrase")}
-          className={cn(
-            "px-3 py-1 rounded-md border font-medium transition cursor-pointer",
-            filter === f
-              ? "bg-slate-900 text-white dark:bg-gray-600 dark:text-white hover:brightness-90"
-              : "bg-gray-100 text-gray-700 border-gray-300 dark:bg-zinc-800 dark:text-gray-300 dark:border-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white"
-          )}
-        >
-          {f === "all" ? "All" : f === "word" ? "Words" : "Phrases"}
-        </button>
-      ))}
+    <div className="inline-flex shrink-0 items-center gap-0.5 rounded-lg border border-border bg-surface-2 p-0.5">
+      {OPTIONS.map((option) => {
+        const active = filter === option.value;
+        return (
+          <button
+            key={option.value}
+            onClick={() => setFilter(option.value)}
+            className={cn(
+              "relative rounded-md px-3.5 py-1.5 text-sm font-medium transition-colors",
+              active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {active && (
+              <motion.span
+                layoutId="history-filter"
+                transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                className="absolute inset-0 rounded-md bg-surface shadow-[var(--shadow-soft)]"
+              />
+            )}
+            <span className="relative">{option.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
-};
-
-export default HistoryFilter;
+}

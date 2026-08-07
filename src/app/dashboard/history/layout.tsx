@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Your Translation History | LaSu",
+  title: "History",
   description:
-    "View your recent translations, track your language learning progress, and revisit examples anytime — all in one place.",
+    "Search every word and phrase you have translated, with examples, pronunciation and notes kept alongside them.",
   openGraph: {
-    title: "Your Translation History | LaSu",
+    title: "Your translation history | LaSu",
     description:
       "Track and review your past translations with examples and language stats. Your learning journey, stored and synced.",
     url: "https://lasu.online/dashboard/history",
-    siteName: "LaSu - Your AI Language Support",
-    type: "website",
   },
 };
+
 export default function HistoryLayout({
   children,
 }: {
