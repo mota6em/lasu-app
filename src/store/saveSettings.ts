@@ -1,24 +1,22 @@
 import { Session } from "next-auth";
+import Settings from "@/types/settings";
 
-export const saveSettings = async (settings: any, session: Session | null) => {
-  try {
-    if (session?.user) {
-      await fetch("/api/settings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: session.user.id,
-          settings,
-        }),
-      });
-    } else {
-      localStorage.setItem("lasu-settings", JSON.stringify(settings));
-    }
-  } catch (error) {
-    console.error("Error saving settings:", error);
+export const saveSettings = async (
+  settings: Settings,
+  session: Session | null
+) => {
+  if (!session?.user?.id) {
+    localStorage.setItem("lasu-settings", JSON.stringify(settings));
+    return;
   }
+
+  const res = await fetch("/api/settings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId: session.user.id, settings }),
+  });
+
+  if (!res.ok) throw new Error("Could not save your preferences.");
 };
 
 export default saveSettings;

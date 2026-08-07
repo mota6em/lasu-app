@@ -1,6 +1,9 @@
-import React from "react";
-import { useState } from "react";
-import { availableLanguages } from "@/lib/languages";
+"use client";
+
+import { useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
+import { Check, Search, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -8,129 +11,217 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Language from "@/types/language";
+import { Button } from "@/components/ui/button";
+import { availableLanguages, popularLanguages } from "@/lib/languages";
 import { useTranslateStore } from "@/store/useTranslateStore";
-import { Button } from "../../ui/button";
-import saveSettings from "@/store/saveSettings";
-import { useSession } from "next-auth/react";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
+import saveSettings from "@/store/saveSettings";
+import { cn } from "@/lib/utils";
+import type Language from "@/types/language";
+
+const MAX_LANGS = 4;
+const MIN_LANGS = 1;
+
+const TONES = [
+  { value: "formal", label: "Formal", hint: "Professors, clients, strangers" },
+  { value: "casual", label: "Casual", hint: "How friends actually talk" },
+  { value: "slang", label: "Slang", hint: "Real colloquial wording" },
+  { value: "academic", label: "Academic", hint: "Essays and papers" },
+  { value: "funny", label: "Funny", hint: "Playful but still correct" },
+];
 
 const TranslationSettingDialog = () => {
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
-  const MAX_LANGS = 4;
-  const MIN_LANGS = 1;
-  const [activeTab, setActiveTab] = useState("english");
-  const setSelectedLanguages = useTranslateStore((state) => state.setLanguages);
-
-  const selectedLanguages = useTranslateStore(
-    (state) => state.selectedLanguages
-  );
-  const translationType = useTranslateStore((state) => state.translationType);
-  const setTranslationType = useTranslateStore(
-    (state) => state.setTranslationType
-  );
-  const toggleLanguage = (lang: Language) => {
-    const isSelected = selectedLanguages.some((l) => l.value === lang.value);
-    if (isSelected) {
-      if (selectedLanguages.length > MIN_LANGS) {
-        const updated = selectedLanguages.filter((l) => l.value !== lang.value);
-        setSelectedLanguages(updated);
-        if (activeTab === lang.value) {
-          setActiveTab(updated[0]?.value || "english");
-        }
-      }
-    } else {
-      if (selectedLanguages.length < MAX_LANGS) {
-        setSelectedLanguages([...selectedLanguages, lang]);
-      }
-    }
-  };
+  const [query, setQuery] = useState("");
+  const [saving, setSaving] = useState(false);
   const { data: session } = useSession();
 
-  return (
-    <div>
-      <Dialog open={isOpen} onOpenChange={toggleSettingsDialog}>
-        <DialogContent className="bg-white dark:bg-[#121212] text-black dark:text-gray-100">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Settings</DialogTitle>
-            <DialogDescription>
-              Customize your translation experience
-            </DialogDescription>
-            <div>
-              <p className="font-medium mb-2">Translation style:</p>
-              <div className="flex flex-wrap gap-4">
-                {["formal", "casual", "slang", "academic", "funny"].map(
-                  (type) => (
-                    <label
-                      key={type}
-                      className="flex items-center space-x-2 capitalize cursor-pointer"
-                    >
-                      <input
-                        type="radio"
-                        name="translationType"
-                        value={type}
-                        checked={translationType === type}
-                        className="cursor-pointer flex items-center justify-center w-3 h-3 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={() => setTranslationType(type)}
-                      />
-                      <span>{type}</span>
-                    </label>
-                  )
-                )}
-              </div>
-            </div>
-            <div>
-              <p className="font-medium mb-2">
-                Select up to 4 prefered languages:
-              </p>
-              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border p-3 rounded">
-                {availableLanguages.map((lang) => (
-                  <label
-                    key={lang.value}
-                    className="flex items-center space-x-2 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      className={`cursor-pointer ${
-                        selectedLanguages?.length >= 4
-                          ? "pointer-events-none opacity-50 "
-                          : ""
-                      }`}
-                      checked={selectedLanguages?.some(
-                        (l) => l.value === lang.value
-                      )}
-                      onChange={() => toggleLanguage(lang)}
-                      disabled={
-                        !selectedLanguages?.some(
-                          (l) => l.value === lang.value
-                        ) && selectedLanguages?.length >= 4
-                      }
-                    />
+  const selectedLanguages = useTranslateStore((s) => s.selectedLanguages);
+  const setSelectedLanguages = useTranslateStore((s) => s.setLanguages);
+  const translationType = useTranslateStore((s) => s.translationType);
+  const setTranslationType = useTranslateStore((s) => s.setTranslationType);
 
-                    <span>{lang.label}</span>
-                  </label>
-                ))}
-              </div>
+  const isFull = selectedLanguages.length >= MAX_LANGS;
+
+  const languages = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    const matches = availableLanguages.filter(
+      (lang) =>
+        !term ||
+        lang.name.toLowerCase().includes(term) ||
+        lang.native.toLowerCase().includes(term)
+    );
+    if (term) return matches;
+    // no search yet, so float the languages most people want to the top
+    const rank = (value: string) => {
+      const i = popularLanguages.indexOf(value);
+      return i === -1 ? popularLanguages.length : i;
+    };
+    return [...matches].sort((a, b) => rank(a.value) - rank(b.value));
+  }, [query]);
+
+  const toggleLanguage = (lang: Language) => {
+    const isSelected = selectedLanguages.some((l) => l.value === lang.value);
+
+    if (isSelected) {
+      if (selectedLanguages.length <= MIN_LANGS) {
+        toast("Keep at least one language selected.");
+        return;
+      }
+      setSelectedLanguages(selectedLanguages.filter((l) => l.value !== lang.value));
+      return;
+    }
+
+    if (isFull) {
+      toast(`Four languages at a time is the sweet spot.`);
+      return;
+    }
+    setSelectedLanguages([...selectedLanguages, { value: lang.value, label: lang.label }]);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await saveSettings({ selectedLanguages, translationType }, session);
+      toast.success("Preferences saved");
+      toggleSettingsDialog();
+    } catch {
+      toast.error("Could not save your preferences. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={toggleSettingsDialog}>
+      <DialogContent className="max-h-[90vh] gap-0 overflow-y-auto p-0 sm:max-w-lg">
+        <DialogHeader className="border-b border-border px-6 py-4 text-left">
+          <DialogTitle className="font-display text-xl">
+            Translation preferences
+          </DialogTitle>
+          <DialogDescription>
+            Pick the languages you are learning and the register you want back.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6 px-6 py-5">
+          <section>
+            <div className="mb-2.5 flex items-baseline justify-between">
+              <h3 className="text-sm font-semibold">Register</h3>
+              <span className="text-xs text-muted-foreground">
+                Applies to every translation
+              </span>
             </div>
-          </DialogHeader>
-          <div className="flex justify-end">
-            <Button
-              className="w-fit"
-              onClick={async () => {
-                const settings = {
-                  selectedLanguages,
-                  translationType,
-                };
-                await saveSettings(settings, session);
-                toggleSettingsDialog();
-              }}
-            >
-              Save
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {TONES.map((tone) => {
+                const active = translationType === tone.value;
+                return (
+                  <button
+                    key={tone.value}
+                    type="button"
+                    onClick={() => setTranslationType(tone.value)}
+                    className={cn(
+                      "rounded-xl border p-2.5 text-left transition-all",
+                      active
+                        ? "border-brand-500 bg-brand-500/10 shadow-[var(--shadow-brand)]"
+                        : "border-border bg-surface hover:border-border-strong hover:bg-surface-2"
+                    )}
+                  >
+                    <span className="block text-sm font-medium">{tone.label}</span>
+                    <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">
+                      {tone.hint}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-2.5 flex items-baseline justify-between">
+              <h3 className="text-sm font-semibold">Target languages</h3>
+              <span
+                className={cn(
+                  "text-xs tabular-nums",
+                  isFull ? "text-brand-600 dark:text-brand-400" : "text-muted-foreground"
+                )}
+              >
+                {selectedLanguages.length} / {MAX_LANGS}
+              </span>
+            </div>
+
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {selectedLanguages.map((lang) => (
+                <button
+                  key={lang.value}
+                  type="button"
+                  onClick={() => toggleLanguage(lang)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-85"
+                >
+                  {lang.label}
+                  <X className="h-3 w-3" />
+                </button>
+              ))}
+            </div>
+
+            <div className="relative mb-2">
+              <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search 74 languages…"
+                className="h-10 w-full rounded-lg border border-border bg-surface-2 ps-9 pe-3 text-sm outline-none transition-colors focus:border-brand-400"
+              />
+            </div>
+
+            <div className="max-h-56 overflow-y-auto rounded-xl border border-border">
+              {languages.length === 0 && (
+                <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+                  No language matches “{query}”.
+                </p>
+              )}
+              {languages.map((lang) => {
+                const active = selectedLanguages.some((l) => l.value === lang.value);
+                const disabled = !active && isFull;
+                return (
+                  <button
+                    key={lang.value}
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => toggleLanguage(lang)}
+                    className={cn(
+                      "flex w-full items-center gap-3 border-b border-border px-3 py-2.5 text-left text-sm transition-colors last:border-b-0",
+                      active ? "bg-brand-500/10" : "hover:bg-surface-2",
+                      disabled && "cursor-not-allowed opacity-40"
+                    )}
+                  >
+                    <span className="text-base" aria-hidden>
+                      {lang.flag}
+                    </span>
+                    <span className="flex-1 truncate">
+                      {lang.name}
+                      <span className="ms-2 text-xs text-muted-foreground">
+                        {lang.native}
+                      </span>
+                    </span>
+                    {active && <Check className="h-4 w-4 text-brand-600 dark:text-brand-400" />}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+
+        <div className="sticky bottom-0 flex justify-end gap-2 border-t border-border bg-surface px-6 py-4">
+          <Button variant="ghost" onClick={toggleSettingsDialog}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Saving…" : "Save preferences"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
