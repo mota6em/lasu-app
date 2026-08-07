@@ -2,6 +2,7 @@ import { connectToDB } from "@/lib/mongodb";
 import LiveTranslation from "@/models/liveTranslations";
 import { CommunityStatsCache } from "@/models/communityStatsCache";
 import CommunityUser from "@/models/communityUser";
+import type { PipelineStage } from "mongoose";
 
 // helper: get date ranges
 function getDayStart() {
@@ -18,10 +19,13 @@ function getMonthStart() {
 
 // helper to resolve learner info
 async function enrichLearners(aggregated: any) {
-  const results = [];
+  const userIds = aggregated.map((l: any) => l._id);
+  const users = await CommunityUser.find({ userId: { $in: userIds } });
+  const usersById = new Map(users.map((u) => [u.userId, u]));
 
+  const results = [];
   for (const l of aggregated) {
-    const user = await CommunityUser.findOne({ userId: l._id });
+    const user = usersById.get(l._id);
     if (!user) continue;
 
     results.push({
@@ -48,89 +52,54 @@ export async function recalcAndStoreCommunityStats() {
   const dayStart = getDayStart();
   const monthStart = getMonthStart();
 
-  // TODAY
-  const dailyWords = await LiveTranslation.aggregate([
-    { $match: { createdAt: { $gte: dayStart } } },
+  const wordsPipeline = (match: Record<string, any>): PipelineStage[] => [
+    ...(Object.keys(match).length ? [{ $match: match }] : []),
     { $group: { _id: "$sourceText", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
-  ]);
-
-  const dailyLangs = await LiveTranslation.aggregate([
-    { $match: { createdAt: { $gte: dayStart } } },
-    {
-      $project: {
-        langs: { $objectToArray: "$result.translations" },
-      },
-    },
+  ];
+  const langsPipeline = (match: Record<string, any>): PipelineStage[] => [
+    ...(Object.keys(match).length ? [{ $match: match }] : []),
+    { $project: { langs: { $objectToArray: "$result.translations" } } },
     { $unwind: "$langs" },
     { $group: { _id: "$langs.k", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
-  ]);
-
-  const dailyLearnersRaw = await LiveTranslation.aggregate([
-    { $match: { createdAt: { $gte: dayStart } } },
+  ];
+  const learnersPipeline = (match: Record<string, any>): PipelineStage[] => [
+    ...(Object.keys(match).length ? [{ $match: match }] : []),
     { $group: { _id: "$userId", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
     { $limit: 10 },
-  ]);
-  const dailyLearners = await enrichLearners(dailyLearnersRaw);
+  ];
 
-  // MONTH
-  const monthlyWords = await LiveTranslation.aggregate([
-    { $match: { createdAt: { $gte: monthStart } } },
-    { $group: { _id: "$sourceText", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 },
-  ]);
-
-  const monthlyLangs = await LiveTranslation.aggregate([
-    { $match: { createdAt: { $gte: monthStart } } },
-    {
-      $project: {
-        langs: { $objectToArray: "$result.translations" },
-      },
-    },
-    { $unwind: "$langs" },
-    { $group: { _id: "$langs.k", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 },
-  ]);
-
-  const monthlyLearnersRaw = await LiveTranslation.aggregate([
-    { $match: { createdAt: { $gte: monthStart } } },
-    { $group: { _id: "$userId", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 },
-  ]);
-  const monthlyLearners = await enrichLearners(monthlyLearnersRaw);
-
-  // ALL TIME
-  const allTimeWords = await LiveTranslation.aggregate([
-    { $group: { _id: "$sourceText", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 },
+  const [
+    dailyWords,
+    dailyLangs,
+    dailyLearnersRaw,
+    monthlyWords,
+    monthlyLangs,
+    monthlyLearnersRaw,
+    allTimeWords,
+    allTimeLangs,
+    allTimeLearnersRaw,
+  ] = await Promise.all([
+    LiveTranslation.aggregate(wordsPipeline({ createdAt: { $gte: dayStart } })),
+    LiveTranslation.aggregate(langsPipeline({ createdAt: { $gte: dayStart } })),
+    LiveTranslation.aggregate(learnersPipeline({ createdAt: { $gte: dayStart } })),
+    LiveTranslation.aggregate(wordsPipeline({ createdAt: { $gte: monthStart } })),
+    LiveTranslation.aggregate(langsPipeline({ createdAt: { $gte: monthStart } })),
+    LiveTranslation.aggregate(learnersPipeline({ createdAt: { $gte: monthStart } })),
+    LiveTranslation.aggregate(wordsPipeline({})),
+    LiveTranslation.aggregate(langsPipeline({})),
+    LiveTranslation.aggregate(learnersPipeline({})),
   ]);
 
-  const allTimeLangs = await LiveTranslation.aggregate([
-    {
-      $project: {
-        langs: { $objectToArray: "$result.translations" },
-      },
-    },
-    { $unwind: "$langs" },
-    { $group: { _id: "$langs.k", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 },
+  const [dailyLearners, monthlyLearners, allTimeLearners] = await Promise.all([
+    enrichLearners(dailyLearnersRaw),
+    enrichLearners(monthlyLearnersRaw),
+    enrichLearners(allTimeLearnersRaw),
   ]);
-
-  const allTimeLearnersRaw = await LiveTranslation.aggregate([
-    { $group: { _id: "$userId", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 },
-  ]);
-  const allTimeLearners = await enrichLearners(allTimeLearnersRaw);
 
   // ----- SAVE INTO CACHE -----
   await CommunityStatsCache.findOneAndUpdate(

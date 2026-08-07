@@ -17,22 +17,15 @@ export function useTopLearners(period: Period) {
         );
         const topUsers: any[] = await res.json();
 
-        const learnersWithInfo: Learner[] = await Promise.all(
-          topUsers.map(async (u) => {
-            const userRes = await fetch(`/api/users/${u.userId}`);
-            const userData = await userRes.json();
-
-            return {
-              id: u.userId,
-              name: userData.name || "Anonymous",
-              Image: userData.image || "/imgs/userIcon.jpg",
-              xp: u.xp || 0,
-              totalTranslations: u[period + "Translations"]! || 0,
-              showName: u.showName ?? true,
-              showPicture: u.showPicture ?? true,
-            };
-          })
-        );
+        const learnersWithInfo: Learner[] = topUsers.map((u) => ({
+          id: u.userId,
+          name: u.name || "Anonymous",
+          Image: u.image || "/imgs/userIcon.jpg",
+          xp: u.xp || 0,
+          totalTranslations: u[period + "Translations"]! || 0,
+          showName: u.showName ?? true,
+          showPicture: u.showPicture ?? true,
+        }));
 
         setLearners(learnersWithInfo);
       } catch (err) {

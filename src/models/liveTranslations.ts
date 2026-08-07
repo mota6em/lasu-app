@@ -15,6 +15,9 @@ const LiveTranslationSchema = new Schema(
   { timestamps: true }
 );
 
+LiveTranslationSchema.index({ createdAt: -1 });
+LiveTranslationSchema.index({ userId: 1 });
+
 const LiveTranslation =
   models.LiveTranslation || model("LiveTranslation", LiveTranslationSchema);
 

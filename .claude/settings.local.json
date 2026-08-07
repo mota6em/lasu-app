@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs -I{} echo {})",
+      "Bash(npx eslint *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

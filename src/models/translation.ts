@@ -27,6 +27,8 @@ const TranslationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+TranslationSchema.index({ userId: 1, createdAt: -1 });
+
 //Set translation filter automatically
 TranslationSchema.pre("save", function (next) {
   if (this.sourceText.includes(" ")) this.translationFilter = "phrase";

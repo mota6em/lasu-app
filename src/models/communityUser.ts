@@ -19,6 +19,10 @@ export const CommunityUserSchema = new Schema({
   allTimeTranslations: { type: Number, default: 0 },
 });
 
+CommunityUserSchema.index({ dailyTranslations: -1 });
+CommunityUserSchema.index({ monthlyTranslations: -1 });
+CommunityUserSchema.index({ allTimeTranslations: -1 });
+
 const CommunityUser =
   models.CommunityUser || model("CommunityUser", CommunityUserSchema);
 

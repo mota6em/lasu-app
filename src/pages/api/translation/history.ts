@@ -20,27 +20,43 @@ export default async function handler(
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-    // total translations
-    const totalTranslations = await Translation.countDocuments({ userId });
+    const [totalTranslations, thisWeekCount, langAgg, dailyAgg] =
+      await Promise.all([
+        // total translations
+        Translation.countDocuments({ userId }),
 
-    // last week count
-    const thisWeekCount = await Translation.countDocuments({
-      userId,
-      createdAt: { $gt: oneWeekAgo },
-    });
+        // last week count
+        Translation.countDocuments({
+          userId,
+          createdAt: { $gt: oneWeekAgo },
+        }),
 
-    // language counts + most used
-    const langAgg = await Translation.aggregate([
-      { $match: { userId } },
-      {
-        $project: {
-          translationsArray: { $objectToArray: "$result.translations" },
-        },
-      },
-      { $unwind: "$translationsArray" },
-      { $group: { _id: "$translationsArray.k", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-    ]);
+        // language counts + most used
+        Translation.aggregate([
+          { $match: { userId } },
+          {
+            $project: {
+              translationsArray: { $objectToArray: "$result.translations" },
+            },
+          },
+          { $unwind: "$translationsArray" },
+          { $group: { _id: "$translationsArray.k", count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+        ]),
+
+        Translation.aggregate([
+          { $match: { userId } },
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+              },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ]),
+      ]);
 
     const langCount = Object.fromEntries(
       langAgg.map(({ _id, count }) => [_id, count])
@@ -49,17 +65,6 @@ export default async function handler(
     const topLangs: [string, number][] = langAgg.map((x: any) => [
       x._id,
       x.count,
-    ]);
-
-    const dailyAgg = await Translation.aggregate([
-      { $match: { userId } },
-      {
-        $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: 1 } },
     ]);
 
     const dailySeries = dailyAgg.map((d: any) => ({
@@ -80,7 +85,9 @@ export default async function handler(
   const query: any = { userId };
   if (filter !== "all") query.translationFilter = filter;
 
-  let cursor = Translation.find(query).sort({ createdAt: -1 });
+  let cursor = Translation.find(query)
+    .select("sourceText translationType result.translations result.example createdAt")
+    .sort({ createdAt: -1 });
 
   // only apply pagination if limit is provided
   if (limit) {
@@ -88,6 +95,8 @@ export default async function handler(
     const limitNum = parseInt(limit as string, 10);
     const skip = pageNum * limitNum;
     cursor = cursor.skip(skip).limit(limitNum);
+  } else {
+    cursor = cursor.limit(200);
   }
 
   const history = await cursor.lean();

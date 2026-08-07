@@ -27,14 +27,15 @@ export default async function handler(
       const data = req.body;
       const newTrans = await LiveTranslation.create(data);
 
-      // limit to 100
-      const count = await LiveTranslation.countDocuments();
-      if (count > 100) {
-        const oldest = await LiveTranslation.find({})
-          .sort({ createdAt: 1 })
-          .limit(count - 100);
+      // limit to 100: find the cutoff (100th newest) and drop anything older
+      const cutoff = await LiveTranslation.findOne({})
+        .sort({ createdAt: -1 })
+        .skip(99)
+        .select("createdAt")
+        .lean();
+      if (cutoff) {
         await LiveTranslation.deleteMany({
-          _id: { $in: oldest.map((o) => o._id) },
+          createdAt: { $lt: (cutoff as any).createdAt },
         });
       }
 

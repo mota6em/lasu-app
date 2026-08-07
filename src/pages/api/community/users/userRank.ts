@@ -21,20 +21,21 @@ export default async function handler(
     const user = await CommunityUser.findOne({ userId });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const dailyRank =
-      (await CommunityUser.countDocuments({
+    const [dailyCount, monthlyCount, allTimeCount] = await Promise.all([
+      CommunityUser.countDocuments({
         dailyTranslations: { $gt: user.dailyTranslations },
-      })) + 1;
-
-    const monthlyRank =
-      (await CommunityUser.countDocuments({
+      }),
+      CommunityUser.countDocuments({
         monthlyTranslations: { $gt: user.monthlyTranslations },
-      })) + 1;
-
-    const allTimeRank =
-      (await CommunityUser.countDocuments({
+      }),
+      CommunityUser.countDocuments({
         allTimeTranslations: { $gt: user.allTimeTranslations },
-      })) + 1;
+      }),
+    ]);
+
+    const dailyRank = dailyCount + 1;
+    const monthlyRank = monthlyCount + 1;
+    const allTimeRank = allTimeCount + 1;
 
     return res.status(200).json({
       daily: dailyRank,
