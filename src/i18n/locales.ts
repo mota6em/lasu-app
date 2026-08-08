@@ -20,6 +20,10 @@ export const localeCatalogue: LocaleMeta[] = [
   { code: "pt", name: "Portuguese", native: "Português", flag: "🇧🇷" },
   { code: "ru", name: "Russian", native: "Русский", flag: "🇷🇺" },
   { code: "de", name: "German", native: "Deutsch", flag: "🇩🇪" },
+  { code: "hi", name: "Hindi", native: "हिन्दी", flag: "🇮🇳" },
+  { code: "ja", name: "Japanese", native: "日本語", flag: "🇯🇵" },
+  { code: "it", name: "Italian", native: "Italiano", flag: "🇮🇹" },
+  { code: "tr", name: "Turkish", native: "Türkçe", flag: "🇹🇷" },
 ];
 
 export const locales = localeCatalogue.map((l) => l.code);

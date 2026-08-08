@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Flame, Menu, Search } from "lucide-react";
+import { ChevronDown, Flame, Menu, Search } from "lucide-react";
 import { ModeToggle } from "./ModeToggle";
 import { UserMenu } from "./UserMenu";
 import { Skeleton } from "../ui/skeleton";
@@ -44,6 +44,7 @@ function StreakPill() {
 export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   const t = useTranslations("shell");
   const tNav = useTranslations("nav");
+  const tLang = useTranslations("language");
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const locale = useLocale();
@@ -115,15 +116,21 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 
         <button
           onClick={openLanguages}
-          title={localeMeta?.native}
-          aria-label={localeMeta?.name}
-          className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2 text-sm text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
+          title={tLang("title")}
+          aria-label={`${tLang("title")}: ${localeMeta?.name ?? locale}`}
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-surface-2 px-2.5 text-sm font-medium transition-colors hover:border-brand-400 hover:bg-brand-500/10"
         >
-          <span aria-hidden>{localeMeta?.flag ?? "🌐"}</span>
-          <span className="hidden text-xs font-medium uppercase sm:inline">
-            {locale}
+          <span className="text-base leading-none" aria-hidden>
+            {localeMeta?.flag ?? "🌐"}
           </span>
+          <span className="hidden max-w-24 truncate sm:inline">
+            {localeMeta?.native ?? locale}
+          </span>
+          <span className="text-xs font-semibold uppercase sm:hidden">{locale}</span>
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
+
+        <span aria-hidden className="mx-0.5 h-5 w-px bg-border" />
 
         <StreakPill />
         <ModeToggle />

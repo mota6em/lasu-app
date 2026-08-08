@@ -13,6 +13,10 @@ const OG_TERRITORY: Record<string, string> = {
   pt: "pt_BR",
   ru: "ru_RU",
   de: "de_DE",
+  hi: "hi_IN",
+  ja: "ja_JP",
+  it: "it_IT",
+  tr: "tr_TR",
 };
 
 export function openGraphLocale(locale: string) {
