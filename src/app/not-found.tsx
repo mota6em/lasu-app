@@ -1,8 +1,6 @@
 import Link from "next/link";
 import "./globals.css";
 
-// catches paths that never resolved to a locale segment, so it cannot rely on
-// translations and stays deliberately plain
 export default function GlobalNotFound() {
   return (
     <html lang="en">

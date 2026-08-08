@@ -23,7 +23,6 @@ export default function ActivityHeatmap({ series }: { series: DayPoint[] }) {
 
     const end = new Date();
     end.setHours(0, 0, 0, 0);
-    // walk back to the most recent Sunday so every column is a full week
     end.setDate(end.getDate() + (6 - end.getDay()));
 
     const weeks: { date: Date; count: number }[][] = [];

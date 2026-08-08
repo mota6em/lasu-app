@@ -35,8 +35,6 @@ type TranslationPayload = {
   exampleMeaning: Record<string, string>;
 };
 
-// the tone and the language list end up inside the prompt, so both are matched
-// against fixed lists instead of being trusted straight off the request body
 function sanitizeLangs(input: unknown): string[] {
   const raw = Array.isArray(input) ? input : [];
   const valid = raw
@@ -146,7 +144,6 @@ function normalize(raw: unknown, langs: string[], text: string): TranslationPayl
   const src = (raw ?? {}) as Record<string, unknown>;
   const translations = coerceStringMap(src.translations, langs);
 
-  // a response with nothing usable in it is worse than an explicit failure
   if (Object.keys(translations).length === 0) {
     throw new Error("model returned no translations");
   }
@@ -214,7 +211,6 @@ export default async function handler(
       });
       reply = chat.choices[0]?.message?.content ?? null;
     } catch {
-      // not every model accepts json_object; the prompt already demands raw JSON
       const chat = await openai.chat.completions.create({ model, messages });
       reply = chat.choices[0]?.message?.content ?? null;
     }
@@ -223,7 +219,6 @@ export default async function handler(
 
     const parsed = normalize(JSON.parse(stripFences(reply)), langs, text);
 
-    // `translation` stays a JSON string because the published extension parses it
     return res.status(200).json({
       translation: JSON.stringify(parsed),
       data: parsed,

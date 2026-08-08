@@ -111,7 +111,6 @@ export function isRTL(value: string) {
   return getLanguage(value)?.rtl ?? false;
 }
 
-// the handful people actually reach for first — used to seed the language picker
 export const popularLanguages = [
   "english",
   "spanish",

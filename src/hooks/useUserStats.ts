@@ -1,8 +1,6 @@
 import CommunityUser from "@/types/communityUser";
 import { useQuery } from "@tanstack/react-query";
 
-// a 404 here just means the user never joined the community, which is a normal
-// state rather than a failure, so it resolves to null instead of throwing
 async function fetchUserStats(userId: string): Promise<CommunityUser | null> {
   const res = await fetch(`/api/community/users/${userId}`);
   if (res.status === 404) return null;

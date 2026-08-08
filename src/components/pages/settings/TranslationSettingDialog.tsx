@@ -49,7 +49,6 @@ const TranslationSettingDialog = () => {
         lang.native.toLowerCase().includes(term)
     );
     if (term) return matches;
-    // no search yet, so float the languages most people want to the top
     const rank = (value: string) => {
       const i = popularLanguages.indexOf(value);
       return i === -1 ? popularLanguages.length : i;

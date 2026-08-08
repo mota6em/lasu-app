@@ -2,8 +2,6 @@ import { defaultLocale, locales } from "./locales";
 
 const SITE = "https://lasu.online";
 
-// open graph wants a territory, and guessing one per language beats emitting
-// a bare language tag that some crawlers ignore
 const OG_TERRITORY: Record<string, string> = {
   en: "en_US",
   zh: "zh_CN",
@@ -30,8 +28,6 @@ function localeHref(locale: string, path: string) {
     : `${SITE}/${locale}${clean}`;
 }
 
-// every page advertises the full set of translations plus an x-default, which
-// is what search engines need to serve the right one per visitor
 export function buildAlternates(locale: string, path: string) {
   return {
     canonical: localeHref(locale, path),

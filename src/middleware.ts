@@ -104,8 +104,6 @@ async function handleApi(req: NextRequest) {
 }
 
 export async function middleware(req: NextRequest) {
-  // api traffic keeps the origin + rate-limit rules and never gets a locale
-  // prefix, so the extension's endpoints stay exactly where they were
   if (req.nextUrl.pathname.startsWith("/api")) {
     return handleApi(req);
   }
@@ -116,7 +114,6 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/api/:path*",
-    // every page route except next internals and files with an extension
     "/((?!_next|_vercel|.*\\..*).*)",
   ],
 };

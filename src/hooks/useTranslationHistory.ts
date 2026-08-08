@@ -63,8 +63,6 @@ export default function useTranslationHistory(filter: Filter) {
       ? localHistory
       : localHistory.filter((item) => item.translationFilter === filter);
 
-  // the row disappears straight away and the request only leaves once the undo
-  // window closes, so an accidental delete costs nothing
   const handleDelete = useCallback(
     (itemId: string) => {
       if (status !== "authenticated") {

@@ -28,9 +28,7 @@ function saveLocally(
       createdAt: new Date().toISOString(),
     });
     writeLocalHistory(history.slice(0, LOCAL_HISTORY_CAP));
-  } catch {
-    // storage can be full or blocked — the translation itself still stands
-  }
+  } catch {}
 }
 
 async function fetchPrivacy(userId: string) {
@@ -132,7 +130,6 @@ export function useTranslate() {
         }).catch(() => null);
       }
 
-      // the freshly saved word should show up the moment the user navigates
       queryClient.invalidateQueries({ queryKey: ["translation-history"] });
       queryClient.invalidateQueries({ queryKey: ["translation-stats"] });
       queryClient.invalidateQueries({ queryKey: ["practice-words"] });

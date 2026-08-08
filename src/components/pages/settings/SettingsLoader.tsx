@@ -30,9 +30,7 @@ export default function SettingsLoader() {
           if (!res.ok) return;
           const data = await res.json();
           apply(data?.settings);
-        } catch {
-          // keep whatever defaults are already in the store
-        }
+        } catch {}
         return;
       }
 

@@ -11,8 +11,6 @@ export function dayKey(date: Date) {
   ].join("-");
 }
 
-// the aggregate only returns days that had activity, so gaps are filled in here
-// to keep the x-axis honest
 export function fillDays(series: DayPoint[], days: number): DayPoint[] {
   const counts = new Map(series.map((point) => [point.date, point.count]));
   const filled: DayPoint[] = [];
@@ -33,7 +31,6 @@ export function currentStreak(series: DayPoint[]) {
   const cursor = new Date();
   cursor.setHours(0, 0, 0, 0);
 
-  // today not being logged yet should not break a streak that is still alive
   if (!counts.get(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
 
   let streak = 0;

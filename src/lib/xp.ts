@@ -1,4 +1,3 @@
-// mirrors getLevelFromXP on the server: level n starts at 100 * (n - 1)^2 XP
 export function xpForLevel(level: number) {
   return 100 * Math.pow(Math.max(level - 1, 0), 2);
 }

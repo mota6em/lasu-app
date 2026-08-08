@@ -1,7 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 
 export interface NavItem {
-  /** key into the `nav` message namespace, paired with `<key>Hint` */
   key: "translate" | "practice" | "history" | "stats" | "community";
   href: string;
   icon: "home" | "practice" | "history" | "stats" | "community";
@@ -26,7 +25,6 @@ const json = (url: string) => async () => {
   return res.json();
 };
 
-// warm the cache for a nav destination on hover so the page has data the instant it mounts
 export function prefetchRoute(
   queryClient: QueryClient,
   href: string,

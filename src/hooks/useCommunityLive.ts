@@ -39,7 +39,6 @@ export function useCommunityLive() {
 
     const ids = data.map((t) => t.userId.toString() + t.sourceText);
 
-    // the very first payload is history, not news, so nothing is highlighted
     if (firstLoad.current) {
       firstLoad.current = false;
       seen.current = new Set(ids);

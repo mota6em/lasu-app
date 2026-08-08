@@ -15,7 +15,6 @@ async function fetchTranslationStats(): Promise<TranslationStatsResponse> {
   return res.json();
 }
 
-// shared across useOverviewCards/useStatsData so both dedupe into one request+cache entry
 export function useTranslationStats(userId?: string) {
   return useQuery({
     queryKey: ["translation-stats", userId],

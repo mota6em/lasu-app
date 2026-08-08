@@ -135,7 +135,6 @@ export function usePracticeSession() {
     if (missed.length) start({ ...config, deckSize: "all" }, missed);
   }, [log, config, start]);
 
-  // countdown only runs while a recall card is still hidden
   useEffect(() => {
     if (phase !== "active" || config.mode !== "recall" || revealed || !config.timer) {
       clearTimer();
@@ -170,11 +169,9 @@ export function usePracticeSession() {
   }, [log]);
 
   return {
-    // data
     pool,
     isLoading,
     isError,
-    // session
     phase,
     config,
     setConfig,
@@ -188,7 +185,6 @@ export function usePracticeSession() {
     setAnswers,
     timeLeft,
     stats,
-    // actions
     start,
     reveal,
     next,

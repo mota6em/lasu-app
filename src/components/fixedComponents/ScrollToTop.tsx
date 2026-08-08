@@ -14,7 +14,6 @@ export default function ScrollToTop() {
 
     const onScroll = () => {
       const y = window.scrollY;
-      // only offer the shortcut while scrolling back up, so it stays out of the way
       setVisible(y > 400 && y < lastY);
       lastY = y;
     };

@@ -5,8 +5,6 @@ import { defaultLocale, locales } from "./locales";
 export const routing = defineRouting({
   locales,
   defaultLocale,
-  // english stays unprefixed so the published extension's /dashboard?text=…
-  // deep links keep resolving without a rewrite
   localePrefix: "as-needed",
   localeCookie: {
     name: "LASU_LOCALE",

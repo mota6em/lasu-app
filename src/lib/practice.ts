@@ -1,5 +1,3 @@
-// answers are graded leniently: case, accents, punctuation and articles are
-// noise for a vocabulary drill, and one typo should not read as "wrong"
 const ARTICLES = /^(the|a|an|le|la|les|un|une|el|los|las|der|die|das|il|lo|gli)\s+/i;
 
 export function normalizeAnswer(value: string) {
@@ -44,7 +42,6 @@ export function gradeAnswer(given: string, expected: string): AnswerVerdict {
   if (!a) return "wrong";
   if (a === b) return "correct";
 
-  // one slip in a longer word still counts, it is just flagged as close
   const tolerance = b.length > 7 ? 2 : b.length > 4 ? 1 : 0;
   return tolerance && levenshtein(a, b) <= tolerance ? "close" : "wrong";
 }

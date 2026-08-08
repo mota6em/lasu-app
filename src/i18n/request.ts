@@ -7,8 +7,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
   const locale = hasLocale(routing.locales, requested) ? requested : defaultLocale;
 
-  // english is bundled as the fallback so a half-finished catalogue can never
-  // render a raw message key to a user
   const [messages, fallback] = await Promise.all([
     import(`../../messages/${locale}.json`).then((m) => m.default),
     locale === defaultLocale

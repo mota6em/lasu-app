@@ -14,7 +14,6 @@ function loadVoices(): Promise<SpeechSynthesisVoice[]> {
     return Promise.resolve(voices);
   }
 
-  // chrome populates the voice list asynchronously on first call
   return new Promise((resolve) => {
     const done = () => {
       cachedVoices = speechSynthesis.getVoices();

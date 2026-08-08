@@ -30,9 +30,7 @@ export default function CopyButton({
       setCopied(true);
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => setCopied(false), 1600);
-    } catch {
-      // clipboard permission denied, nothing useful to fall back to
-    }
+    } catch {}
   };
 
   return (

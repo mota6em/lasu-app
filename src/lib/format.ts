@@ -1,6 +1,5 @@
 const DAY = 86_400_000;
 
-/** key into the `history` message namespace, or null when the label is a date */
 export type DayBucketKey = "today" | "yesterday" | "thisWeek" | "thisMonth" | null;
 
 export function dayBucket(input: string | Date, locale: string) {
@@ -14,7 +13,6 @@ export function dayBucket(input: string | Date, locale: string) {
   if (diffDays < 7) return { key: "thisWeek" as const, label: "thisWeek" };
   if (diffDays < 30) return { key: "thisMonth" as const, label: "thisMonth" };
 
-  // older entries fall back to a real month name in the reader's own locale
   const label = date.toLocaleDateString(locale, {
     month: "long",
     year: "numeric",

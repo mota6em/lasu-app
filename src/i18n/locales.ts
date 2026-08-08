@@ -6,11 +6,6 @@ export interface LocaleMeta {
   rtl?: boolean;
 }
 
-/**
- * Every locale listed here must have a matching messages/<code>.json.
- * Adding a language is: drop the catalogue in, add the row, done — the
- * switcher, routing, sitemap and hreflang tags all read from this list.
- */
 export const localeCatalogue: LocaleMeta[] = [
   { code: "en", name: "English", native: "English", flag: "🇬🇧" },
   { code: "zh", name: "Chinese", native: "中文", flag: "🇨🇳" },

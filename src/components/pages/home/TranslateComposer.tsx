@@ -57,7 +57,6 @@ export default function TranslateComposer({
     el.style.height = `${Math.min(el.scrollHeight, 320)}px`;
   }, [text]);
 
-  // ?text= is how the extension, the palette and the recent chips hand work over
   useEffect(() => {
     if (!urlText || urlText === appliedFromUrl.current) return;
     appliedFromUrl.current = urlText;

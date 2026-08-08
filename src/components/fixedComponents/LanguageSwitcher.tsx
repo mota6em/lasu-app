@@ -25,8 +25,6 @@ export function useLocaleSwitcher() {
   const switchTo = (next: string) => {
     if (next === locale) return;
     startTransition(() => {
-      // usePathname already strips the locale prefix and keeps dynamic segments
-      // resolved, so the same path just gets re-rendered under the new locale
       const query = search?.toString();
       router.replace(`${pathname}${query ? `?${query}` : ""}`, {
         locale: next,
