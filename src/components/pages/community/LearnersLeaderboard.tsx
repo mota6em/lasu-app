@@ -93,48 +93,52 @@ export default function LearnersLeaderboard({
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: rank * 0.07, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col items-center text-center"
             >
-              <div className="relative">
-                {isFirst && (
-                  <Crown className="absolute -top-5 left-1/2 h-5 w-5 -translate-x-1/2 text-brand-500" />
-                )}
-                <span
-                  className={cn(
-                    "block rounded-full p-0.5",
-                    isFirst
-                      ? "bg-gradient-to-br from-brand-400 to-brand-600"
-                      : "bg-border-strong"
-                  )}
-                >
-                  <span className="block rounded-full bg-surface p-0.5">
-                    <Avatar learner={learner} size={isFirst ? 56 : 44} />
-                  </span>
-                </span>
-              </div>
-
-              <p className="mt-2 max-w-full truncate text-xs font-semibold sm:text-sm">
-                {displayName(learner)}
-              </p>
-              <p className="text-[11px] tabular-nums text-muted-foreground">
-                {learner.xp ?? 0} XP
-              </p>
-
-              <div
-                className={cn(
-                  "mt-2 w-full rounded-t-lg border border-b-0 border-border bg-surface-2",
-                  isFirst ? "h-14" : "h-9"
-                )}
+              <Link
+                href={`/dashboard/profile/${learner.id}`}
+                className="group flex flex-col items-center rounded-lg text-center transition-colors"
               >
-                <span
+                <div className="relative">
+                  {isFirst && (
+                    <Crown className="absolute -top-5 left-1/2 h-5 w-5 -translate-x-1/2 text-brand-500" />
+                  )}
+                  <span
+                    className={cn(
+                      "block rounded-full p-0.5 transition-transform group-hover:scale-105",
+                      isFirst
+                        ? "bg-gradient-to-br from-brand-400 to-brand-600"
+                        : "bg-border-strong"
+                    )}
+                  >
+                    <span className="block rounded-full bg-surface p-0.5">
+                      <Avatar learner={learner} size={isFirst ? 56 : 44} />
+                    </span>
+                  </span>
+                </div>
+
+                <p className="mt-2 max-w-full truncate text-xs font-semibold transition-colors group-hover:text-brand-600 sm:text-sm dark:group-hover:text-brand-400">
+                  {displayName(learner)}
+                </p>
+                <p className="text-[11px] tabular-nums text-muted-foreground">
+                  {learner.xp ?? 0} XP
+                </p>
+
+                <div
                   className={cn(
-                    "flex h-full items-center justify-center font-display text-lg font-bold",
-                    RANK_TONE[rank - 1]
+                    "mt-2 w-full rounded-t-lg border border-b-0 border-border bg-surface-2 transition-colors group-hover:bg-surface-3",
+                    isFirst ? "h-14" : "h-9"
                   )}
                 >
-                  {rank}
-                </span>
-              </div>
+                  <span
+                    className={cn(
+                      "flex h-full items-center justify-center font-display text-lg font-bold",
+                      RANK_TONE[rank - 1]
+                    )}
+                  >
+                    {rank}
+                  </span>
+                </div>
+              </Link>
             </motion.div>
           );
         })}

@@ -93,8 +93,13 @@ export function Sidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 start-0 z-50 flex w-64 flex-col border-e border-border bg-surface transition-transform duration-300 lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
+          "fixed inset-y-0 start-0 z-50 flex w-64 flex-col border-e border-border bg-surface transition-transform duration-300",
+          // the off-screen transform is scoped to mobile: rtl: compiles to an
+          // attribute selector that outranks any lg: override, so leaving a
+          // transform in play at desktop width hid the sidebar in RTL
+          mobileOpen
+            ? "translate-x-0"
+            : "max-lg:-translate-x-full max-lg:rtl:translate-x-full"
         )}
         style={{ transitionTimingFunction: "var(--ease-out-quint)" }}
       >
