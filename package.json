@@ -57,5 +57,9 @@
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5"
+  },
+  "optionalDependencies": {
+    "@parcel/watcher-linux-x64-glibc": "2.6.0",
+    "@parcel/watcher-win32-x64": "2.6.0"
   }
 }
