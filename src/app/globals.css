@@ -4,9 +4,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-outfit);
+  /* geist and outfit only ship latin, so the stack hands CJK, arabic, indic,
+     thai and hebrew over to whatever the platform already has */
+  --font-fallback: "Noto Sans", "Segoe UI", "Helvetica Neue", ui-sans-serif,
+    system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  --font-sans: var(--font-geist-sans), var(--font-fallback);
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display: var(--font-outfit), var(--font-fallback);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -204,8 +208,23 @@
   h2,
   h3,
   h4 {
-    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-family: var(--font-display);
     letter-spacing: -0.02em;
+  }
+
+  /* the tight display tracking is tuned for latin and reads as cramped in
+     scripts with connected or stacked glyphs */
+  :where([lang="ar"], [lang="fa"], [lang="ur"], [lang="he"], [lang="hi"],
+    [lang="bn"], [lang="th"], [lang="ja"], [lang="zh"], [lang="ko"])
+    :is(h1, h2, h3, h4) {
+    letter-spacing: normal;
+  }
+
+  [dir="rtl"] .lasu-logo,
+  [dir="rtl"] .lasu-logo-lg,
+  [dir="rtl"] .newyork {
+    direction: ltr;
+    unicode-bidi: isolate;
   }
 
   ::selection {

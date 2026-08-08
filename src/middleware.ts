@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import createIntlMiddleware from "next-intl/middleware";
 import { rateLimit } from "./lib/rateLimit";
+import { routing } from "./i18n/routing";
 
 const allowedOrigins = [
   "https://lasu.online",
@@ -11,7 +13,9 @@ const allowedOrigins = [
 const EXT_ID = "chrome-extension://jllhdgojepfdpmlppkccogdobopmiaok";
 const SEC_KEY = process.env.LASU_API_SEC_KEY!;
 
-export async function middleware(req: NextRequest) {
+const intlMiddleware = createIntlMiddleware(routing);
+
+async function handleApi(req: NextRequest) {
   const origin = req.headers.get("origin");
   const method = req.method;
   const path = req.nextUrl.pathname;
@@ -99,6 +103,20 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
+export async function middleware(req: NextRequest) {
+  // api traffic keeps the origin + rate-limit rules and never gets a locale
+  // prefix, so the extension's endpoints stay exactly where they were
+  if (req.nextUrl.pathname.startsWith("/api")) {
+    return handleApi(req);
+  }
+
+  return intlMiddleware(req);
+}
+
 export const config = {
-  matcher: ["/api/:path*"],
+  matcher: [
+    "/api/:path*",
+    // every page route except next internals and files with an extension
+    "/((?!_next|_vercel|.*\\..*).*)",
+  ],
 };
