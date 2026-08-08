@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/routing";
 
 export default function HistoryEmptyState({ query }: { query?: string }) {
+  const t = useTranslations("history");
   const searching = !!query;
 
   return (
@@ -13,22 +15,16 @@ export default function HistoryEmptyState({ query }: { query?: string }) {
         <SearchX className="h-6 w-6 text-muted-foreground" />
       </div>
       <h2 className="font-display text-xl font-semibold">
-        {searching ? "Nothing matched" : "Your history is empty"}
+        {searching ? t("emptySearchTitle") : t("emptyTitle")}
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        {searching ? (
-          <>
-            No saved translation contains “{query}”. Try a different word or clear the
-            search.
-          </>
-        ) : (
-          "Everything you translate is saved here automatically, ready to search and practise."
-        )}
+        {searching ? t("emptySearchBody", { query: query! }) : t("emptyBody")}
       </p>
       {!searching && (
         <Button asChild className="mt-5 gap-2">
           <Link href="/dashboard">
-            Translate something <ArrowRight className="h-4 w-4" />
+            {t("translateSomething")}{" "}
+            <ArrowRight className="h-4 w-4 rtl:-scale-x-100" />
           </Link>
         </Button>
       )}

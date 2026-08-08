@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import useProfile from "@/hooks/useProfile";
 import Hero from "@/components/pages/profile/Hero";
 import UserProfileStatsGrid from "@/components/pages/profile/UserProfileStatsGrid";
@@ -18,6 +19,7 @@ function ProfileSkeleton() {
 }
 
 export default function ProfilePage() {
+  const t = useTranslations("profile");
   const { user, allStats } = useProfile();
 
   if (!user) return <ProfileSkeleton />;
@@ -25,10 +27,10 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto w-full max-w-3xl space-y-5">
       <header className="animate-fade-up">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Profile</h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          Your identity, avatar and progress in one place.
-        </p>
+        <h1 className="font-display text-3xl font-bold tracking-tight">
+          {t("title")}
+        </h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">{t("subtitle")}</p>
       </header>
 
       <Hero />

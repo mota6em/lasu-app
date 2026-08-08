@@ -1,15 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ArrowLeft, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/routing";
 import UserProfileStatsGrid from "@/components/pages/profile/UserProfileStatsGrid";
 import useProfile from "@/hooks/useProfile";
 import { levelProgress } from "@/lib/xp";
 
 export default function PublicProfilePage() {
+  const t = useTranslations("profile");
   const { id } = useParams() as { id: string };
   const { allStats, user, publicUserLoading } = useProfile({ sUserId: id });
 
@@ -32,13 +34,14 @@ export default function PublicProfilePage() {
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-2">
           <UserX className="h-6 w-6 text-muted-foreground" />
         </div>
-        <h1 className="font-display text-xl font-semibold">Learner not found</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          This profile may have been removed or set to private.
-        </p>
+        <h1 className="font-display text-xl font-semibold">
+          {t("notFoundTitle")}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t("notFoundBody")}</p>
         <Button asChild variant="outline" className="mt-5 gap-2">
           <Link href="/dashboard/community">
-            <ArrowLeft className="h-4 w-4" /> Back to community
+            <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" />{" "}
+            {t("backToCommunity")}
           </Link>
         </Button>
       </div>
@@ -53,7 +56,7 @@ export default function PublicProfilePage() {
         href="/dashboard/community"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
-        <ArrowLeft className="h-4 w-4" /> Community
+        <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" /> {t("backToCommunity")}
       </Link>
 
       <section className="surface-card overflow-hidden">
@@ -73,7 +76,7 @@ export default function PublicProfilePage() {
             <div className="pb-1">
               <h1 className="font-display text-xl font-bold">{user.name}</h1>
               <p className="text-xs text-muted-foreground">
-                Level {progress.level} learner
+                {t("publicLevel", { level: progress.level })}
               </p>
             </div>
           </div>
@@ -86,8 +89,11 @@ export default function PublicProfilePage() {
               />
             </div>
             <p className="mt-1.5 text-[11px] text-muted-foreground">
-              {progress.into} / {progress.needed} XP towards level{" "}
-              {progress.level + 1}
+              {t("publicProgress", {
+                into: progress.into,
+                needed: progress.needed,
+                level: progress.level + 1,
+              })}
             </p>
           </div>
         </div>

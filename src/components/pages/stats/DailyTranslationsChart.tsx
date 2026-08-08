@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useLocale, useTranslations } from "next-intl";
 import type { DayPoint } from "@/lib/series";
 
 interface DailyTranslationsChartProps {
@@ -16,28 +17,23 @@ interface DailyTranslationsChartProps {
   isMobile: boolean;
 }
 
-function formatTick(value: string) {
-  const date = new Date(value);
-  return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
-}
-
 function ChartTooltip({ active, payload, label }: any) {
+  const t = useTranslations("stats");
+  const locale = useLocale();
+
   if (!active || !payload?.length) return null;
 
   return (
     <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-[var(--shadow-lift)]">
       <p className="text-[11px] text-muted-foreground">
-        {new Date(label).toLocaleDateString(undefined, {
+        {new Date(label).toLocaleDateString(locale, {
           weekday: "short",
           day: "numeric",
           month: "short",
         })}
       </p>
       <p className="font-display text-lg font-bold tabular-nums leading-tight">
-        {payload[0].value}
-        <span className="ms-1 text-xs font-normal text-muted-foreground">
-          {payload[0].value === 1 ? "translation" : "translations"}
-        </span>
+        {t("tooltipCount", { count: payload[0].value })}
       </p>
     </div>
   );
@@ -47,6 +43,14 @@ export default function DailyTranslationsChart({
   chartData,
   isMobile,
 }: DailyTranslationsChartProps) {
+  const locale = useLocale();
+
+  const formatTick = (value: string) =>
+    new Date(value).toLocaleDateString(locale, {
+      day: "numeric",
+      month: "short",
+    });
+
   return (
     <ResponsiveContainer width="100%" height={260}>
       <AreaChart

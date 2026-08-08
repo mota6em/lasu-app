@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Camera, Check, Loader2, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import { levelProgress } from "@/lib/xp";
 import { cn } from "@/lib/utils";
 
 export default function Hero() {
+  const t = useTranslations("profile");
   const {
     user,
     allStats,
@@ -65,7 +67,7 @@ export default function Hero() {
             <Dialog>
               <DialogTrigger asChild>
                 <button
-                  title="Change avatar"
+                  title={t("changeAvatar")}
                   className="absolute -bottom-1 -end-1 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[var(--shadow-brand)] transition-transform hover:scale-105"
                 >
                   <Camera className="h-4 w-4" />
@@ -73,18 +75,18 @@ export default function Hero() {
               </DialogTrigger>
 
               <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
-                <DialogHeader>
+                <DialogHeader className="text-start">
                   <DialogTitle className="font-display text-xl">
-                    Choose your avatar
+                    {t("avatarTitle")}
                   </DialogTitle>
                   <DialogDescription>
-                    New avatars unlock as you earn XP. You have {xp} XP.
+                    {t("avatarDescription", { xp })}
                   </DialogDescription>
                 </DialogHeader>
 
                 <div>
                   <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Unlocked
+                    {t("unlocked")}
                   </h3>
                   <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
                     {unlocked.map((item) => (
@@ -118,7 +120,7 @@ export default function Hero() {
                 {locked.length > 0 && (
                   <div>
                     <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      <Lock className="h-3 w-3" /> Locked
+                      <Lock className="h-3 w-3" /> {t("locked")}
                     </h3>
                     <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
                       {locked.map((item) => (
@@ -134,7 +136,7 @@ export default function Hero() {
                             className="h-full w-full object-cover grayscale"
                           />
                           <span className="absolute inset-0 flex items-center justify-center bg-background/70 text-[11px] font-semibold">
-                            {item.requiredXP} XP
+                            {t("requiredXp", { xp: item.requiredXP })}
                           </span>
                         </div>
                       ))}
@@ -149,15 +151,17 @@ export default function Hero() {
             <p className="font-display text-xl font-bold">{name || user?.name}</p>
             <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Mail className="h-3.5 w-3.5" />
-              {user?.email || "no email"}
+              {user?.email || t("noEmail")}
             </p>
           </div>
         </div>
 
         <div className="mt-5 max-w-sm">
           <div className="flex items-baseline justify-between text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">Level {progress.level}</span>
-            <span>{progress.remaining} XP to go</span>
+            <span className="font-medium text-foreground">
+              {t("statLevel")} {progress.level}
+            </span>
+            <span>{t("xpToGo", { remaining: progress.remaining })}</span>
           </div>
           <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-3">
             <div
@@ -170,16 +174,18 @@ export default function Hero() {
         <div className="mt-6 grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
           <div>
             <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-              Display name
+              {t("displayName")}
             </label>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
           <label className="flex cursor-pointer items-center justify-between gap-3 self-end rounded-lg border border-border bg-surface-2 px-3 py-2">
             <span>
-              <span className="block text-sm font-medium">Email summaries</span>
+              <span className="block text-sm font-medium">
+                {t("emailSummaries")}
+              </span>
               <span className="block text-[11px] text-muted-foreground">
-                A recap of what you learned
+                {t("emailSummariesHint")}
               </span>
             </span>
             <Switch
@@ -192,7 +198,7 @@ export default function Hero() {
 
         <Button onClick={handleSave} disabled={loading} className="mt-4 gap-2">
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          {loading ? "Saving…" : "Save changes"}
+          {loading ? t("saving") : t("saveChanges")}
         </Button>
       </div>
     </section>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import HistoryCard from "./HistoryCard";
 import { groupByDay } from "@/lib/format";
 import Translation from "@/types/translation";
@@ -10,7 +11,9 @@ type HistoryGridProps = {
 };
 
 export default function HistoryGrid({ displayHistory, onDelete }: HistoryGridProps) {
-  const groups = groupByDay(displayHistory, (item) => item.createdAt);
+  const t = useTranslations("history");
+  const locale = useLocale();
+  const groups = groupByDay(displayHistory, (item) => item.createdAt, locale);
 
   return (
     <div className="space-y-8">
@@ -18,7 +21,7 @@ export default function HistoryGrid({ displayHistory, onDelete }: HistoryGridPro
         <section key={group.label}>
           <div className="mb-3 flex items-center gap-3">
             <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              {group.label}
+              {group.key ? t(group.key) : group.label}
             </h2>
             <span className="h-px flex-1 bg-border" />
             <span className="text-xs tabular-nums text-muted-foreground">

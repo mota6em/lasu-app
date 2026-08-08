@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { routeMetadata } from "@/i18n/pageMetadata";
 
-export const metadata: Metadata = {
-  title: "Welcome",
-  description:
-    "Get started with LaSu — AI translations with real context, saved as flashcards you can actually practise.",
-};
+export const generateMetadata = routeMetadata({
+  namespace: "welcome",
+  path: "/dashboard/welcome",
+  titleKey: "skip",
+  descriptionKey: "subheading",
+});
 
 export default function WelcomeLayout({
   children,

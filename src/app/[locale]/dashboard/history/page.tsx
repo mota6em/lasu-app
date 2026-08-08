@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeferredValue, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Search, X } from "lucide-react";
 import HistoryFilter from "@/components/pages/history/HistoryFilter";
 import AuthAlert from "@/components/pages/history/AuthAlert";
@@ -10,6 +11,7 @@ import HistoryGrid from "@/components/pages/history/HistoryGrid";
 import useTranslationHistory from "@/hooks/useTranslationHistory";
 
 export default function HistoryPage() {
+  const t = useTranslations("history");
   const [filter, setFilter] = useState<"all" | "word" | "phrase">("all");
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
@@ -34,14 +36,10 @@ export default function HistoryPage() {
 
       <header className="animate-fade-up">
         <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-          History
+          {t("title")}
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          {isLoading
-            ? "Loading your saved translations…"
-            : `${displayHistory.length} translation${
-                displayHistory.length === 1 ? "" : "s"
-              } saved and searchable.`}
+          {isLoading ? t("loading") : t("count", { count: displayHistory.length })}
         </p>
       </header>
 
@@ -52,13 +50,13 @@ export default function HistoryPage() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search words, phrases or translations…"
+            placeholder={t("search")}
             className="h-10 w-full rounded-lg border border-border bg-surface ps-9 pe-9 text-sm outline-none transition-colors focus:border-brand-400"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              aria-label="Clear search"
+              aria-label={t("clearSearch")}
               className="absolute end-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
             >
               <X className="h-3.5 w-3.5" />
@@ -71,12 +69,8 @@ export default function HistoryPage() {
 
       {isError ? (
         <div className="surface-card border-destructive/30 bg-destructive/5 p-5">
-          <p className="text-sm font-medium text-destructive">
-            Could not load your history.
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Check your connection and refresh the page.
-          </p>
+          <p className="text-sm font-medium text-destructive">{t("errorTitle")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("errorBody")}</p>
         </div>
       ) : isLoading ? (
         <HistorySkeletonGrid />

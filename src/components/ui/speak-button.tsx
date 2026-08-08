@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Loader2, Volume2 } from "lucide-react";
 import { speak, speechSupported, stopSpeaking } from "@/lib/speech";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,7 @@ export default function SpeakButton({
   className,
   size = 15,
 }: SpeakButtonProps) {
+  const t = useTranslations("result");
   const [speaking, setSpeaking] = useState(false);
   const [supported, setSupported] = useState(true);
 
@@ -43,8 +45,8 @@ export default function SpeakButton({
     <button
       type="button"
       onClick={play}
-      aria-label={`Listen in ${lang}`}
-      title="Listen"
+      aria-label={t("listen")}
+      title={t("listen")}
       className={cn(
         "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-surface-2 hover:text-foreground active:scale-90",
         speaking && "text-brand-600 dark:text-brand-400",

@@ -1,80 +1,86 @@
 import type { Metadata, Viewport } from "next";
+import { notFound } from "next/navigation";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
-import "./globals.css";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import "../globals.css";
 import AuthProvider from "@/components/topbar/AuthProvider";
 import { ThemeProvider } from "@/components/topbar/theme-provider";
-import Providers from "./providers";
+import Providers from "../providers";
 import ToastHub from "@/components/fixedComponents/ToastHub";
 import { Analytics } from "@vercel/analytics/next";
+import { routing } from "@/i18n/routing";
+import { localeDirection } from "@/i18n/locales";
+import { buildAlternates, openGraphLocale } from "@/i18n/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   display: "swap",
 });
 
 const outfit = Outfit({
   variable: "--font-outfit",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "LaSu - Your AI Language Support",
-    template: "%s | LaSu",
-  },
-  description:
-    "Learn languages effortlessly with LaSu - the Chrome extension that offers AI-powered translations, real-life examples, and contextual understanding as you browse.",
-  keywords: [
-    "language learning",
-    "AI translation",
-    "chrome extension",
-    "LaSu",
-    "multilingual",
-    "context-aware translation",
-    "AI Language Support",
-    "learn languages while browsing",
-  ],
-  icons: {
-    icon: "/favicon.ico",
-  },
-  authors: [{ name: "Motasem Abubaraka", url: "https://lasu.online" }],
-  creator: "Motasem Abubaraka",
-  metadataBase: new URL("https://lasu.online"),
-  openGraph: {
-    title: "LaSu - Your AI Language Support",
-    description:
-      "Translate, understand, and learn languages as you browse. The ultimate tool for polyglots and learners.",
-    url: "https://lasu.online",
-    siteName: "LaSu - Your AI Language Support",
-    locale: "en_US",
-    type: "website",
-    images: [
-      {
-        url: "https://lasu.online/meta-img.png",
-        width: 1200,
-        height: 630,
-        alt: "LaSu AI Language Support Preview",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "LaSu - Your AI Language Support",
-    description:
-      "AI-powered Chrome extension for smarter language learning and browsing.",
-    images: ["https://lasu.online/meta-img.png"],
-    creator: "@mota6em",
-  },
-};
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+
+  return {
+    title: {
+      default: t("siteTitle"),
+      template: `%s | LaSu`,
+    },
+    description: t("siteDescription"),
+    keywords: t("keywords").split(",").map((k) => k.trim()),
+    icons: { icon: "/favicon.ico" },
+    authors: [{ name: "Motasem Abubaraka", url: "https://lasu.online" }],
+    creator: "Motasem Abubaraka",
+    metadataBase: new URL("https://lasu.online"),
+    alternates: buildAlternates(locale, "/"),
+    openGraph: {
+      title: t("siteTitle"),
+      description: t("ogDescription"),
+      url: "https://lasu.online",
+      siteName: "LaSu",
+      locale: openGraphLocale(locale),
+      type: "website",
+      images: [
+        {
+          url: "https://lasu.online/meta-img.png",
+          width: 1200,
+          height: 630,
+          alt: t("siteTitle"),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("siteTitle"),
+      description: t("twitterDescription"),
+      images: ["https://lasu.online/meta-img.png"],
+      creator: "@mota6em",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: [
@@ -86,39 +92,57 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <script type="application/ld+json" suppressHydrationWarning>
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "LaSu - Your AI Language Support",
-          url: "https://lasu.online",
-          description:
-            "Learn languages effortlessly with LaSu - the Chrome extension that offers AI-powered translations, real-life examples, and contextual understanding as you browse.",
-        })}
-      </script>
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
 
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "meta" });
+
+  return (
+    <html
+      lang={locale}
+      dir={localeDirection(locale)}
+      suppressHydrationWarning
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Providers>
-            <AuthProvider>{children}</AuthProvider>
-            <ToastHub />
-            <Analytics />
-          </Providers>
-        </ThemeProvider>
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "LaSu",
+              url: "https://lasu.online",
+              inLanguage: locale,
+              description: t("siteDescription"),
+            }),
+          }}
+        />
+
+        <NextIntlClientProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Providers>
+              <AuthProvider>{children}</AuthProvider>
+              <ToastHub />
+              <Analytics />
+            </Providers>
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowRight,
   CornerDownLeft,
+  Globe,
   LogIn,
   LogOut,
   Moon,
@@ -16,9 +17,12 @@ import {
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import NavIcon from "./NavIcon";
+import { useRouter } from "@/i18n/routing";
+import { getLocaleMeta } from "@/i18n/locales";
 import { navItems } from "@/lib/nav";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import { useCommandPalette } from "@/store/useCommandPalette";
+import { useLanguageDialog } from "@/store/useLanguageDialog";
 import { cn } from "@/lib/utils";
 
 interface Command {
@@ -30,15 +34,22 @@ interface Command {
 }
 
 export default function CommandPalette() {
+  const t = useTranslations("palette");
+  const tNav = useTranslations("nav");
+  const tTheme = useTranslations("theme");
+  const tShell = useTranslations("shell");
+
   const { isOpen: open, toggle, close } = useCommandPalette();
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
+  const locale = useLocale();
   const { status } = useSession();
   const { setTheme, resolvedTheme } = useTheme();
   const { toggleSettingsDialog } = useSettingsDialog();
+  const openLanguages = useLanguageDialog((s) => s.open);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -68,16 +79,16 @@ export default function CommandPalette() {
       .filter((item) => !item.requiresAuth || status === "authenticated")
       .map((item) => ({
         id: item.href,
-        label: item.label,
-        hint: item.description,
+        label: tNav(item.key),
+        hint: tNav(`${item.key}Hint`),
         icon: <NavIcon name={item.icon} className="h-4 w-4" />,
         run: go(item.href),
       }));
 
     base.push({
       id: "preferences",
-      label: "Translation preferences",
-      hint: "Languages and register",
+      label: tNav("preferences"),
+      hint: t("preferencesHint"),
       icon: <Settings className="h-4 w-4" />,
       run: () => {
         close();
@@ -86,8 +97,19 @@ export default function CommandPalette() {
     });
 
     base.push({
+      id: "language",
+      label: t("language"),
+      hint: t("languageHint", { language: getLocaleMeta(locale)?.native ?? locale }),
+      icon: <Globe className="h-4 w-4" />,
+      run: () => {
+        close();
+        openLanguages();
+      },
+    });
+
+    base.push({
       id: "theme",
-      label: resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode",
+      label: resolvedTheme === "dark" ? tTheme("switchToLight") : tTheme("switchToDark"),
       icon:
         resolvedTheme === "dark" ? (
           <Sun className="h-4 w-4" />
@@ -104,7 +126,7 @@ export default function CommandPalette() {
       status === "authenticated"
         ? {
             id: "signout",
-            label: "Sign out",
+            label: tShell("signOut"),
             icon: <LogOut className="h-4 w-4" />,
             run: () => {
               close();
@@ -113,7 +135,7 @@ export default function CommandPalette() {
           }
         : {
             id: "signin",
-            label: "Sign in with Google",
+            label: t("signInWithGoogle"),
             icon: <LogIn className="h-4 w-4" />,
             run: () => {
               close();
@@ -123,7 +145,20 @@ export default function CommandPalette() {
     );
 
     return base;
-  }, [router, status, resolvedTheme, setTheme, toggleSettingsDialog]);
+  }, [
+    router,
+    status,
+    resolvedTheme,
+    setTheme,
+    toggleSettingsDialog,
+    openLanguages,
+    locale,
+    close,
+    t,
+    tNav,
+    tTheme,
+    tShell,
+  ]);
 
   const results = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -140,8 +175,8 @@ export default function CommandPalette() {
     return [
       {
         id: "translate",
-        label: `Translate “${query.trim()}”`,
-        hint: "Send it straight to the composer",
+        label: t("translateAction", { query: query.trim() }),
+        hint: t("translateHint"),
         icon: <ArrowRight className="h-4 w-4" />,
         run: () => {
           close();
@@ -150,7 +185,7 @@ export default function CommandPalette() {
       } as Command,
       ...matched,
     ];
-  }, [commands, query, router]);
+  }, [commands, query, router, close, t]);
 
   useEffect(() => setCursor(0), [query]);
 
@@ -178,7 +213,7 @@ export default function CommandPalette() {
           }
         }}
       >
-        <DialogTitle className="sr-only">Command palette</DialogTitle>
+        <DialogTitle className="sr-only">{t("title")}</DialogTitle>
 
         <div className="flex items-center gap-3 border-b border-border px-4">
           <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -186,7 +221,7 @@ export default function CommandPalette() {
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search pages, or type text to translate…"
+            placeholder={t("placeholder")}
             className="h-13 w-full bg-transparent py-4 text-sm outline-none placeholder:text-muted-foreground"
           />
           <kbd className="kbd">esc</kbd>
@@ -195,7 +230,7 @@ export default function CommandPalette() {
         <div ref={listRef} className="max-h-80 overflow-y-auto p-2">
           {results.length === 0 && (
             <p className="px-3 py-8 text-center text-sm text-muted-foreground">
-              Nothing matches that.
+              {t("empty")}
             </p>
           )}
           {results.map((command, index) => (
@@ -205,7 +240,7 @@ export default function CommandPalette() {
               onMouseEnter={() => setCursor(index)}
               onClick={command.run}
               className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors",
+                "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-start transition-colors",
                 index === cursor ? "bg-surface-2" : "hover:bg-surface-2/60"
               )}
             >
@@ -228,7 +263,7 @@ export default function CommandPalette() {
                 )}
               </span>
               {index === cursor && (
-                <CornerDownLeft className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <CornerDownLeft className="h-3.5 w-3.5 shrink-0 text-muted-foreground rtl:-scale-x-100" />
               )}
             </button>
           ))}
@@ -237,13 +272,13 @@ export default function CommandPalette() {
         <div className="flex items-center gap-4 border-t border-border bg-surface-2/60 px-4 py-2.5 text-[11px] text-muted-foreground">
           <span className="flex items-center gap-1">
             <kbd className="kbd">↑</kbd>
-            <kbd className="kbd">↓</kbd> navigate
+            <kbd className="kbd">↓</kbd> {t("navigate")}
           </span>
           <span className="flex items-center gap-1">
-            <kbd className="kbd">↵</kbd> open
+            <kbd className="kbd">↵</kbd> {t("open")}
           </span>
           <span className="ms-auto flex items-center gap-1">
-            <kbd className="kbd">/</kbd> focus composer
+            <kbd className="kbd">/</kbd> {t("focusComposer")}
           </span>
         </div>
       </DialogContent>

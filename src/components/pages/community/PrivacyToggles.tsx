@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Switch } from "@/components/ui/switch";
 
 export interface PrivacyState {
@@ -8,26 +9,10 @@ export interface PrivacyState {
   shareTranslations: boolean;
 }
 
-const FIELDS: {
-  key: keyof PrivacyState;
-  label: string;
-  hint: string;
-}[] = [
-  {
-    key: "showName",
-    label: "Show my name",
-    hint: "Otherwise you appear as an anonymous learner.",
-  },
-  {
-    key: "showPicture",
-    label: "Show my picture",
-    hint: "A medal icon stands in when this is off.",
-  },
-  {
-    key: "shareTranslations",
-    label: "Share my translated words",
-    hint: "Single words only — full sentences are never shared.",
-  },
+const FIELDS: (keyof PrivacyState)[] = [
+  "showName",
+  "showPicture",
+  "shareTranslations",
 ];
 
 export default function PrivacyToggles({
@@ -37,24 +22,24 @@ export default function PrivacyToggles({
   value: PrivacyState;
   onChange: (next: PrivacyState) => void;
 }) {
+  const t = useTranslations("community");
+
   return (
     <div className="divide-y divide-border rounded-xl border border-border">
       {FIELDS.map((field) => (
         <label
-          key={field.key}
+          key={field}
           className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3"
         >
           <span>
-            <span className="block text-sm font-medium">{field.label}</span>
+            <span className="block text-sm font-medium">{t(field)}</span>
             <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
-              {field.hint}
+              {t(`${field}Hint`)}
             </span>
           </span>
           <Switch
-            checked={value[field.key]}
-            onCheckedChange={(checked) =>
-              onChange({ ...value, [field.key]: checked })
-            }
+            checked={value[field]}
+            onCheckedChange={(checked) => onChange({ ...value, [field]: checked })}
             className="cursor-pointer data-[state=checked]:bg-primary"
           />
         </label>

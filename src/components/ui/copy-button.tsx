@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,10 +14,11 @@ interface CopyButtonProps {
 
 export default function CopyButton({
   value,
-  label = "Copy",
+  label,
   className,
   size = 15,
 }: CopyButtonProps) {
+  const t = useTranslations("result");
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -37,8 +39,8 @@ export default function CopyButton({
     <button
       type="button"
       onClick={copy}
-      aria-label={copied ? "Copied" : label}
-      title={copied ? "Copied" : label}
+      aria-label={copied ? t("copied") : label ?? t("copy")}
+      title={copied ? t("copied") : label ?? t("copy")}
       className={cn(
         "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-surface-2 hover:text-foreground active:scale-90",
         copied && "text-success hover:text-success",

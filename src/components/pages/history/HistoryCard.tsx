@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronDown, Trash2 } from "lucide-react";
 import CopyButton from "@/components/ui/copy-button";
 import SpeakButton from "@/components/ui/speak-button";
@@ -15,6 +16,8 @@ interface HistoryCardProps {
 }
 
 export default function HistoryCard({ item, onDelete }: HistoryCardProps) {
+  const t = useTranslations("history");
+  const locale = useLocale();
   const [expanded, setExpanded] = useState(false);
 
   const entries = Object.entries(item.result?.translations ?? {});
@@ -30,7 +33,7 @@ export default function HistoryCard({ item, onDelete }: HistoryCardProps) {
             {item.sourceText}
           </h3>
           <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
-            <span>{shortTime(item.createdAt)}</span>
+            <span>{shortTime(item.createdAt, locale)}</span>
             <span aria-hidden>·</span>
             <span className="capitalize">{item.translationType}</span>
             {item.result?.difficulty && (
@@ -44,7 +47,7 @@ export default function HistoryCard({ item, onDelete }: HistoryCardProps) {
 
         <button
           onClick={() => onDelete(item._id.toString())}
-          aria-label="Delete translation"
+          aria-label={t("delete")}
           className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
         >
           <Trash2 className="h-4 w-4" />
@@ -84,7 +87,7 @@ export default function HistoryCard({ item, onDelete }: HistoryCardProps) {
             onClick={() => setExpanded((v) => !v)}
             className="flex items-center justify-center gap-1 border-t border-border py-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
           >
-            {expanded ? "Hide details" : "Examples & notes"}
+            {expanded ? t("detailsHide") : t("detailsShow")}
             <ChevronDown
               className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
             />

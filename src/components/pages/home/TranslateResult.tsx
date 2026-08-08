@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { Lightbulb, Quote, Sparkles } from "lucide-react";
 import CopyButton from "@/components/ui/copy-button";
@@ -61,28 +62,29 @@ function ResultSkeleton() {
 }
 
 function EmptyPanel() {
+  const t = useTranslations("result");
   const tips = [
     {
       icon: <Sparkles className="h-4 w-4 text-brand-500" />,
-      title: "Single words go deeper",
-      body: "One word gets you a definition, an example sentence and its meaning in every language you picked.",
+      title: t("tipWordsTitle"),
+      body: t("tipWordsBody"),
     },
     {
       icon: <Quote className="h-4 w-4 text-iris-500" />,
-      title: "Sentences stay natural",
-      body: "Idioms are matched to their real equivalent instead of being translated word by word.",
+      title: t("tipSentencesTitle"),
+      body: t("tipSentencesBody"),
     },
     {
       icon: <Lightbulb className="h-4 w-4 text-brand-500" />,
-      title: "Everything is saved",
-      body: "Each translation lands in your history and feeds the Practice Hub so the words actually stick.",
+      title: t("tipSavedTitle"),
+      body: t("tipSavedBody"),
     },
   ];
 
   return (
     <div className="surface-card overflow-hidden">
       <div className="border-b border-border bg-surface-2/60 px-5 py-3">
-        <p className="text-sm font-semibold">Your results land here</p>
+        <p className="text-sm font-semibold">{t("landHere")}</p>
       </div>
       <ul className="divide-y divide-border">
         {tips.map((tip) => (
@@ -109,15 +111,15 @@ export default function TranslateResult({
   submittedText,
   error,
 }: Props) {
+  const t = useTranslations("result");
+
   if (resultLoading) return <ResultSkeleton />;
 
   if (error && !result) {
     return (
       <div className="surface-card border-destructive/30 bg-destructive/5 p-5">
         <p className="text-sm font-medium text-destructive">{error}</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          The model occasionally hiccups. Press translate again and it usually goes through.
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">{t("errorHint")}</p>
       </div>
     );
   }

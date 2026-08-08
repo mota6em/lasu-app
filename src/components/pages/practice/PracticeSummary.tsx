@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { RotateCcw, Sparkles, Target } from "lucide-react";
@@ -7,15 +8,12 @@ import { Button } from "@/components/ui/button";
 import { getLanguage, langName } from "@/lib/languages";
 import type { PracticeSession } from "@/hooks/usePracticeSession";
 
-function verdict(accuracy: number, answered: number) {
-  if (!answered) return { title: "Session ended", line: "No answers recorded this round." };
-  if (accuracy === 100)
-    return { title: "Flawless", line: "Every single word. Time for a bigger deck." };
-  if (accuracy >= 80)
-    return { title: "Sharp", line: "That is solid recall — keep the streak alive." };
-  if (accuracy >= 50)
-    return { title: "Getting there", line: "The misses below are worth one more pass." };
-  return { title: "Rough round", line: "Run the missed words again while they are fresh." };
+function verdictKey(accuracy: number, answered: number) {
+  if (!answered) return "Ended";
+  if (accuracy === 100) return "Perfect";
+  if (accuracy >= 80) return "Good";
+  if (accuracy >= 50) return "Ok";
+  return "Rough";
 }
 
 export default function PracticeSummary({
@@ -24,7 +22,8 @@ export default function PracticeSummary({
   backToSetup,
   retryMissed,
 }: Pick<PracticeSession, "stats" | "deck" | "backToSetup" | "retryMissed">) {
-  const { title, line } = verdict(stats.accuracy, stats.answered);
+  const t = useTranslations("practice");
+  const verdict = verdictKey(stats.accuracy, stats.answered);
   const radius = 52;
   const circumference = 2 * Math.PI * radius;
 
@@ -66,18 +65,24 @@ export default function PracticeSummary({
             <span className="font-display text-3xl font-bold tabular-nums">
               <CountUp end={stats.accuracy} duration={1.2} />%
             </span>
-            <span className="text-[11px] text-muted-foreground">accuracy</span>
+            <span className="text-[11px] text-muted-foreground">
+              {t("accuracy")}
+            </span>
           </div>
         </div>
 
-        <h2 className="mt-4 font-display text-2xl font-bold">{title}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{line}</p>
+        <h2 className="mt-4 font-display text-2xl font-bold">
+          {t(`verdict${verdict}Title`)}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t(`verdict${verdict}Body`)}
+        </p>
 
         <div className="mt-5 grid grid-cols-3 gap-2">
           {[
-            { label: "Correct", value: stats.correct, tone: "text-success" },
-            { label: "Missed", value: stats.wrong, tone: "text-destructive" },
-            { label: "Cards", value: deck.length, tone: "text-foreground" },
+            { label: t("correct"), value: stats.correct, tone: "text-success" },
+            { label: t("missed"), value: stats.wrong, tone: "text-destructive" },
+            { label: t("cards"), value: deck.length, tone: "text-foreground" },
           ].map((cell) => (
             <div key={cell.label} className="rounded-xl bg-surface-2 py-3">
               <p className={`font-display text-xl font-bold tabular-nums ${cell.tone}`}>
@@ -92,12 +97,12 @@ export default function PracticeSummary({
           {stats.missed.length > 0 && (
             <Button onClick={retryMissed} className="flex-1 gap-2">
               <Target className="h-4 w-4" />
-              Redo the {stats.missed.length} missed
+              {t("redoMissed", { count: stats.missed.length })}
             </Button>
           )}
           <Button onClick={backToSetup} variant="outline" className="flex-1 gap-2">
             <RotateCcw className="h-4 w-4" />
-            New session
+            {t("newSession")}
           </Button>
         </div>
       </div>
@@ -106,7 +111,7 @@ export default function PracticeSummary({
         <div className="surface-card overflow-hidden">
           <div className="flex items-center gap-2 border-b border-border px-5 py-3">
             <Sparkles className="h-4 w-4 text-brand-500" />
-            <p className="text-sm font-semibold">Worth another look</p>
+            <p className="text-sm font-semibold">{t("worthAnotherLook")}</p>
           </div>
           <ul className="divide-y divide-border">
             {stats.missed.map((word) => (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { dayKey, type DayPoint } from "@/lib/series";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,8 @@ const LEVEL_CLASS = [
 ];
 
 export default function ActivityHeatmap({ series }: { series: DayPoint[] }) {
+  const t = useTranslations("stats");
+  const locale = useLocale();
   const { weeks, monthLabels, max } = useMemo(() => {
     const counts = new Map(series.map((point) => [point.date, point.count]));
     const max = Math.max(...series.map((p) => p.count), 1);
@@ -40,7 +43,7 @@ export default function ActivityHeatmap({ series }: { series: DayPoint[] }) {
       if (month !== lastMonth) {
         monthLabels.push({
           index: columnIndex,
-          label: column[0].date.toLocaleDateString(undefined, { month: "short" }),
+          label: column[0].date.toLocaleDateString(locale, { month: "short" }),
         });
         lastMonth = month;
       }
@@ -49,7 +52,7 @@ export default function ActivityHeatmap({ series }: { series: DayPoint[] }) {
     }
 
     return { weeks, monthLabels, max };
-  }, [series]);
+  }, [series, locale]);
 
   const level = (count: number) => {
     if (!count) return 0;
@@ -84,10 +87,13 @@ export default function ActivityHeatmap({ series }: { series: DayPoint[] }) {
                     title={
                       future
                         ? ""
-                        : `${count} on ${date.toLocaleDateString(undefined, {
-                            day: "numeric",
-                            month: "short",
-                          })}`
+                        : t("heatmapCell", {
+                            count,
+                            date: date.toLocaleDateString(locale, {
+                              day: "numeric",
+                              month: "short",
+                            }),
+                          })
                     }
                     className={cn(
                       "h-3.5 w-3.5 rounded-[3px] transition-colors",
@@ -101,11 +107,11 @@ export default function ActivityHeatmap({ series }: { series: DayPoint[] }) {
         </div>
 
         <div className="mt-3 flex items-center justify-end gap-1.5 text-[10px] text-muted-foreground">
-          <span>Less</span>
+          <span>{t("less")}</span>
           {LEVEL_CLASS.map((tone) => (
             <span key={tone} className={cn("h-3 w-3 rounded-[3px]", tone)} />
           ))}
-          <span>More</span>
+          <span>{t("more")}</span>
         </div>
       </div>
     </div>

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import SettingsLoader from "@/components/pages/settings/SettingsLoader";
 import { Sidebar } from "@/components/fixedComponents/Sidebar";
 import CommandPalette from "@/components/fixedComponents/CommandPalette";
+import LanguageSwitcher from "@/components/fixedComponents/LanguageSwitcher";
 import Footer from "@/components/fixedComponents/Footer";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
 import Topbar from "@/components/topbar/Topbar";
+import { useLanguageDialog } from "@/store/useLanguageDialog";
 
 export default function DashboardLayoutClient({
   children,
@@ -14,11 +16,15 @@ export default function DashboardLayoutClient({
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isOpen: languageOpen, setOpen: setLanguageOpen } = useLanguageDialog();
 
   return (
     <div className="min-h-screen bg-background">
       <SettingsLoader />
       <CommandPalette />
+      <Suspense fallback={null}>
+        <LanguageSwitcher open={languageOpen} onOpenChange={setLanguageOpen} />
+      </Suspense>
       <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
       <div className="flex min-h-screen flex-col lg:ps-64">

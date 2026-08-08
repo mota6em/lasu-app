@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,8 +15,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import PrivacyToggles, { type PrivacyState } from "./PrivacyToggles";
+import { useRouter } from "@/i18n/routing";
 
 export default function JoinCommModal() {
+  const t = useTranslations("community");
   const [open, setOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,11 +39,11 @@ export default function JoinCommModal() {
       });
       if (!res.ok) throw new Error();
 
-      toast.success("You're in — welcome to the community");
+      toast.success(t("joined"));
       setOpen(false);
       router.refresh();
     } catch {
-      toast.error("Could not join right now. Try again in a moment.");
+      toast.error(t("joinFailed"));
     } finally {
       setLoading(false);
     }
@@ -50,21 +52,21 @@ export default function JoinCommModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="lg">Join the community</Button>
+        <Button size="lg">{t("joinButton")}</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+        <DialogHeader className="text-start">
           <DialogTitle className="font-display text-xl">
-            Welcome to the{" "}
-            <span className="newyork text-2xl text-brand-600 dark:text-brand-400">
-              LaSu
-            </span>{" "}
-            community
+            {t.rich("modalTitle", {
+              brand: (chunks) => (
+                <span className="newyork text-2xl text-brand-600 dark:text-brand-400">
+                  {chunks}
+                </span>
+              ),
+            })}
           </DialogTitle>
-          <DialogDescription>
-            Choose what other learners can see. You can change all of this later.
-          </DialogDescription>
+          <DialogDescription>{t("modalDescription")}</DialogDescription>
         </DialogHeader>
 
         <PrivacyToggles value={privacy} onChange={setPrivacy} />
@@ -75,12 +77,12 @@ export default function JoinCommModal() {
             onCheckedChange={(checked) => setAgreed(checked === true)}
             className="cursor-pointer"
           />
-          I agree to the terms &amp; conditions
+          {t("agree")}
         </label>
 
         <DialogFooter>
           <Button disabled={!agreed || loading} onClick={joinCommunity}>
-            {loading ? "Joining…" : "Enter community"}
+            {loading ? t("joining") : t("enter")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,11 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Radio } from "lucide-react";
 import LiveTranslationCard from "./LiveTranslationCard";
 import LiveTranslationsSkeleton from "./LiveTranslationsSkeleton";
 import { useCommunityLive } from "@/hooks/useCommunityLive";
 
 export default function CommunityLiveTranslations() {
+  const t = useTranslations("community");
   const { translations, isLoading, newCards, selectedLangs, selectLanguage } =
     useCommunityLive();
 
@@ -17,11 +19,11 @@ export default function CommunityLiveTranslations() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-500 opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-500" />
           </span>
-          Live translations
+          {t("liveTitle")}
         </h2>
         <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
           <Radio className="h-3.5 w-3.5" />
-          Updating every 10s
+          {t("liveUpdating")}
         </span>
       </div>
 
@@ -29,10 +31,8 @@ export default function CommunityLiveTranslations() {
         <LiveTranslationsSkeleton />
       ) : translations.length === 0 ? (
         <div className="surface-card p-10 text-center">
-          <p className="text-sm font-medium">The feed is quiet right now</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Translate a word and yours will be the first one here.
-          </p>
+          <p className="text-sm font-medium">{t("liveQuietTitle")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("liveQuietBody")}</p>
         </div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">

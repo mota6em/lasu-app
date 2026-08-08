@@ -1,11 +1,10 @@
-import { Metadata } from "next";
-import { redirect } from "next/navigation";
-export const metadata: Metadata = {
-  title: "LaSu - Your AI Language Support",
-  description:
-    "Learn languages effortlessly with LaSu - the Chrome extension that offers AI-powered translations, real-life examples, and contextual understanding as you browse.",
-};
+import { redirect } from "@/i18n/routing";
 
-export default function Home() {
-  redirect("/dashboard");
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  redirect({ href: "/dashboard", locale });
 }

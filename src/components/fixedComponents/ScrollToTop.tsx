@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ScrollToTop() {
+  const t = useTranslations("shell");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export default function ScrollToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      aria-label="Back to top"
+      aria-label={t("backToTop")}
       tabIndex={visible ? 0 : -1}
       className={cn(
         "fixed bottom-6 end-6 z-40 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-[var(--shadow-lift)] transition-all duration-300 hover:text-foreground",

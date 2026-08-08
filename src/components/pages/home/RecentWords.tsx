@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight, Clock } from "lucide-react";
+import { Link } from "@/i18n/routing";
 import useTranslationHistory from "@/hooks/useTranslationHistory";
 import { getLanguage } from "@/lib/languages";
 
 export default function RecentWords() {
+  const t = useTranslations("home");
   const { displayHistory, isLoading } = useTranslationHistory("all");
   const recent = displayHistory.slice(0, 8);
 
@@ -26,14 +28,14 @@ export default function RecentWords() {
       <div className="mb-2.5 flex items-center justify-between">
         <h2 className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground">
           <Clock className="h-3.5 w-3.5" />
-          Picked up recently
+          {t("recent")}
         </h2>
         <Link
           href="/dashboard/history"
           className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
-          All history
-          <ArrowRight className="h-3 w-3" />
+          {t("allHistory")}
+          <ArrowRight className="h-3 w-3 rtl:-scale-x-100" />
         </Link>
       </div>
 

@@ -1,6 +1,9 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 export default function NotFound() {
+  const t = useTranslations("notFound");
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
       <div aria-hidden className="absolute inset-0 grid-bg" />
@@ -14,11 +17,10 @@ export default function NotFound() {
           404
         </p>
         <h1 className="mt-2 font-display text-2xl font-bold tracking-tight md:text-3xl">
-          Lost in translation
+          {t("title")}
         </h1>
         <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          This page does not exist in any of our 74 languages. Let&apos;s get you back
-          to something useful.
+          {t("body")}
         </p>
 
         <div className="mt-7 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
@@ -26,13 +28,13 @@ export default function NotFound() {
             href="/dashboard"
             className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-brand)] transition-transform active:scale-[0.97]"
           >
-            Back to translating
+            {t("backToTranslating")}
           </Link>
           <Link
             href="/dashboard/history"
             className="rounded-lg border border-border bg-surface px-5 py-2.5 text-sm font-medium transition-colors hover:bg-surface-2"
           >
-            Open my history
+            {t("openHistory")}
           </Link>
         </div>
       </div>

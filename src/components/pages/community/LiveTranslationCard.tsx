@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import CopyButton from "@/components/ui/copy-button";
 import SpeakButton from "@/components/ui/speak-button";
+import { Link } from "@/i18n/routing";
 import { getLanguage, isRTL, langName } from "@/lib/languages";
 import { cn } from "@/lib/utils";
 import type { CommunityTranslation } from "@/hooks/useCommunityLive";
@@ -24,11 +25,12 @@ export default function LiveTranslationCard({
   selectedLang,
   onSelectLang,
 }: LiveTranslationCardProps) {
+  const t = useTranslations("community");
   const langs = Object.keys(translation.result?.translations ?? {});
   const active = selectedLang || langs[0];
   const text = translation.result?.translations?.[active] ?? "";
   const example = translation.result?.example?.[active];
-  const displayName = translation.userName?.split(" ")[0] || "Anonymous";
+  const displayName = translation.userName?.split(" ")[0] || t("anonymous");
 
   return (
     <motion.article
@@ -52,7 +54,7 @@ export default function LiveTranslationCard({
             {isNew && (
               <span className="ms-2 inline-flex items-center gap-1 font-medium text-brand-600 dark:text-brand-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" />
-                just now
+                {t("justNow")}
               </span>
             )}
           </p>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { Check, Search, X } from "lucide-react";
 import {
@@ -22,15 +23,11 @@ import type Language from "@/types/language";
 const MAX_LANGS = 4;
 const MIN_LANGS = 1;
 
-const TONES = [
-  { value: "formal", label: "Formal", hint: "Professors, clients, strangers" },
-  { value: "casual", label: "Casual", hint: "How friends actually talk" },
-  { value: "slang", label: "Slang", hint: "Real colloquial wording" },
-  { value: "academic", label: "Academic", hint: "Essays and papers" },
-  { value: "funny", label: "Funny", hint: "Playful but still correct" },
-];
+const TONES = ["formal", "casual", "slang", "academic", "funny"] as const;
 
 const TranslationSettingDialog = () => {
+  const t = useTranslations("settings");
+  const tTone = useTranslations("tone");
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
   const [query, setQuery] = useState("");
   const [saving, setSaving] = useState(false);
@@ -65,7 +62,7 @@ const TranslationSettingDialog = () => {
 
     if (isSelected) {
       if (selectedLanguages.length <= MIN_LANGS) {
-        toast("Keep at least one language selected.");
+        toast(t("keepOne"));
         return;
       }
       setSelectedLanguages(selectedLanguages.filter((l) => l.value !== lang.value));
@@ -73,7 +70,7 @@ const TranslationSettingDialog = () => {
     }
 
     if (isFull) {
-      toast(`Four languages at a time is the sweet spot.`);
+      toast(t("maxReached"));
       return;
     }
     setSelectedLanguages([...selectedLanguages, { value: lang.value, label: lang.label }]);
@@ -83,10 +80,10 @@ const TranslationSettingDialog = () => {
     setSaving(true);
     try {
       await saveSettings({ selectedLanguages, translationType }, session);
-      toast.success("Preferences saved");
+      toast.success(t("saved"));
       toggleSettingsDialog();
     } catch {
-      toast.error("Could not save your preferences. Try again.");
+      toast.error(t("saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -95,31 +92,27 @@ const TranslationSettingDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={toggleSettingsDialog}>
       <DialogContent className="max-h-[90vh] gap-0 overflow-y-auto p-0 sm:max-w-lg">
-        <DialogHeader className="border-b border-border px-6 py-4 text-left">
-          <DialogTitle className="font-display text-xl">
-            Translation preferences
-          </DialogTitle>
-          <DialogDescription>
-            Pick the languages you are learning and the register you want back.
-          </DialogDescription>
+        <DialogHeader className="border-b border-border px-6 py-4 text-start">
+          <DialogTitle className="font-display text-xl">{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 px-6 py-5">
           <section>
             <div className="mb-2.5 flex items-baseline justify-between">
-              <h3 className="text-sm font-semibold">Register</h3>
+              <h3 className="text-sm font-semibold">{t("register")}</h3>
               <span className="text-xs text-muted-foreground">
-                Applies to every translation
+                {t("registerHint")}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {TONES.map((tone) => {
-                const active = translationType === tone.value;
+                const active = translationType === tone;
                 return (
                   <button
-                    key={tone.value}
+                    key={tone}
                     type="button"
-                    onClick={() => setTranslationType(tone.value)}
+                    onClick={() => setTranslationType(tone)}
                     className={cn(
                       "rounded-xl border p-2.5 text-left transition-all",
                       active
@@ -127,9 +120,9 @@ const TranslationSettingDialog = () => {
                         : "border-border bg-surface hover:border-border-strong hover:bg-surface-2"
                     )}
                   >
-                    <span className="block text-sm font-medium">{tone.label}</span>
+                    <span className="block text-sm font-medium">{tTone(tone)}</span>
                     <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">
-                      {tone.hint}
+                      {tTone(`${tone}Hint`)}
                     </span>
                   </button>
                 );
@@ -139,7 +132,7 @@ const TranslationSettingDialog = () => {
 
           <section>
             <div className="mb-2.5 flex items-baseline justify-between">
-              <h3 className="text-sm font-semibold">Target languages</h3>
+              <h3 className="text-sm font-semibold">{t("targets")}</h3>
               <span
                 className={cn(
                   "text-xs tabular-nums",
@@ -169,7 +162,7 @@ const TranslationSettingDialog = () => {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search 74 languages…"
+                placeholder={t("searchLanguages", { count: availableLanguages.length })}
                 className="h-10 w-full rounded-lg border border-border bg-surface-2 ps-9 pe-3 text-sm outline-none transition-colors focus:border-brand-400"
               />
             </div>
@@ -177,7 +170,7 @@ const TranslationSettingDialog = () => {
             <div className="max-h-56 overflow-y-auto rounded-xl border border-border">
               {languages.length === 0 && (
                 <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-                  No language matches “{query}”.
+                  {t("noLanguage", { query })}
                 </p>
               )}
               {languages.map((lang) => {
@@ -214,10 +207,10 @@ const TranslationSettingDialog = () => {
 
         <div className="sticky bottom-0 flex justify-end gap-2 border-t border-border bg-surface px-6 py-4">
           <Button variant="ghost" onClick={toggleSettingsDialog}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving…" : "Save preferences"}
+            {saving ? t("saving") : t("save")}
           </Button>
         </div>
       </DialogContent>

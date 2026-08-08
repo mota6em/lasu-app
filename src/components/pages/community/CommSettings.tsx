@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import {
 import PrivacyToggles, { type PrivacyState } from "./PrivacyToggles";
 
 export default function CommSettings() {
+  const t = useTranslations("community");
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -52,10 +54,10 @@ export default function CommSettings() {
         body: JSON.stringify(privacy),
       });
       if (!res.ok) throw new Error();
-      toast.success("Community settings updated");
+      toast.success(t("settingsSaved"));
       setOpen(false);
     } catch {
-      toast.error("Could not save those settings.");
+      toast.error(t("settingsFailed"));
     } finally {
       setLoading(false);
     }
@@ -66,25 +68,23 @@ export default function CommSettings() {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Settings2 className="h-3.5 w-3.5" />
-          Privacy
+          {t("privacy")}
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+        <DialogHeader className="text-start">
           <DialogTitle className="font-display text-xl">
-            Community privacy
+            {t("settingsTitle")}
           </DialogTitle>
-          <DialogDescription>
-            Control what other learners see about you.
-          </DialogDescription>
+          <DialogDescription>{t("settingsDescription")}</DialogDescription>
         </DialogHeader>
 
         <PrivacyToggles value={privacy} onChange={setPrivacy} />
 
         <DialogFooter>
           <Button disabled={loading} onClick={save}>
-            {loading ? "Saving…" : "Save changes"}
+            {loading ? t("saving") : t("saveChanges")}
           </Button>
         </DialogFooter>
       </DialogContent>

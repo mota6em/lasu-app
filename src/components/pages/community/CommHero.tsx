@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { Flame, Trophy, Zap } from "lucide-react";
@@ -14,13 +15,23 @@ export default function CommHero({
   userName: string;
   userId: string;
 }) {
+  const t = useTranslations("community");
   const { stats, loading } = useUserStats(userId);
   const progress = levelProgress(stats.xp ?? 0);
 
   const tiles = [
-    { label: "XP", value: stats.xp ?? 0, icon: Zap },
-    { label: "Streak", value: stats.streak ?? 0, icon: Flame, suffix: " days" },
-    { label: "Translations", value: stats.allTimeTranslations ?? 0, icon: Trophy },
+    { label: t("xp"), value: stats.xp ?? 0, icon: Zap },
+    {
+      label: t("streak"),
+      value: stats.streak ?? 0,
+      icon: Flame,
+      suffix: ` ${t("days")}`,
+    },
+    {
+      label: t("translations"),
+      value: stats.allTimeTranslations ?? 0,
+      icon: Trophy,
+    },
   ];
 
   return (
@@ -35,18 +46,25 @@ export default function CommHero({
       />
 
       <div className="relative p-6 md:p-8">
-        <p className="text-sm text-muted-foreground">Welcome back,</p>
+        <p className="text-sm text-muted-foreground">{t("welcomeBack")}</p>
         <h1 className="mt-0.5 font-display text-3xl font-bold tracking-tight md:text-4xl">
           {userName.split(" ")[0]}{" "}
-          <span className="text-gradient">level {progress.level}</span>
+          <span className="text-gradient">
+            {t("levelHeading", { level: progress.level })}
+          </span>
         </h1>
 
         <div className="mt-5 max-w-md">
           <div className="flex items-baseline justify-between text-xs text-muted-foreground">
             <span>
-              {progress.into} / {progress.needed} XP
+              {t("xpProgress", { into: progress.into, needed: progress.needed })}
             </span>
-            <span>{progress.remaining} XP to level {progress.level + 1}</span>
+            <span>
+              {t("xpToNext", {
+                remaining: progress.remaining,
+                level: progress.level + 1,
+              })}
+            </span>
           </div>
           <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-surface-3">
             <motion.div

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Eye, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,7 @@ export default function PracticeRunner({
   endSession,
   isLast,
 }: PracticeSession) {
+  const t = useTranslations("practice");
   const firstInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -113,7 +115,7 @@ export default function PracticeRunner({
           onClick={endSession}
           className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
-          End
+          {t("end")}
         </button>
       </div>
 
@@ -191,26 +193,26 @@ export default function PracticeRunner({
                         onClick={() => answerRecall(true)}
                         className="h-11 gap-2 bg-success text-success-foreground shadow-none hover:brightness-105"
                       >
-                        <Check className="h-4 w-4" /> I knew it
+                        <Check className="h-4 w-4" /> {t("knewIt")}
                       </Button>
                       <Button
                         onClick={() => answerRecall(false)}
                         variant="outline"
                         className="h-11 gap-2 border-destructive/40 text-destructive hover:bg-destructive/10"
                       >
-                        <X className="h-4 w-4" /> Missed it
+                        <X className="h-4 w-4" /> {t("missedIt")}
                       </Button>
                     </div>
                     <button
                       onClick={reveal}
                       className="inline-flex items-center justify-center gap-1.5 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
                     >
-                      <Eye className="h-3.5 w-3.5" /> Just show me
+                      <Eye className="h-3.5 w-3.5" /> {t("justShowMe")}
                     </button>
                   </>
                 ) : (
                   <Button onClick={next} size="lg" className="h-11 w-full">
-                    {isLast ? "See results" : "Next word"}
+                    {isLast ? t("seeResults") : t("nextWord")}
                   </Button>
                 )}
               </div>
@@ -242,7 +244,7 @@ export default function PracticeRunner({
                             checked ? next() : checkWriting();
                           }
                         }}
-                        placeholder={`Type it in ${langName(lang)}…`}
+                        placeholder={t("typeIn", { language: langName(lang) })}
                         className={cn(
                           verdict === "correct" && "border-success",
                           verdict === "close" && "border-warning",
@@ -263,7 +265,7 @@ export default function PracticeRunner({
                           )}
                           <span dir={isRTL(lang) ? "rtl" : "ltr"}>{translation}</span>
                           {verdict === "close" && (
-                            <span className="text-warning">· close enough</span>
+                            <span className="text-warning">· {t("closeEnough")}</span>
                           )}
                         </p>
                       )}
@@ -275,7 +277,7 @@ export default function PracticeRunner({
               <div className="mt-5">
                 {checked ? (
                   <Button onClick={next} size="lg" className="h-11 w-full">
-                    {isLast ? "See results" : "Next word"}
+                    {isLast ? t("seeResults") : t("nextWord")}
                   </Button>
                 ) : (
                   <Button
@@ -284,7 +286,7 @@ export default function PracticeRunner({
                     className="h-11 w-full"
                     disabled={entries.every(([lang]) => !answers[lang]?.trim())}
                   >
-                    Check my answers
+                    {t("checkAnswers")}
                   </Button>
                 )}
               </div>
@@ -295,8 +297,9 @@ export default function PracticeRunner({
 
       {config.mode === "recall" && (
         <p className="text-center text-[11px] text-muted-foreground">
-          <kbd className="kbd">space</kbd> reveal · <kbd className="kbd">1</kbd> knew
-          it · <kbd className="kbd">2</kbd> missed it
+          {t.rich("shortcuts", {
+            kbd: (chunks) => <kbd className="kbd">{chunks}</kbd>,
+          })}
         </p>
       )}
     </div>

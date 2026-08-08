@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { getLanguage } from "@/lib/languages";
 
@@ -14,6 +15,8 @@ export default function TopLangsSec({
   isLoading,
   limit = 6,
 }: TopLangsSecProps) {
+  const t = useTranslations("stats");
+
   if (isLoading) {
     return (
       <div className="space-y-2.5">
@@ -27,7 +30,7 @@ export default function TopLangsSec({
   if (!topLangs.length) {
     return (
       <p className="py-6 text-center text-sm text-muted-foreground">
-        Translate into a few languages and they will rank up here.
+        {t("noLanguages")}
       </p>
     );
   }

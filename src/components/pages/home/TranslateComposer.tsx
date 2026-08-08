@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { ClipboardPaste, CornerDownLeft, Loader2, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,13 +13,7 @@ import type { TranslateHook } from "@/types/translation";
 
 const MAX_CHARS = 1000;
 
-const TONES = [
-  { value: "formal", label: "Formal" },
-  { value: "casual", label: "Casual" },
-  { value: "slang", label: "Slang" },
-  { value: "academic", label: "Academic" },
-  { value: "funny", label: "Funny" },
-];
+const TONES = ["formal", "casual", "slang", "academic", "funny"] as const;
 
 const STARTERS = [
   "serendipity",
@@ -45,6 +40,8 @@ export default function TranslateComposer({
   toggleSettingsDialog,
   resultLoading,
 }: Props) {
+  const t = useTranslations("composer");
+  const tTone = useTranslations("tone");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const appliedFromUrl = useRef<string | null>(null);
   const searchParams = useSearchParams();
@@ -104,7 +101,9 @@ export default function TranslateComposer({
         )}
       >
         <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
-          <span className="text-xs font-medium text-muted-foreground">Into</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            {t("into")}
+          </span>
 
           <div className="flex flex-wrap items-center gap-1.5">
             {selectedLanguages.map((lang) => {
@@ -114,7 +113,7 @@ export default function TranslateComposer({
                   key={lang.value}
                   type="button"
                   onClick={toggleSettingsDialog}
-                  title="Change target languages"
+                  title={t("changeTargets")}
                   className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-1 text-xs font-medium transition-colors hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/40"
                 >
                   <span aria-hidden>{meta?.flag ?? "🌐"}</span>
@@ -128,19 +127,19 @@ export default function TranslateComposer({
                 onClick={toggleSettingsDialog}
                 className="inline-flex h-[26px] items-center gap-1 rounded-full border border-dashed border-border-strong px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-brand-400 hover:text-brand-600"
               >
-                + Add
+                {t("add")}
               </button>
             )}
           </div>
 
           <div className="ms-auto flex items-center gap-1 rounded-full bg-surface-2 p-0.5">
             {TONES.map((tone) => {
-              const active = translationType === tone.value;
+              const active = translationType === tone;
               return (
                 <button
-                  key={tone.value}
+                  key={tone}
                   type="button"
-                  onClick={() => setTranslationType(tone.value)}
+                  onClick={() => setTranslationType(tone)}
                   className={cn(
                     "relative rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
                     active
@@ -155,7 +154,7 @@ export default function TranslateComposer({
                       className="absolute inset-0 rounded-full bg-primary"
                     />
                   )}
-                  <span className="relative">{tone.label}</span>
+                  <span className="relative">{tTone(tone)}</span>
                 </button>
               );
             })}
@@ -175,8 +174,8 @@ export default function TranslateComposer({
             }
           }}
           rows={3}
-          placeholder="Type a word or paste a sentence…"
-          aria-label="Text to translate"
+          placeholder={t("placeholder")}
+          aria-label={t("ariaLabel")}
           className="w-full resize-none bg-transparent px-4 py-4 text-lg leading-relaxed outline-none placeholder:text-muted-foreground/70 md:text-xl"
         />
 
@@ -184,7 +183,8 @@ export default function TranslateComposer({
           <button
             type="button"
             onClick={handlePasteInline}
-            title="Paste from clipboard"
+            title={t("paste")}
+            aria-label={t("paste")}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
           >
             <ClipboardPaste className="h-4 w-4" />
@@ -196,13 +196,15 @@ export default function TranslateComposer({
               textareaRef.current?.focus();
             }}
             disabled={!text}
-            title="Clear"
+            title={t("clear")}
+            aria-label={t("clear")}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground disabled:opacity-40"
           >
             <X className="h-4 w-4" />
           </button>
 
           <span
+            dir="ltr"
             className={cn(
               "font-mono text-[11px] tabular-nums",
               overBudget
@@ -217,19 +219,19 @@ export default function TranslateComposer({
 
           <div className="ms-auto flex items-center gap-3">
             <span className="hidden items-center gap-1 text-[11px] text-muted-foreground sm:flex">
-              <kbd className="kbd">↵</kbd> to translate
+              <kbd className="kbd">↵</kbd> {t("enterToTranslate")}
             </span>
             <Button type="submit" disabled={!canSubmit} className="gap-2 px-5">
               {resultLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Translating
+                  {t("translating")}
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4" />
-                  Translate
-                  <CornerDownLeft className="h-3.5 w-3.5 opacity-60" />
+                  {t("translate")}
+                  <CornerDownLeft className="h-3.5 w-3.5 opacity-60 rtl:-scale-x-100" />
                 </>
               )}
             </Button>
@@ -239,7 +241,7 @@ export default function TranslateComposer({
 
       {!text && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-muted-foreground">Try</span>
+          <span className="text-xs text-muted-foreground">{t("try")}</span>
           {STARTERS.map((starter) => (
             <button
               key={starter}
@@ -248,6 +250,7 @@ export default function TranslateComposer({
                 setText(starter);
                 textareaRef.current?.focus();
               }}
+              dir="ltr"
               className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:text-foreground"
             >
               {starter}

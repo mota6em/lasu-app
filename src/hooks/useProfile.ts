@@ -3,7 +3,13 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useOverviewCards } from "./useOverviewCards";
+import { useTranslations } from "next-intl";
 import { useUserStats } from "./useUserStats";
+
+function useProfileMessages() {
+  const t = useTranslations("profile");
+  return { updated: t("updated"), updateFailed: t("updateFailed") };
+}
 
 interface UseProfileProps {
   sUserId?: string; // optional, for public profiles
@@ -16,6 +22,7 @@ async function fetchUser(userId: string) {
 }
 
 const useProfile = ({ sUserId }: UseProfileProps = {}) => {
+  const messages = useProfileMessages();
   const { data: session, update } = useSession();
   const sessionUser = session?.user;
   const queryClient = useQueryClient();
@@ -70,10 +77,10 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
       queryClient.invalidateQueries({
         queryKey: ["profile-user", sessionUser?.id],
       });
-      toast.success("Profile updated successfully 🎉");
+      toast.success(messages.updated);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Error updating profile ⚠️");
+      toast.error(err.message || messages.updateFailed);
     },
   });
 

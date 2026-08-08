@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { usePracticeSession } from "@/hooks/usePracticeSession";
 import PracticeSetup from "./PracticeSetup";
 import PracticeRunner from "./PracticeRunner";
@@ -16,6 +17,7 @@ function BoardSkeleton() {
 }
 
 export default function PracticeBoard() {
+  const t = useTranslations("practice");
   const session = usePracticeSession();
 
   if (session.isLoading) return <BoardSkeleton />;
@@ -23,12 +25,8 @@ export default function PracticeBoard() {
   if (session.isError) {
     return (
       <div className="surface-card mx-auto max-w-md p-6 text-center">
-        <p className="text-sm font-medium text-destructive">
-          Could not load your words.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Refresh the page and they should come back.
-        </p>
+        <p className="text-sm font-medium text-destructive">{t("errorTitle")}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{t("errorBody")}</p>
       </div>
     );
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Flame, Trophy } from "lucide-react";
 import { OverviewCards } from "@/components/pages/home/OverviewCards";
 import TopLangsSec from "@/components/pages/community/TopLangsSec";
@@ -12,10 +13,10 @@ import { busiestDay, currentStreak, fillDays } from "@/lib/series";
 import { cn } from "@/lib/utils";
 
 const RANGES = [
-  { days: 7, label: "7 days" },
-  { days: 30, label: "30 days" },
-  { days: 90, label: "90 days" },
-];
+  { days: 7, key: "range7" },
+  { days: 30, key: "range30" },
+  { days: 90, key: "range90" },
+] as const;
 
 function Panel({
   title,
@@ -45,6 +46,7 @@ function Panel({
 }
 
 export default function StatsPage() {
+  const t = useTranslations("stats");
   const { topLangs, dailySeries, isLoading } = useStatsData();
   const [range, setRange] = useState(30);
   const isMobile = useIsMobile();
@@ -58,18 +60,16 @@ export default function StatsPage() {
     <div className="space-y-6">
       <header className="animate-fade-up">
         <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-          Stats
+          {t("title")}
         </h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          Where your effort is actually going.
-        </p>
+        <p className="mt-1.5 text-sm text-muted-foreground">{t("subtitle")}</p>
       </header>
 
       <OverviewCards />
 
       <Panel
-        title="Daily activity"
-        subtitle="Translations saved per day"
+        title={t("dailyTitle")}
+        subtitle={t("dailySubtitle")}
         action={
           <div className="inline-flex items-center gap-0.5 rounded-lg border border-border bg-surface-2 p-0.5">
             {RANGES.map((option) => (
@@ -83,7 +83,7 @@ export default function StatsPage() {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                {option.label}
+                {t(option.key)}
               </button>
             ))}
           </div>
@@ -97,7 +97,7 @@ export default function StatsPage() {
       </Panel>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-        <Panel title="Consistency" subtitle="The last 18 weeks">
+        <Panel title={t("consistencyTitle")} subtitle={t("consistencySubtitle")}>
           {isLoading ? (
             <div className="shimmer h-32 w-full rounded-lg" />
           ) : (
@@ -105,12 +105,12 @@ export default function StatsPage() {
               <div className="mb-4 flex flex-wrap gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-500/25 bg-brand-500/10 px-2.5 py-1 text-xs font-medium">
                   <Flame className="h-3.5 w-3.5 text-brand-500" />
-                  {streak} day{streak === 1 ? "" : "s"} in a row
+                  {t("streakInARow", { count: streak })}
                 </span>
                 {best && best.count > 0 && (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted-foreground">
                     <Trophy className="h-3.5 w-3.5" />
-                    Best day: {best.count}
+                    {t("bestDay", { count: best.count })}
                   </span>
                 )}
               </div>
@@ -119,7 +119,7 @@ export default function StatsPage() {
           )}
         </Panel>
 
-        <Panel title="Top languages" subtitle="By number of translations">
+        <Panel title={t("topLanguagesTitle")} subtitle={t("topLanguagesSubtitle")}>
           <TopLangsSec topLangs={topLangs} isLoading={isLoading} />
         </Panel>
       </div>

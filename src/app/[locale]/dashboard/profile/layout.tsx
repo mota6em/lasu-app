@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import { routeMetadata } from "@/i18n/pageMetadata";
 
-export const metadata: Metadata = {
-  title: "Profile",
-  description: "Your avatar, level progress and learning totals.",
-  robots: { index: false, follow: false },
-};
+export const generateMetadata = routeMetadata({
+  namespace: "profile",
+  path: "/dashboard/profile",
+  noIndex: true,
+});
 
 export default function ProfileLayout({
   children,

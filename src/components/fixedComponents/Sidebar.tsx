@@ -2,20 +2,21 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Flame, LogOut, Settings, Sparkles, X, Zap } from "lucide-react";
 import NavIcon from "./NavIcon";
 import TranslationSettingDialog from "../pages/settings/TranslationSettingDialog";
+import { Link, usePathname } from "@/i18n/routing";
 import { navItems, prefetchRoute } from "@/lib/nav";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import { useUserStats } from "@/hooks/useUserStats";
 import { cn } from "@/lib/utils";
 
 function StreakCard() {
+  const t = useTranslations("shell");
   const { data: session } = useSession();
   const { stats, isMember } = useUserStats(session?.user?.id);
 
@@ -31,14 +32,14 @@ function StreakCard() {
         <span className="font-display text-lg font-bold tabular-nums">
           {stats.streak ?? 0}
         </span>
-        <span className="text-xs text-muted-foreground">day streak</span>
+        <span className="text-xs text-muted-foreground">{t("dayStreak")}</span>
       </div>
       <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Zap className="h-3 w-3 text-brand-500" />
-          {stats.xp ?? 0} XP
+          {t("xpShort", { xp: stats.xp ?? 0 })}
         </span>
-        <span>Level {stats.level ?? 1}</span>
+        <span>{t("level", { level: stats.level ?? 1 })}</span>
       </div>
     </Link>
   );
@@ -51,6 +52,8 @@ export function Sidebar({
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
 }) {
+  const t = useTranslations("nav");
+  const tShell = useTranslations("shell");
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
@@ -90,8 +93,8 @@ export function Sidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-e border-border bg-surface transition-transform duration-300 lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 start-0 z-50 flex w-64 flex-col border-e border-border bg-surface transition-transform duration-300 lg:translate-x-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
         )}
         style={{ transitionTimingFunction: "var(--ease-out-quint)" }}
       >
@@ -105,7 +108,7 @@ export function Sidebar({
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
-            aria-label="Close menu"
+            aria-label={tShell("closeMenu")}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-surface-2 lg:hidden"
           >
             <X className="h-4.5 w-4.5" />
@@ -114,7 +117,7 @@ export function Sidebar({
 
         <nav className="flex-1 overflow-y-auto px-3">
           <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Workspace
+            {t("workspace")}
           </p>
 
           <ul className="space-y-0.5">
@@ -149,7 +152,7 @@ export function Sidebar({
                         isActive && "text-brand-600 dark:text-brand-400"
                       )}
                     />
-                    <span className="relative">{item.label}</span>
+                    <span className="relative">{t(item.key)}</span>
                   </Link>
                 </li>
               );
@@ -166,7 +169,7 @@ export function Sidebar({
                 )}
               >
                 <Settings className="h-[18px] w-[18px] shrink-0" />
-                <span>Preferences</span>
+                <span>{t("preferences")}</span>
               </button>
             </li>
           </ul>
@@ -175,17 +178,16 @@ export function Sidebar({
             <div className="mt-6 rounded-xl border border-border bg-surface-2 p-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-brand-500" />
-                <p className="text-sm font-semibold">Unlock everything</p>
+                <p className="text-sm font-semibold">{tShell("unlockTitle")}</p>
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                Sign in to keep your history in sync, build a streak and drill words
-                in the Practice Hub.
+                {tShell("unlockBody")}
               </p>
               <button
                 onClick={() => signIn("google")}
                 className="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98]"
               >
-                Continue with Google
+                {tShell("continueWithGoogle")}
               </button>
             </div>
           )}
@@ -211,8 +213,8 @@ export function Sidebar({
               </div>
               <button
                 onClick={() => signOut()}
-                title="Sign out"
-                aria-label="Sign out"
+                title={tShell("signOut")}
+                aria-label={tShell("signOut")}
                 className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-2 hover:text-destructive"
               >
                 <LogOut className="h-4 w-4" />

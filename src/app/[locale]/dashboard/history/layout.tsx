@@ -1,16 +1,10 @@
-import type { Metadata } from "next";
+import { routeMetadata } from "@/i18n/pageMetadata";
 
-export const metadata: Metadata = {
-  title: "History",
-  description:
-    "Search every word and phrase you have translated, with examples, pronunciation and notes kept alongside them.",
-  openGraph: {
-    title: "Your translation history | LaSu",
-    description:
-      "Track and review your past translations with examples and language stats. Your learning journey, stored and synced.",
-    url: "https://lasu.online/dashboard/history",
-  },
-};
+export const generateMetadata = routeMetadata({
+  namespace: "history",
+  path: "/dashboard/history",
+  descriptionKey: "emptyBody",
+});
 
 export default function HistoryLayout({
   children,

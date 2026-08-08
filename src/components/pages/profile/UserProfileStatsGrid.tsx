@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import CountUp from "react-countup";
 import { Flame, Layers, Star, Zap } from "lucide-react";
 
@@ -54,12 +55,18 @@ export default function UserProfileStatsGrid({
   streakDays,
   level,
 }: UserStatsGridProps) {
+  const t = useTranslations("profile");
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <Tile icon={ICONS.translations} label="Translations" value={totalTranslations} />
-      <Tile icon={ICONS.xp} label="XP earned" value={xp} />
-      <Tile icon={ICONS.streak} label="Day streak" value={streakDays} suffix="d" />
-      <Tile icon={ICONS.level} label="Level" value={level ?? "—"} />
+      <Tile
+        icon={ICONS.translations}
+        label={t("statTranslations")}
+        value={totalTranslations}
+      />
+      <Tile icon={ICONS.xp} label={t("statXp")} value={xp} />
+      <Tile icon={ICONS.streak} label={t("statStreak")} value={streakDays} />
+      <Tile icon={ICONS.level} label={t("statLevel")} value={level ?? "—"} />
     </div>
   );
 }

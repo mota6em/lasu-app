@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { LogOut, Settings, User } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,9 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "@/i18n/routing";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 
 export function UserMenu() {
+  const t = useTranslations("userMenu");
+  const tShell = useTranslations("shell");
   const { data: session, status } = useSession();
   const { toggleSettingsDialog } = useSettingsDialog();
   const user = session?.user;
@@ -29,7 +32,7 @@ export function UserMenu() {
         onClick={() => signIn("google")}
         className="rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-brand)] transition-transform active:scale-[0.97]"
       >
-        Sign in
+        {tShell("signIn")}
       </button>
     );
   }
@@ -63,7 +66,7 @@ export function UserMenu() {
 
         <DropdownMenuItem asChild className="cursor-pointer gap-2">
           <Link href="/dashboard/profile">
-            <User className="h-4 w-4" /> My profile
+            <User className="h-4 w-4" /> {t("profile")}
           </Link>
         </DropdownMenuItem>
 
@@ -71,7 +74,7 @@ export function UserMenu() {
           onClick={toggleSettingsDialog}
           className="cursor-pointer gap-2"
         >
-          <Settings className="h-4 w-4" /> Preferences
+          <Settings className="h-4 w-4" /> {t("preferences")}
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
@@ -80,7 +83,7 @@ export function UserMenu() {
           onClick={() => signOut()}
           className="cursor-pointer gap-2 text-destructive focus:text-destructive"
         >
-          <LogOut className="h-4 w-4" /> Sign out
+          <LogOut className="h-4 w-4" /> {tShell("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

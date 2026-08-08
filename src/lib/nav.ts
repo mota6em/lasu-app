@@ -1,45 +1,24 @@
 import type { QueryClient } from "@tanstack/react-query";
 
 export interface NavItem {
-  label: string;
+  /** key into the `nav` message namespace, paired with `<key>Hint` */
+  key: "translate" | "practice" | "history" | "stats" | "community";
   href: string;
   icon: "home" | "practice" | "history" | "stats" | "community";
-  description: string;
   requiresAuth?: boolean;
 }
 
 export const navItems: NavItem[] = [
+  { key: "translate", href: "/dashboard", icon: "home" },
   {
-    label: "Translate",
-    href: "/dashboard",
-    icon: "home",
-    description: "Translate a word or a sentence",
-  },
-  {
-    label: "Practice Hub",
+    key: "practice",
     href: "/dashboard/practice",
     icon: "practice",
-    description: "Drill the words you saved",
     requiresAuth: true,
   },
-  {
-    label: "History",
-    href: "/dashboard/history",
-    icon: "history",
-    description: "Everything you have translated",
-  },
-  {
-    label: "Stats",
-    href: "/dashboard/stats",
-    icon: "stats",
-    description: "Your activity and top languages",
-  },
-  {
-    label: "Community",
-    href: "/dashboard/community",
-    icon: "community",
-    description: "Leaderboards and live translations",
-  },
+  { key: "history", href: "/dashboard/history", icon: "history" },
+  { key: "stats", href: "/dashboard/stats", icon: "stats" },
+  { key: "community", href: "/dashboard/community", icon: "community" },
 ];
 
 const json = (url: string) => async () => {

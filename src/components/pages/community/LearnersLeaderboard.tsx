@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Crown, Medal } from "lucide-react";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
 interface Learner {
@@ -46,9 +47,7 @@ function Avatar({ learner, size }: { learner: Learner; size: number }) {
   );
 }
 
-function displayName(learner: Learner) {
-  return learner.showName && learner.name ? learner.name : "Anonymous learner";
-}
+
 
 export default function LearnersLeaderboard({
   learners,
@@ -57,6 +56,10 @@ export default function LearnersLeaderboard({
   learners: Learner[];
   loading: boolean;
 }) {
+  const t = useTranslations("community");
+  const displayName = (learner: Learner) =>
+    learner.showName && learner.name ? learner.name : t("anonymous");
+
   if (loading) {
     return (
       <div className="space-y-2">
@@ -70,7 +73,7 @@ export default function LearnersLeaderboard({
   if (!learners.length) {
     return (
       <p className="py-10 text-center text-sm text-muted-foreground">
-        Nobody has ranked for this period yet — the top spot is open.
+        {t("noLearners")}
       </p>
     );
   }
@@ -154,7 +157,9 @@ export default function LearnersLeaderboard({
                     {displayName(learner)}
                   </span>
                   <span className="block text-[11px] text-muted-foreground">
-                    {learner.totalTranslations ?? 0} translations
+                    {t("learnerTranslations", {
+                      count: learner.totalTranslations ?? 0,
+                    })}
                   </span>
                 </span>
                 <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">

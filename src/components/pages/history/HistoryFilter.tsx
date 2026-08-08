@@ -1,12 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const OPTIONS = [
-  { value: "all", label: "All" },
-  { value: "word", label: "Words" },
-  { value: "phrase", label: "Phrases" },
+  { value: "all", key: "filterAll" },
+  { value: "word", key: "filterWords" },
+  { value: "phrase", key: "filterPhrases" },
 ] as const;
 
 interface HistoryFilterProps {
@@ -15,6 +16,7 @@ interface HistoryFilterProps {
 }
 
 export default function HistoryFilter({ filter, setFilter }: HistoryFilterProps) {
+  const t = useTranslations("history");
   return (
     <div className="inline-flex shrink-0 items-center gap-0.5 rounded-lg border border-border bg-surface-2 p-0.5">
       {OPTIONS.map((option) => {
@@ -35,7 +37,7 @@ export default function HistoryFilter({ filter, setFilter }: HistoryFilterProps)
                 className="absolute inset-0 rounded-md bg-surface shadow-[var(--shadow-soft)]"
               />
             )}
-            <span className="relative">{option.label}</span>
+            <span className="relative">{t(option.key)}</span>
           </button>
         );
       })}

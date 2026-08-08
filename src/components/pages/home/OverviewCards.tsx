@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import CountUp from "react-countup";
 import { ArrowRight, Flame, Languages, Layers, TrendingDown, TrendingUp } from "lucide-react";
 import Sparkline from "@/components/fixedComponents/Sparkline";
+import { Link } from "@/i18n/routing";
 import { useOverviewCards } from "@/hooks/useOverviewCards";
 import { useUserStats } from "@/hooks/useUserStats";
 import { getLanguage } from "@/lib/languages";
@@ -51,6 +52,7 @@ function LoadingCards() {
 }
 
 export function OverviewCards() {
+  const t = useTranslations("overview");
   const { data, isLoading } = useOverviewCards();
   const { data: session } = useSession();
   const { stats, isMember } = useUserStats(session?.user?.id);
@@ -64,7 +66,7 @@ export function OverviewCards() {
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <StatShell
-        label="Total translations"
+        label={t("total")}
         icon={<Layers className="h-3.5 w-3.5" />}
         footer={<Sparkline values={spark} className="h-8 w-full" />}
       >
@@ -72,7 +74,7 @@ export function OverviewCards() {
       </StatShell>
 
       <StatShell
-        label="This week"
+        label={t("thisWeek")}
         icon={<TrendingUp className="h-3.5 w-3.5" />}
         footer={
           data.lastWeek > 0 || data.thisWeek > 0 ? (
@@ -89,12 +91,11 @@ export function OverviewCards() {
               ) : (
                 <TrendingDown className="h-3 w-3" />
               )}
-              {delta >= 0 ? "+" : ""}
-              {delta} vs last week
+              {t("vsLastWeek", { delta: `${delta >= 0 ? "+" : ""}${delta}` })}
             </span>
           ) : (
             <span className="text-[11px] text-muted-foreground">
-              Translate something to start the trend
+              {t("startTrend")}
             </span>
           )
         }
@@ -103,12 +104,12 @@ export function OverviewCards() {
       </StatShell>
 
       <StatShell
-        label="Top language"
+        label={t("topLanguage")}
         icon={<Languages className="h-3.5 w-3.5" />}
         footer={
           data.topLangs.length > 1 ? (
             <span className="text-[11px] text-muted-foreground">
-              {data.topLangs.length} languages used
+              {t("languagesUsed", { count: data.topLangs.length })}
             </span>
           ) : null
         }
@@ -123,19 +124,19 @@ export function OverviewCards() {
         )}
       </StatShell>
 
-      <StatShell label="Streak" icon={<Flame className="h-3.5 w-3.5" />}>
+      <StatShell label={t("streak")} icon={<Flame className="h-3.5 w-3.5" />}>
         {isMember ? (
           <span className="flex items-baseline gap-1.5">
             <CountUp end={stats.streak ?? 0} duration={1.1} />
-            <span className="text-sm font-medium text-muted-foreground">days</span>
+            <span className="text-sm font-medium text-muted-foreground">{t("days")}</span>
           </span>
         ) : (
           <Link
             href="/dashboard/community"
             className="inline-flex items-center gap-1.5 text-base font-semibold text-brand-600 dark:text-brand-400"
           >
-            Join to track it
-            <ArrowRight className="h-4 w-4" />
+            {t("joinToTrack")}
+            <ArrowRight className="h-4 w-4 rtl:-scale-x-100" />
           </Link>
         )}
       </StatShell>
