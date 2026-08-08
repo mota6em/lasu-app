@@ -105,7 +105,12 @@ async function handleApi(req: NextRequest) {
 
 export async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith("/api")) {
-    return handleApi(req);
+    try {
+      return await handleApi(req);
+    } catch (err) {
+      console.error("api middleware failed, passing through:", err);
+      return NextResponse.next();
+    }
   }
 
   return intlMiddleware(req);
