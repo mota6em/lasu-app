@@ -6,7 +6,6 @@
     "twitterDescription": "語学学習を賢くする AI 搭載の Chrome 拡張機能。",
     "keywords": "語学学習, AI 翻訳, chrome 拡張機能, LaSu, 多言語, 文脈翻訳, ブラウジングしながら語学学習"
   },
-
   "nav": {
     "workspace": "ワークスペース",
     "translate": "翻訳",
@@ -22,7 +21,6 @@
     "preferences": "設定",
     "dashboard": "ダッシュボード"
   },
-
   "shell": {
     "openMenu": "メニューを開く",
     "closeMenu": "メニューを閉じる",
@@ -44,7 +42,6 @@
     "tagline": "ブラウジングしながら語学学習",
     "streakTooltip": "{days} 日連続 · {xp} XP"
   },
-
   "theme": {
     "change": "テーマを変更",
     "light": "ライト",
@@ -53,12 +50,10 @@
     "switchToLight": "ライトモードに切り替え",
     "switchToDark": "ダークモードに切り替え"
   },
-
   "userMenu": {
     "profile": "マイプロフィール",
     "preferences": "設定"
   },
-
   "palette": {
     "title": "コマンドパレット",
     "placeholder": "ページを検索、または翻訳したい文字を入力…",
@@ -73,7 +68,6 @@
     "open": "開く",
     "focusComposer": "入力欄へ"
   },
-
   "language": {
     "title": "表示言語",
     "description": "LaSu 自体を表示する言語を選びます。翻訳設定はそのままです。",
@@ -81,7 +75,6 @@
     "noResults": "「{query}」に一致する言語はありません。",
     "current": "現在"
   },
-
   "home": {
     "heading": "今日は何を<accent>学びますか</accent>？",
     "subheading": "単語を入れると詳しい解説、文章を入れると自然な訳が返ってきます。",
@@ -89,7 +82,6 @@
     "recent": "最近見たもの",
     "allHistory": "履歴をすべて見る"
   },
-
   "composer": {
     "into": "訳す言語",
     "add": "+ 追加",
@@ -104,7 +96,6 @@
     "try": "お試し",
     "clipboardBlocked": "ブラウザがクリップボードへのアクセスをブロックしました。"
   },
-
   "tone": {
     "formal": "丁寧",
     "casual": "カジュアル",
@@ -117,7 +108,6 @@
     "academicHint": "論文やレポート",
     "funnyHint": "遊び心があっても意味は正確"
   },
-
   "result": {
     "landHere": "ここに結果が表示されます",
     "tipWordsTitle": "単語は深く掘り下げます",
@@ -129,9 +119,15 @@
     "errorHint": "モデルはたまに失敗します。もう一度翻訳を押せばたいてい通ります。",
     "listen": "読み上げ",
     "copy": "コピー",
-    "copied": "コピーしました"
+    "copied": "コピーしました",
+    "loadingTitle": "翻訳中",
+    "loadingReadingImage": "写真の文字を読み取っています…",
+    "loadingThinking": "ネイティブならどう言うか考えています…",
+    "loadingTranslating": "{language}で書き起こしています…",
+    "loadingPolishing": "言い回しと丁寧さを調整しています…",
+    "loadingAlmost": "もうすぐ完了…",
+    "loadingWaiting": "待機中"
   },
-
   "settings": {
     "title": "翻訳の設定",
     "description": "学習中の言語と、返してほしい文体を選んでください。",
@@ -148,7 +144,6 @@
     "keepOne": "少なくとも 1 つの言語を残してください。",
     "maxReached": "同時に 4 言語がちょうどよいバランスです。"
   },
-
   "overview": {
     "total": "翻訳の総数",
     "thisWeek": "今週",
@@ -160,7 +155,6 @@
     "languagesUsed": "{count} 言語を使用",
     "joinToTrack": "参加して記録する"
   },
-
   "history": {
     "title": "履歴",
     "loading": "保存した翻訳を読み込んでいます…",
@@ -189,7 +183,6 @@
     "localOnlyTitle": "これはこの端末にのみ保存されています",
     "localOnlyBody": "ログインすると履歴がどこでも使えるようになり、練習ハブに反映され、連続記録にも数えられます。"
   },
-
   "practice": {
     "badge": "練習ハブ",
     "heading": "単語を<accent>定着</accent>させる",
@@ -240,7 +233,6 @@
     "verdictRoughTitle": "手強いラウンド",
     "verdictRoughBody": "記憶が新しいうちに、間違えた単語をもう一度。"
   },
-
   "stats": {
     "title": "統計",
     "subtitle": "あなたの努力が実際どこに向かっているか。",
@@ -261,7 +253,6 @@
     "tooltipCount": "{count} 件の翻訳",
     "heatmapCell": "{date} に {count} 件"
   },
-
   "community": {
     "title": "コミュニティ",
     "privacy": "プライバシー",
@@ -323,7 +314,6 @@
     "shareTranslations": "翻訳した単語を共有する",
     "shareTranslationsHint": "単語のみ。文章全体が共有されることはありません。"
   },
-
   "profile": {
     "title": "プロフィール",
     "subtitle": "あなたの情報・アバター・進捗をひとつの場所に。",
@@ -352,7 +342,6 @@
     "notFoundBody": "このプロフィールは削除されたか、非公開に設定されている可能性があります。",
     "backToCommunity": "コミュニティに戻る"
   },
-
   "welcome": {
     "heading": "<accent>ブラウジングしながら</accent>言語を学ぶ",
     "subheading": "ネット上の文字を選ぶだけで、実際の文脈つきの AI 訳が手に入り、出会った単語をすべて残せます。",
@@ -369,14 +358,12 @@
     "perkThreeTitle": "連続記録・XP・ランキング",
     "perkThreeBody": "毎日の小さな達成が、途切れさせたくない習慣になります。"
   },
-
   "notFound": {
     "title": "翻訳の途中で迷子です",
     "body": "このページはどの言語にも存在しません。役に立つところへ戻りましょう。",
     "backToTranslating": "翻訳に戻る",
     "openHistory": "履歴を開く"
   },
-
   "footer": {
     "rights": "© {year} LaSu — 語学学習を、もっと手軽に。",
     "about": "概要",
@@ -406,7 +393,6 @@
     "privacyStorageThree": "ログアウト中の翻訳はブラウザ内にとどまります",
     "privacyClose": "了解しました"
   },
-
   "privacyPage": {
     "title": "プライバシーポリシー",
     "updated": "最終更新: 2026 年 4 月 23 日",
@@ -431,7 +417,6 @@
     "contactTitle": "連絡先",
     "contactBody": "データの扱いについてご質問があれば、こちらまで"
   },
-
   "errors": {
     "generic": "問題が発生しました。もう一度お試しください。",
     "translateFailed": "翻訳に失敗しました。少し待ってからもう一度お試しください。",

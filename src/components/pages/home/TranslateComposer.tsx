@@ -6,14 +6,12 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { ClipboardPaste, CornerDownLeft, Loader2, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslateStore } from "@/store/useTranslateStore";
+import { TONES, useTranslateStore } from "@/store/useTranslateStore";
 import { getLanguage } from "@/lib/languages";
 import { cn } from "@/lib/utils";
 import type { TranslateHook } from "@/types/translation";
 
 const MAX_CHARS = 1000;
-
-const TONES = ["formal", "casual", "slang", "academic", "funny"] as const;
 
 const STARTERS = [
   "serendipity",

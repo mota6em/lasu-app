@@ -6,7 +6,6 @@
     "twitterDescription": "由 AI 驱动的 Chrome 扩展，让语言学习更聪明。",
     "keywords": "语言学习, AI 翻译, chrome 扩展, LaSu, 多语言, 语境翻译, 边浏览边学语言"
   },
-
   "nav": {
     "workspace": "工作区",
     "translate": "翻译",
@@ -22,7 +21,6 @@
     "preferences": "偏好设置",
     "dashboard": "控制台"
   },
-
   "shell": {
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单",
@@ -44,7 +42,6 @@
     "tagline": "边浏览边学语言",
     "streakTooltip": "连续 {days} 天 · {xp} XP"
   },
-
   "theme": {
     "change": "切换主题",
     "light": "浅色",
@@ -53,12 +50,10 @@
     "switchToLight": "切换到浅色模式",
     "switchToDark": "切换到深色模式"
   },
-
   "userMenu": {
     "profile": "我的资料",
     "preferences": "偏好设置"
   },
-
   "palette": {
     "title": "命令面板",
     "placeholder": "搜索页面，或输入要翻译的文字…",
@@ -73,7 +68,6 @@
     "open": "打开",
     "focusComposer": "聚焦输入框"
   },
-
   "language": {
     "title": "界面语言",
     "description": "选择 LaSu 界面显示的语言。你的翻译设置不会受到影响。",
@@ -81,7 +75,6 @@
     "noResults": "没有语言匹配「{query}」。",
     "current": "当前"
   },
-
   "home": {
     "heading": "今天想<accent>学点什么</accent>？",
     "subheading": "输入一个词获得完整解析，或输入整句得到自然的译文。",
@@ -89,7 +82,6 @@
     "recent": "最近学过",
     "allHistory": "全部记录"
   },
-
   "composer": {
     "into": "译成",
     "add": "+ 添加",
@@ -104,7 +96,6 @@
     "try": "试试",
     "clipboardBlocked": "浏览器阻止了剪贴板访问。"
   },
-
   "tone": {
     "formal": "正式",
     "casual": "口语",
@@ -117,7 +108,6 @@
     "academicHint": "论文与学术写作",
     "funnyHint": "俏皮但依然准确"
   },
-
   "result": {
     "landHere": "结果会显示在这里",
     "tipWordsTitle": "单个词解析更深入",
@@ -129,9 +119,15 @@
     "errorHint": "模型偶尔会出岔子。再点一次翻译，通常就好了。",
     "listen": "朗读",
     "copy": "复制",
-    "copied": "已复制"
+    "copied": "已复制",
+    "loadingTitle": "正在翻译",
+    "loadingReadingImage": "正在识别照片中的文字…",
+    "loadingThinking": "正在寻找母语者会用的说法…",
+    "loadingTranslating": "正在翻译成{language}…",
+    "loadingPolishing": "正在检查措辞和语气…",
+    "loadingAlmost": "快好了…",
+    "loadingWaiting": "等待中"
   },
-
   "settings": {
     "title": "翻译偏好",
     "description": "选择你正在学的语言，以及希望得到的语域。",
@@ -148,7 +144,6 @@
     "keepOne": "至少要保留一种语言。",
     "maxReached": "一次四种语言刚刚好。"
   },
-
   "overview": {
     "total": "翻译总数",
     "thisWeek": "本周",
@@ -160,7 +155,6 @@
     "languagesUsed": "已使用 {count} 种语言",
     "joinToTrack": "加入即可记录"
   },
-
   "history": {
     "title": "历史记录",
     "loading": "正在加载你保存的翻译…",
@@ -189,7 +183,6 @@
     "localOnlyTitle": "这些内容只保存在本设备",
     "localOnlyBody": "登录后，历史记录将随你同步到任何设备，汇入练习中心，并开始计入你的连续打卡。"
   },
-
   "practice": {
     "badge": "练习中心",
     "heading": "让词汇<accent>真正记住</accent>",
@@ -240,7 +233,6 @@
     "verdictRoughTitle": "这轮有点难",
     "verdictRoughBody": "趁印象还新，把错题再练一次。"
   },
-
   "stats": {
     "title": "统计",
     "subtitle": "看看你的努力都花在了哪里。",
@@ -261,7 +253,6 @@
     "tooltipCount": "{count} 条翻译",
     "heatmapCell": "{date} 有 {count} 条"
   },
-
   "community": {
     "title": "社区",
     "privacy": "隐私",
@@ -323,7 +314,6 @@
     "shareTranslations": "分享我翻译的词汇",
     "shareTranslationsHint": "仅限单个词——完整句子永远不会被分享。"
   },
-
   "profile": {
     "title": "个人资料",
     "subtitle": "你的身份、头像和进度，都在这一页。",
@@ -352,7 +342,6 @@
     "notFoundBody": "这个资料可能已被删除或设为私密。",
     "backToCommunity": "返回社区"
   },
-
   "welcome": {
     "heading": "<accent>边浏览</accent>边学一门语言",
     "subheading": "在网上划选任意文字，获得带真实语境的 AI 译文，并留住你遇到的每一个词。",
@@ -369,14 +358,12 @@
     "perkThreeTitle": "连续打卡、经验值和排行榜",
     "perkThreeBody": "每天一点小成就，真的舍不得断。"
   },
-
   "notFound": {
     "title": "在翻译中迷路了",
     "body": "这个页面在我们任何一种语言里都不存在。回到有用的地方吧。",
     "backToTranslating": "回到翻译",
     "openHistory": "打开我的历史记录"
   },
-
   "footer": {
     "rights": "© {year} LaSu — 让语言学习毫不费力。",
     "about": "关于",
@@ -406,7 +393,6 @@
     "privacyStorageThree": "未登录时的翻译只保留在你的浏览器里",
     "privacyClose": "知道了"
   },
-
   "privacyPage": {
     "title": "隐私政策",
     "updated": "最后更新：2026 年 4 月 23 日",
@@ -431,7 +417,6 @@
     "contactTitle": "联系方式",
     "contactBody": "对我们如何处理数据有疑问？请写信至"
   },
-
   "errors": {
     "generic": "出了点问题，请重试。",
     "translateFailed": "翻译失败，请稍后再试一次。",

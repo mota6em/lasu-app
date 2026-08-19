@@ -6,7 +6,6 @@
     "twitterDescription": "Dil öğrenmeyi akıllandıran yapay zekâ destekli Chrome eklentisi.",
     "keywords": "dil öğrenme, yapay zekâ çeviri, chrome eklentisi, LaSu, çok dilli, bağlama duyarlı çeviri, gezinirken dil öğrenme"
   },
-
   "nav": {
     "workspace": "Çalışma alanı",
     "translate": "Çeviri",
@@ -22,7 +21,6 @@
     "preferences": "Tercihler",
     "dashboard": "Panel"
   },
-
   "shell": {
     "openMenu": "Menüyü aç",
     "closeMenu": "Menüyü kapat",
@@ -44,7 +42,6 @@
     "tagline": "Gezinirken dil öğren",
     "streakTooltip": "{days} günlük seri · {xp} XP"
   },
-
   "theme": {
     "change": "Temayı değiştir",
     "light": "Açık",
@@ -53,12 +50,10 @@
     "switchToLight": "Açık temaya geç",
     "switchToDark": "Koyu temaya geç"
   },
-
   "userMenu": {
     "profile": "Profilim",
     "preferences": "Tercihler"
   },
-
   "palette": {
     "title": "Komut paleti",
     "placeholder": "Sayfa ara ya da çevirmek için metin yaz…",
@@ -73,7 +68,6 @@
     "open": "aç",
     "focusComposer": "yazım alanına git"
   },
-
   "language": {
     "title": "Arayüz dili",
     "description": "LaSu'nun kendisinin görüneceği dili seç. Çeviri ayarların olduğu gibi kalır.",
@@ -81,7 +75,6 @@
     "noResults": "“{query}” ile eşleşen dil yok.",
     "current": "Geçerli"
   },
-
   "home": {
     "heading": "Bugün ne <accent>öğreniyoruz</accent>?",
     "subheading": "Tam çözümleme için bir kelime, doğal bir çeviri için tam cümle yaz.",
@@ -89,7 +82,6 @@
     "recent": "Yakınlarda bakılanlar",
     "allHistory": "Tüm geçmiş"
   },
-
   "composer": {
     "into": "Şu dillere",
     "add": "+ Ekle",
@@ -104,7 +96,6 @@
     "try": "Dene",
     "clipboardBlocked": "Tarayıcın pano erişimini engelledi."
   },
-
   "tone": {
     "formal": "Resmî",
     "casual": "Günlük",
@@ -117,7 +108,6 @@
     "academicHint": "Makaleler ve ödevler",
     "funnyHint": "Şakacı ama yine de doğru"
   },
-
   "result": {
     "landHere": "Sonuçların burada görünür",
     "tipWordsTitle": "Tek kelimeler daha derine iner",
@@ -129,9 +119,15 @@
     "errorHint": "Model arada takılıyor. Tekrar çevir'e bas, genelde geçer.",
     "listen": "Dinle",
     "copy": "Kopyala",
-    "copied": "Kopyalandı"
+    "copied": "Kopyalandı",
+    "loadingTitle": "Çevriliyor",
+    "loadingReadingImage": "Fotoğraftaki metin okunuyor…",
+    "loadingThinking": "Anadili konuşan birinin seçeceği sözcükler bulunuyor…",
+    "loadingTranslating": "{language} dilinde yazılıyor…",
+    "loadingPolishing": "İfade ve üslup kontrol ediliyor…",
+    "loadingAlmost": "Neredeyse bitti…",
+    "loadingWaiting": "Bekleniyor"
   },
-
   "settings": {
     "title": "Çeviri tercihleri",
     "description": "Öğrendiğin dilleri ve almak istediğin üslubu seç.",
@@ -148,7 +144,6 @@
     "keepOne": "En az bir dil seçili kalsın.",
     "maxReached": "Aynı anda dört dil tam kıvamında."
   },
-
   "overview": {
     "total": "Toplam çeviri",
     "thisWeek": "Bu hafta",
@@ -160,7 +155,6 @@
     "languagesUsed": "{count} dil kullanıldı",
     "joinToTrack": "Takip için katıl"
   },
-
   "history": {
     "title": "Geçmiş",
     "loading": "Kaydettiğin çeviriler yükleniyor…",
@@ -189,7 +183,6 @@
     "localOnlyTitle": "Bunlar yalnızca bu cihazda kayıtlı",
     "localOnlyBody": "Giriş yap; geçmişin her yerde seninle gelsin, Pratik Merkezi'ni beslesin ve serine sayılmaya başlasın."
   },
-
   "practice": {
     "badge": "Pratik Merkezi",
     "heading": "Kelimeler <accent>aklında kalsın</accent>",
@@ -240,7 +233,6 @@
     "verdictRoughTitle": "Zorlu tur",
     "verdictRoughBody": "Yanlış kelimeleri aklında tazeyken bir kez daha çalış."
   },
-
   "stats": {
     "title": "İstatistikler",
     "subtitle": "Emeğin aslında nereye gidiyor.",
@@ -261,7 +253,6 @@
     "tooltipCount": "{count} çeviri",
     "heatmapCell": "{date} tarihinde {count}"
   },
-
   "community": {
     "title": "Topluluk",
     "privacy": "Gizlilik",
@@ -323,7 +314,6 @@
     "shareTranslations": "Çevirdiğim kelimeleri paylaş",
     "shareTranslationsHint": "Yalnızca tek kelimeler — tam cümleler asla paylaşılmaz."
   },
-
   "profile": {
     "title": "Profil",
     "subtitle": "Kimliğin, avatarın ve ilerlemen tek yerde.",
@@ -352,7 +342,6 @@
     "notFoundBody": "Bu profil kaldırılmış ya da gizli yapılmış olabilir.",
     "backToCommunity": "Topluluğa dön"
   },
-
   "welcome": {
     "heading": "<accent>Gezinirken</accent> bir dil öğren",
     "subheading": "İnternette herhangi bir metni seç, gerçek bağlamıyla yapay zekâ çevirisi al ve karşılaştığın her kelimeyi sakla.",
@@ -369,14 +358,12 @@
     "perkThreeTitle": "Seriler, XP ve sıralamalar",
     "perkThreeBody": "Bozmaya gerçekten kıyamayacağın küçük günlük kazanımlar."
   },
-
   "notFound": {
     "title": "Çeviride kaybolduk",
     "body": "Bu sayfa dillerimizin hiçbirinde yok. Hadi işe yarar bir yere dönelim.",
     "backToTranslating": "Çeviriye dön",
     "openHistory": "Geçmişimi aç"
   },
-
   "footer": {
     "rights": "© {year} LaSu — dil öğrenmek artık zahmetsiz.",
     "about": "Hakkında",
@@ -406,7 +393,6 @@
     "privacyStorageThree": "Çıkış yapmışken çeviriler yalnızca tarayıcında kalır",
     "privacyClose": "Anladım"
   },
-
   "privacyPage": {
     "title": "Gizlilik politikası",
     "updated": "Son güncelleme: 23 Nisan 2026",
@@ -431,7 +417,6 @@
     "contactTitle": "İletişim",
     "contactBody": "Verilerini nasıl işlediğimiz hakkında soruların mı var? Şuraya yaz:"
   },
-
   "errors": {
     "generic": "Bir şeyler ters gitti. Tekrar dene.",
     "translateFailed": "Çeviri başarısız oldu. Birazdan tekrar dene.",

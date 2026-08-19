@@ -6,7 +6,6 @@
     "twitterDescription": "KI-gestützte Chrome-Erweiterung für schlaueres Sprachenlernen.",
     "keywords": "Sprachen lernen, KI-Übersetzung, Chrome-Erweiterung, LaSu, mehrsprachig, kontextbezogene Übersetzung, Sprachen lernen beim Surfen"
   },
-
   "nav": {
     "workspace": "Arbeitsbereich",
     "translate": "Übersetzen",
@@ -22,7 +21,6 @@
     "preferences": "Einstellungen",
     "dashboard": "Übersicht"
   },
-
   "shell": {
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen",
@@ -44,7 +42,6 @@
     "tagline": "Sprachen lernen beim Surfen",
     "streakTooltip": "{days} Tage Serie · {xp} XP"
   },
-
   "theme": {
     "change": "Design wechseln",
     "light": "Hell",
@@ -53,12 +50,10 @@
     "switchToLight": "Zum hellen Modus wechseln",
     "switchToDark": "Zum dunklen Modus wechseln"
   },
-
   "userMenu": {
     "profile": "Mein Profil",
     "preferences": "Einstellungen"
   },
-
   "palette": {
     "title": "Befehlspalette",
     "placeholder": "Seiten suchen oder Text zum Übersetzen eingeben…",
@@ -73,7 +68,6 @@
     "open": "öffnen",
     "focusComposer": "zum Editor"
   },
-
   "language": {
     "title": "Oberflächensprache",
     "description": "Wähle die Sprache, in der LaSu selbst erscheint. Deine Übersetzungseinstellungen bleiben unberührt.",
@@ -81,7 +75,6 @@
     "noResults": "Keine Sprache passt zu „{query}“.",
     "current": "Aktuell"
   },
-
   "home": {
     "heading": "Was <accent>lernen</accent> wir heute?",
     "subheading": "Gib ein Wort ein für die volle Analyse, oder einen ganzen Satz für eine natürliche Übersetzung.",
@@ -89,7 +82,6 @@
     "recent": "Kürzlich angesehen",
     "allHistory": "Ganzer Verlauf"
   },
-
   "composer": {
     "into": "Nach",
     "add": "+ Hinzufügen",
@@ -104,7 +96,6 @@
     "try": "Probier",
     "clipboardBlocked": "Dein Browser hat den Zugriff auf die Zwischenablage blockiert."
   },
-
   "tone": {
     "formal": "Förmlich",
     "casual": "Locker",
@@ -117,7 +108,6 @@
     "academicHint": "Aufsätze und Fachtexte",
     "funnyHint": "Verspielt, aber trotzdem korrekt"
   },
-
   "result": {
     "landHere": "Hier landen deine Ergebnisse",
     "tipWordsTitle": "Einzelne Wörter gehen tiefer",
@@ -129,9 +119,15 @@
     "errorHint": "Das Modell hat manchmal Aussetzer. Einfach nochmal übersetzen, dann klappt es meist.",
     "listen": "Anhören",
     "copy": "Kopieren",
-    "copied": "Kopiert"
+    "copied": "Kopiert",
+    "loadingTitle": "Übersetze",
+    "loadingReadingImage": "Text auf deinem Foto wird gelesen…",
+    "loadingThinking": "Die passenden Worte werden gefunden…",
+    "loadingTranslating": "Übersetzung auf {language}…",
+    "loadingPolishing": "Formulierung und Ton werden geprüft…",
+    "loadingAlmost": "Fast fertig…",
+    "loadingWaiting": "Warten"
   },
-
   "settings": {
     "title": "Übersetzungseinstellungen",
     "description": "Wähle die Sprachen, die du lernst, und das Register, das du zurückbekommen möchtest.",
@@ -148,7 +144,6 @@
     "keepOne": "Mindestens eine Sprache muss ausgewählt bleiben.",
     "maxReached": "Vier Sprachen gleichzeitig sind genau richtig."
   },
-
   "overview": {
     "total": "Übersetzungen gesamt",
     "thisWeek": "Diese Woche",
@@ -160,7 +155,6 @@
     "languagesUsed": "{count, plural, one {# Sprache verwendet} other {# Sprachen verwendet}}",
     "joinToTrack": "Beitreten, um sie zu zählen"
   },
-
   "history": {
     "title": "Verlauf",
     "loading": "Deine gespeicherten Übersetzungen werden geladen…",
@@ -189,7 +183,6 @@
     "localOnlyTitle": "Das wird nur auf diesem Gerät gespeichert",
     "localOnlyBody": "Melde dich an, dann folgt dir dein Verlauf überallhin, speist den Übungsbereich und zählt für deine Serie."
   },
-
   "practice": {
     "badge": "Übungsbereich",
     "heading": "Damit die Wörter <accent>sitzen</accent>",
@@ -240,7 +233,6 @@
     "verdictRoughTitle": "Harte Runde",
     "verdictRoughBody": "Nimm die verfehlten Wörter nochmal durch, solange sie frisch sind."
   },
-
   "stats": {
     "title": "Statistiken",
     "subtitle": "Wohin dein Aufwand wirklich fließt.",
@@ -261,7 +253,6 @@
     "tooltipCount": "{count, plural, one {# Übersetzung} other {# Übersetzungen}}",
     "heatmapCell": "{count} am {date}"
   },
-
   "community": {
     "title": "Community",
     "privacy": "Privatsphäre",
@@ -323,7 +314,6 @@
     "shareTranslations": "Meine übersetzten Wörter teilen",
     "shareTranslationsHint": "Nur einzelne Wörter – ganze Sätze werden nie geteilt."
   },
-
   "profile": {
     "title": "Profil",
     "subtitle": "Deine Identität, dein Avatar und dein Fortschritt an einem Ort.",
@@ -352,7 +342,6 @@
     "notFoundBody": "Dieses Profil wurde vielleicht entfernt oder auf privat gestellt.",
     "backToCommunity": "Zurück zur Community"
   },
-
   "welcome": {
     "heading": "Lerne eine Sprache <accent>beim Surfen</accent>",
     "subheading": "Markiere irgendetwas im Netz, bekomme eine KI-Übersetzung mit echtem Kontext und behalte jedes Wort, dem du begegnest.",
@@ -369,14 +358,12 @@
     "perkThreeTitle": "Serien, XP und Ranglisten",
     "perkThreeBody": "Kleine tägliche Erfolge, die man wirklich ungern abreißen lässt."
   },
-
   "notFound": {
     "title": "In der Übersetzung verloren",
     "body": "Diese Seite gibt es in keiner unserer Sprachen. Zurück zu etwas Nützlichem.",
     "backToTranslating": "Zurück zum Übersetzen",
     "openHistory": "Meinen Verlauf öffnen"
   },
-
   "footer": {
     "rights": "© {year} LaSu — Sprachenlernen, das leichtfällt.",
     "about": "Über",
@@ -406,7 +393,6 @@
     "privacyStorageThree": "Ohne Anmeldung bleiben Übersetzungen nur in deinem Browser",
     "privacyClose": "Verstanden"
   },
-
   "privacyPage": {
     "title": "Datenschutzerklärung",
     "updated": "Zuletzt aktualisiert am 23. April 2026",
@@ -431,7 +417,6 @@
     "contactTitle": "Kontakt",
     "contactBody": "Fragen dazu, wie wir mit deinen Daten umgehen? Schreib an"
   },
-
   "errors": {
     "generic": "Etwas ist schiefgelaufen. Versuch es nochmal.",
     "translateFailed": "Übersetzung fehlgeschlagen. Versuch es gleich nochmal.",

@@ -6,7 +6,6 @@
     "twitterDescription": "Extensión de Chrome con IA para aprender idiomas de forma más inteligente.",
     "keywords": "aprender idiomas, traducción con IA, extensión de chrome, LaSu, multilingüe, traducción contextual, aprender idiomas navegando"
   },
-
   "nav": {
     "workspace": "Espacio de trabajo",
     "translate": "Traducir",
@@ -22,7 +21,6 @@
     "preferences": "Preferencias",
     "dashboard": "Panel"
   },
-
   "shell": {
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
@@ -44,7 +42,6 @@
     "tagline": "Aprende idiomas mientras navegas",
     "streakTooltip": "Racha de {days} días · {xp} XP"
   },
-
   "theme": {
     "change": "Cambiar tema",
     "light": "Claro",
@@ -53,12 +50,10 @@
     "switchToLight": "Cambiar al modo claro",
     "switchToDark": "Cambiar al modo oscuro"
   },
-
   "userMenu": {
     "profile": "Mi perfil",
     "preferences": "Preferencias"
   },
-
   "palette": {
     "title": "Paleta de comandos",
     "placeholder": "Busca páginas o escribe un texto para traducir…",
@@ -73,7 +68,6 @@
     "open": "abrir",
     "focusComposer": "ir al editor"
   },
-
   "language": {
     "title": "Idioma de la interfaz",
     "description": "Elige el idioma en el que se muestra LaSu. Tus ajustes de traducción no cambian.",
@@ -81,7 +75,6 @@
     "noResults": "Ningún idioma coincide con «{query}».",
     "current": "Actual"
   },
-
   "home": {
     "heading": "¿Qué vamos a <accent>aprender</accent> hoy?",
     "subheading": "Escribe una palabra para el análisis completo, o una frase entera para una traducción natural.",
@@ -89,7 +82,6 @@
     "recent": "Visto recientemente",
     "allHistory": "Todo el historial"
   },
-
   "composer": {
     "into": "A",
     "add": "+ Añadir",
@@ -104,7 +96,6 @@
     "try": "Prueba",
     "clipboardBlocked": "Tu navegador bloqueó el acceso al portapapeles."
   },
-
   "tone": {
     "formal": "Formal",
     "casual": "Coloquial",
@@ -117,7 +108,6 @@
     "academicHint": "Ensayos y trabajos",
     "funnyHint": "Con gracia, pero correcto"
   },
-
   "result": {
     "landHere": "Tus resultados aparecen aquí",
     "tipWordsTitle": "Las palabras sueltas van más a fondo",
@@ -129,9 +119,15 @@
     "errorHint": "El modelo falla de vez en cuando. Pulsa traducir otra vez y normalmente funciona.",
     "listen": "Escuchar",
     "copy": "Copiar",
-    "copied": "Copiado"
+    "copied": "Copiado",
+    "loadingTitle": "Traduciendo",
+    "loadingReadingImage": "Leyendo el texto de tu foto…",
+    "loadingThinking": "Buscando las palabras que usaría un nativo…",
+    "loadingTranslating": "Escribiéndolo en {language}…",
+    "loadingPolishing": "Revisando la redacción y el tono…",
+    "loadingAlmost": "Casi listo…",
+    "loadingWaiting": "Esperando"
   },
-
   "settings": {
     "title": "Preferencias de traducción",
     "description": "Elige los idiomas que estás aprendiendo y el registro que quieres recibir.",
@@ -148,7 +144,6 @@
     "keepOne": "Mantén al menos un idioma seleccionado.",
     "maxReached": "Cuatro idiomas a la vez es el punto justo."
   },
-
   "overview": {
     "total": "Traducciones totales",
     "thisWeek": "Esta semana",
@@ -160,7 +155,6 @@
     "languagesUsed": "{count, plural, one {# idioma usado} other {# idiomas usados}}",
     "joinToTrack": "Únete para medirla"
   },
-
   "history": {
     "title": "Historial",
     "loading": "Cargando tus traducciones guardadas…",
@@ -189,7 +183,6 @@
     "localOnlyTitle": "Esto solo se guarda en este dispositivo",
     "localOnlyBody": "Inicia sesión y tu historial te acompaña a todas partes, alimenta el Centro de práctica y empieza a contar para tu racha."
   },
-
   "practice": {
     "badge": "Centro de práctica",
     "heading": "Que las palabras <accent>se queden</accent>",
@@ -240,7 +233,6 @@
     "verdictRoughTitle": "Ronda dura",
     "verdictRoughBody": "Repite las palabras falladas mientras las tienes frescas."
   },
-
   "stats": {
     "title": "Estadísticas",
     "subtitle": "Adónde va realmente tu esfuerzo.",
@@ -261,7 +253,6 @@
     "tooltipCount": "{count, plural, one {# traducción} other {# traducciones}}",
     "heatmapCell": "{count} el {date}"
   },
-
   "community": {
     "title": "Comunidad",
     "privacy": "Privacidad",
@@ -323,7 +314,6 @@
     "shareTranslations": "Compartir mis palabras traducidas",
     "shareTranslationsHint": "Solo palabras sueltas: las frases completas nunca se comparten."
   },
-
   "profile": {
     "title": "Perfil",
     "subtitle": "Tu identidad, tu avatar y tu progreso en un solo sitio.",
@@ -352,7 +342,6 @@
     "notFoundBody": "Puede que este perfil se haya eliminado o sea privado.",
     "backToCommunity": "Volver a la comunidad"
   },
-
   "welcome": {
     "heading": "Aprende un idioma <accent>mientras navegas</accent>",
     "subheading": "Selecciona cualquier texto en internet, recibe una traducción con IA y contexto real, y guarda cada palabra que encuentres.",
@@ -369,14 +358,12 @@
     "perkThreeTitle": "Rachas, XP y clasificaciones",
     "perkThreeBody": "Pequeñas victorias diarias que cuesta de verdad romper."
   },
-
   "notFound": {
     "title": "Perdido en la traducción",
     "body": "Esta página no existe en ninguno de nuestros idiomas. Volvamos a algo útil.",
     "backToTranslating": "Volver a traducir",
     "openHistory": "Abrir mi historial"
   },
-
   "footer": {
     "rights": "© {year} LaSu — aprender idiomas sin esfuerzo.",
     "about": "Acerca de",
@@ -406,7 +393,6 @@
     "privacyStorageThree": "Sin sesión iniciada, las traducciones no salen de tu navegador",
     "privacyClose": "Entendido"
   },
-
   "privacyPage": {
     "title": "Política de privacidad",
     "updated": "Última actualización: 23 de abril de 2026",
@@ -431,7 +417,6 @@
     "contactTitle": "Contacto",
     "contactBody": "¿Dudas sobre cómo tratamos tus datos? Escríbenos a"
   },
-
   "errors": {
     "generic": "Algo salió mal. Inténtalo de nuevo.",
     "translateFailed": "La traducción falló. Vuelve a intentarlo en un momento.",

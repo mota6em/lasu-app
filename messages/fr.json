@@ -6,7 +6,6 @@
     "twitterDescription": "Extension Chrome dopée à l'IA pour apprendre les langues plus intelligemment.",
     "keywords": "apprentissage des langues, traduction IA, extension chrome, LaSu, multilingue, traduction contextuelle, apprendre les langues en naviguant"
   },
-
   "nav": {
     "workspace": "Espace de travail",
     "translate": "Traduire",
@@ -22,7 +21,6 @@
     "preferences": "Préférences",
     "dashboard": "Tableau de bord"
   },
-
   "shell": {
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
@@ -44,7 +42,6 @@
     "tagline": "Apprenez les langues en naviguant",
     "streakTooltip": "Série de {days} jours · {xp} XP"
   },
-
   "theme": {
     "change": "Changer de thème",
     "light": "Clair",
@@ -53,12 +50,10 @@
     "switchToLight": "Passer en mode clair",
     "switchToDark": "Passer en mode sombre"
   },
-
   "userMenu": {
     "profile": "Mon profil",
     "preferences": "Préférences"
   },
-
   "palette": {
     "title": "Palette de commandes",
     "placeholder": "Cherchez une page, ou saisissez un texte à traduire…",
@@ -73,7 +68,6 @@
     "open": "ouvrir",
     "focusComposer": "aller à l'éditeur"
   },
-
   "language": {
     "title": "Langue de l'interface",
     "description": "Choisissez la langue dans laquelle LaSu s'affiche. Vos réglages de traduction ne changent pas.",
@@ -81,7 +75,6 @@
     "noResults": "Aucune langue ne correspond à « {query} ».",
     "current": "Actuelle"
   },
-
   "home": {
     "heading": "Qu'allons-nous <accent>apprendre</accent> aujourd'hui ?",
     "subheading": "Saisissez un mot pour l'analyse complète, ou une phrase entière pour une traduction naturelle.",
@@ -89,7 +82,6 @@
     "recent": "Vu récemment",
     "allHistory": "Tout l'historique"
   },
-
   "composer": {
     "into": "Vers",
     "add": "+ Ajouter",
@@ -104,7 +96,6 @@
     "try": "Essayez",
     "clipboardBlocked": "Votre navigateur a bloqué l'accès au presse-papiers."
   },
-
   "tone": {
     "formal": "Soutenu",
     "casual": "Familier",
@@ -117,7 +108,6 @@
     "academicHint": "Dissertations et articles",
     "funnyHint": "Espiègle mais toujours juste"
   },
-
   "result": {
     "landHere": "Vos résultats s'affichent ici",
     "tipWordsTitle": "Les mots seuls vont plus loin",
@@ -129,9 +119,15 @@
     "errorHint": "Le modèle a parfois des ratés. Relancez la traduction, ça passe en général.",
     "listen": "Écouter",
     "copy": "Copier",
-    "copied": "Copié"
+    "copied": "Copié",
+    "loadingTitle": "Traduction en cours",
+    "loadingReadingImage": "Lecture du texte sur votre photo…",
+    "loadingThinking": "Trouver les mots qu’emploierait un natif…",
+    "loadingTranslating": "Rédaction en {language}…",
+    "loadingPolishing": "Vérification de la formulation et du registre…",
+    "loadingAlmost": "Presque terminé…",
+    "loadingWaiting": "En attente"
   },
-
   "settings": {
     "title": "Préférences de traduction",
     "description": "Choisissez les langues que vous apprenez et le registre que vous voulez recevoir.",
@@ -148,7 +144,6 @@
     "keepOne": "Gardez au moins une langue sélectionnée.",
     "maxReached": "Quatre langues à la fois, c'est le bon équilibre."
   },
-
   "overview": {
     "total": "Traductions totales",
     "thisWeek": "Cette semaine",
@@ -160,7 +155,6 @@
     "languagesUsed": "{count, plural, one {# langue utilisée} other {# langues utilisées}}",
     "joinToTrack": "Rejoignez pour la suivre"
   },
-
   "history": {
     "title": "Historique",
     "loading": "Chargement de vos traductions enregistrées…",
@@ -189,7 +183,6 @@
     "localOnlyTitle": "Ceci n'est enregistré que sur cet appareil",
     "localOnlyBody": "Connectez-vous et votre historique vous suit partout, alimente l'espace d'entraînement et commence à compter pour votre série."
   },
-
   "practice": {
     "badge": "Espace d'entraînement",
     "heading": "Faites <accent>tenir</accent> les mots",
@@ -240,7 +233,6 @@
     "verdictRoughTitle": "Manche difficile",
     "verdictRoughBody": "Reprenez les mots ratés tant qu'ils sont frais."
   },
-
   "stats": {
     "title": "Statistiques",
     "subtitle": "Où passent réellement vos efforts.",
@@ -261,7 +253,6 @@
     "tooltipCount": "{count, plural, one {# traduction} other {# traductions}}",
     "heatmapCell": "{count} le {date}"
   },
-
   "community": {
     "title": "Communauté",
     "privacy": "Confidentialité",
@@ -323,7 +314,6 @@
     "shareTranslations": "Partager mes mots traduits",
     "shareTranslationsHint": "Uniquement les mots seuls — les phrases complètes ne sont jamais partagées."
   },
-
   "profile": {
     "title": "Profil",
     "subtitle": "Votre identité, votre avatar et votre progression au même endroit.",
@@ -352,7 +342,6 @@
     "notFoundBody": "Ce profil a peut-être été supprimé ou rendu privé.",
     "backToCommunity": "Retour à la communauté"
   },
-
   "welcome": {
     "heading": "Apprenez une langue <accent>en naviguant</accent>",
     "subheading": "Surlignez n'importe quel texte en ligne, obtenez une traduction IA avec un vrai contexte, et gardez chaque mot rencontré.",
@@ -369,14 +358,12 @@
     "perkThreeTitle": "Séries, XP et classements",
     "perkThreeBody": "De petites victoires quotidiennes vraiment difficiles à briser."
   },
-
   "notFound": {
     "title": "Perdu dans la traduction",
     "body": "Cette page n'existe dans aucune de nos langues. Revenons à quelque chose d'utile.",
     "backToTranslating": "Retour à la traduction",
     "openHistory": "Ouvrir mon historique"
   },
-
   "footer": {
     "rights": "© {year} LaSu — l'apprentissage des langues sans effort.",
     "about": "À propos",
@@ -406,7 +393,6 @@
     "privacyStorageThree": "Hors connexion, les traductions ne quittent pas votre navigateur",
     "privacyClose": "Compris"
   },
-
   "privacyPage": {
     "title": "Politique de confidentialité",
     "updated": "Dernière mise à jour : 23 avril 2026",
@@ -431,7 +417,6 @@
     "contactTitle": "Contact",
     "contactBody": "Des questions sur le traitement de vos données ? Écrivez à"
   },
-
   "errors": {
     "generic": "Un problème est survenu. Réessayez.",
     "translateFailed": "La traduction a échoué. Retentez dans un instant.",

@@ -1,17 +1,19 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { Lightbulb, Quote, Sparkles } from "lucide-react";
 import CopyButton from "@/components/ui/copy-button";
 import SpeakButton from "@/components/ui/speak-button";
-import { getLanguage, isRTL, langName } from "@/lib/languages";
+import { getLanguage, isRTL, langFlag, langName } from "@/lib/languages";
+import { useTranslateStore } from "@/store/useTranslateStore";
 import { cn } from "@/lib/utils";
 import type { TranslateHook } from "@/types/translation";
 
 type Props = Pick<
   TranslateHook,
-  "result" | "resultLoading" | "submittedText" | "error"
+  "result" | "resultLoading" | "submittedText" | "error" | "image"
 >;
 
 const CEFR_TONE: Record<string, string> = {
@@ -36,25 +38,97 @@ function Chip({ children, className }: { children: React.ReactNode; className?: 
   );
 }
 
-function ResultSkeleton() {
+function TranslatingPanel({ image }: { image: string | null }) {
+  const t = useTranslations("result");
+  const selectedLanguages = useTranslateStore((s) => s.selectedLanguages);
+
+  // OmniRoute needs roughly four seconds before its first token, so the wait is
+  // narrated instead of left blank — each line names something real that is
+  // happening, and the bar eases toward a ceiling it never quite reaches.
+  const steps = useMemo(() => {
+    const lines = [image ? t("loadingReadingImage") : t("loadingThinking")];
+    for (const lang of selectedLanguages.slice(0, 4)) {
+      lines.push(t("loadingTranslating", { language: langName(lang.value) }));
+    }
+    lines.push(t("loadingPolishing"), t("loadingAlmost"));
+    return lines;
+  }, [image, selectedLanguages, t]);
+
+  const [step, setStep] = useState(0);
+  const [progress, setProgress] = useState(5);
+
+  useEffect(() => {
+    const advance = setInterval(
+      () => setStep((s) => Math.min(s + 1, steps.length - 1)),
+      1350
+    );
+    const grow = setInterval(
+      () => setProgress((p) => p + (96 - p) * 0.035),
+      90
+    );
+    return () => {
+      clearInterval(advance);
+      clearInterval(grow);
+    };
+  }, [steps.length]);
+
   return (
     <div className="space-y-3">
-      <div className="surface-card p-5">
-        <div className="shimmer h-7 w-40 rounded-md" />
-        <div className="mt-3 flex gap-2">
-          <div className="shimmer h-5 w-16 rounded-full" />
-          <div className="shimmer h-5 w-12 rounded-full" />
+      <div className="surface-card overflow-hidden p-5">
+        <div className="flex items-center gap-2.5">
+          <Sparkles className="h-4 w-4 shrink-0 animate-pulse text-brand-500" />
+          <span className="text-sm font-semibold">{t("loadingTitle")}</span>
+          <span className="ml-auto text-[11px] tabular-nums text-muted-foreground">
+            {Math.round(progress)}%
+          </span>
+        </div>
+
+        <div
+          className="mt-3 h-1 w-full overflow-hidden rounded-full bg-surface-2"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+          aria-label={t("loadingTitle")}
+        >
+          <motion.div
+            className="h-full rounded-full bg-gradient-to-r from-brand-500 to-iris-500"
+            animate={{ width: `${progress}%` }}
+            transition={{ ease: "linear", duration: 0.12 }}
+          />
+        </div>
+
+        <div className="mt-3 h-5 overflow-hidden" aria-live="polite">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={step}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="text-xs text-muted-foreground"
+            >
+              {steps[step]}
+            </motion.p>
+          </AnimatePresence>
         </div>
       </div>
-      {[0, 1, 2].map((i) => (
+
+      {selectedLanguages.slice(0, 4).map((lang, i) => (
         <div
-          key={i}
-          className="surface-card p-5 animate-fade-up"
-          style={{ animationDelay: `${i * 70}ms` }}
+          key={lang.value}
+          className="surface-card animate-fade-up p-5"
+          style={{ animationDelay: `${i * 90}ms` }}
         >
-          <div className="shimmer h-4 w-24 rounded-md" />
+          <div className="flex items-center gap-2">
+            <span aria-hidden>{langFlag(lang.value)}</span>
+            <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+              {langName(lang.value)}
+            </span>
+            <Chip className="ml-auto">{t("loadingWaiting")}</Chip>
+          </div>
           <div className="shimmer mt-3 h-6 w-3/5 rounded-md" />
-          <div className="shimmer mt-3 h-3 w-4/5 rounded-md" />
+          <div className="shimmer mt-2.5 h-3 w-4/5 rounded-md" />
         </div>
       ))}
     </div>
@@ -110,10 +184,11 @@ export default function TranslateResult({
   resultLoading,
   submittedText,
   error,
+  image,
 }: Props) {
   const t = useTranslations("result");
 
-  if (resultLoading) return <ResultSkeleton />;
+  if (resultLoading) return <TranslatingPanel image={image} />;
 
   if (error && !result) {
     return (

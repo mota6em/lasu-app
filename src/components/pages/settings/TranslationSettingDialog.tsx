@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { availableLanguages, popularLanguages } from "@/lib/languages";
-import { useTranslateStore } from "@/store/useTranslateStore";
+import { TONES, useTranslateStore } from "@/store/useTranslateStore";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import saveSettings from "@/store/saveSettings";
 import { cn } from "@/lib/utils";
@@ -22,8 +22,6 @@ import type Language from "@/types/language";
 
 const MAX_LANGS = 4;
 const MIN_LANGS = 1;
-
-const TONES = ["formal", "casual", "slang", "academic", "funny"] as const;
 
 const TranslationSettingDialog = () => {
   const t = useTranslations("settings");

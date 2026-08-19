@@ -26,6 +26,9 @@ export default Translation;
 export interface TranslateHook {
   text: string;
   setText: (val: string) => void;
+  image: string | null;
+  setImage: (input: File | Blob | string | null) => Promise<void>;
+  clearImage: () => void;
   resultLoading: boolean;
   error: string | null;
   result: TranslationResult | null;
