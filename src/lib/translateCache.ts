@@ -1,8 +1,5 @@
 import { createHash } from "crypto";
 
-// OmniRoute spends ~4s routing before it emits a first token, so an identical
-// lookup is well worth keeping. A language app sees the same common words over
-// and over, and this turns those into an instant answer.
 const TTL_MS = 60 * 60 * 1000;
 const MAX_ENTRIES = 500;
 

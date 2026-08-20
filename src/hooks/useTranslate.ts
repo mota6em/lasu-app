@@ -7,6 +7,10 @@ import toast from "react-hot-toast";
 import { useTranslateStore } from "@/store/useTranslateStore";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import type { TranslationResult } from "@/types/translation";
+import {
+  parsePartialTranslation,
+  type PartialTranslation,
+} from "@/lib/partialTranslation";
 
 import { readLocalHistory, writeLocalHistory } from "@/lib/localHistory";
 
@@ -59,6 +63,63 @@ async function fetchPrivacy(userId: string) {
   }
 }
 
+type StreamEvent =
+  | { event: "delta"; data: string }
+  | {
+      event: "done";
+      data: {
+        data?: TranslationResult;
+        translation?: string;
+        sourceText?: string | null;
+      };
+    }
+  | { event: "error"; data: { error?: string } };
+
+async function* readEvents(body: ReadableStream<Uint8Array>) {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+
+    let split = buffer.indexOf("\n\n");
+    while (split !== -1) {
+      const frame = buffer.slice(0, split);
+      buffer = buffer.slice(split + 2);
+      split = buffer.indexOf("\n\n");
+
+      let name = "message";
+      const payload: string[] = [];
+
+      for (const line of frame.split("\n")) {
+        if (line.startsWith("event:")) name = line.slice(6).trim();
+        else if (line.startsWith("data:")) payload.push(line.slice(5).trim());
+      }
+
+      if (!payload.length) continue;
+
+      try {
+        yield {
+          event: name,
+          data: JSON.parse(payload.join("\n")),
+        } as StreamEvent;
+      } catch {
+      }
+    }
+  }
+}
+
+const EMPTY_PARTIAL: PartialTranslation = {
+  sourceText: "",
+  sourceLanguage: "",
+  meaning: "",
+  translations: {},
+};
+
 export function useTranslate() {
   const [text, setText] = useState("");
   const [image, setImageState] = useState<string | null>(null);
@@ -66,6 +127,7 @@ export function useTranslate() {
   const [resultLoading, setResultLoading] = useState(false);
   const [result, setResult] = useState<TranslationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [partial, setPartial] = useState<PartialTranslation>(EMPTY_PARTIAL);
 
   const translationType = useTranslateStore((s) => s.translationType);
   const selectedLanguages = useTranslateStore((s) => s.selectedLanguages);
@@ -167,8 +229,8 @@ export function useTranslate() {
     const langs = selectedLanguages.map((l) => l.value);
     setResultLoading(true);
     setError(null);
-    // With a photo the source text is whatever the model reads out of it, so it
-    // is only known once the response lands.
+    setPartial(EMPTY_PARTIAL);
+
     setSubmittedText(image ? "" : trimmed);
 
     let sourceText = trimmed;
@@ -177,24 +239,55 @@ export function useTranslate() {
     try {
       const res = await fetch("/api/translate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          image
-            ? { image, langs, translationType }
-            : { text: trimmed, langs, translationType },
-        ),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "text/event-stream",
+        },
+        body: JSON.stringify({
+          ...(image ? { image } : { text: trimmed }),
+          langs,
+          translationType,
+          stream: true,
+        }),
         signal: controller.signal,
       });
 
-      const body = await res.json().catch(() => null);
-
-      if (!res.ok) {
+      if (!res.ok || !res.body) {
+        const body = await res.json().catch(() => null);
         throw new Error(
           body?.error || "Translation failed. Try again shortly.",
         );
       }
 
-      payload = body?.data ?? JSON.parse(body?.translation ?? "{}");
+      let done: {
+        data?: TranslationResult;
+        translation?: string;
+        sourceText?: string | null;
+      } | null = null;
+      let raw = "";
+
+      for await (const frame of readEvents(res.body)) {
+        if (frame.event === "delta") {
+          raw += frame.data;
+          setPartial(parsePartialTranslation(raw));
+          continue;
+        }
+        if (frame.event === "error") {
+          throw new Error(
+            frame.data?.error || "Translation failed. Try again shortly.",
+          );
+        }
+        if (frame.event === "done") {
+          done = frame.data;
+          break;
+        }
+      }
+
+      if (!done) throw new Error("The translation stopped early. Try again.");
+
+      payload =
+        done.data ??
+        (JSON.parse(done.translation ?? "{}") as TranslationResult);
 
       if (!payload?.translations || !Object.keys(payload.translations).length) {
         throw new Error("No translation came back. Try rephrasing it.");
@@ -202,21 +295,23 @@ export function useTranslate() {
 
       if (
         image &&
-        typeof body?.sourceText === "string" &&
-        body.sourceText.trim()
+        typeof done.sourceText === "string" &&
+        done.sourceText.trim()
       ) {
-        sourceText = body.sourceText.trim();
+        sourceText = done.sourceText.trim();
       }
 
       setResult(payload);
       setSubmittedText(sourceText);
       setResultLoading(false);
+      setPartial(EMPTY_PARTIAL);
     } catch (err) {
       if (controller.signal.aborted) return;
       const message =
         err instanceof Error ? err.message : "Something went wrong. Try again.";
       setError(message);
       setResultLoading(false);
+      setPartial(EMPTY_PARTIAL);
       toast.error(message);
       return;
     }
@@ -256,6 +351,7 @@ export function useTranslate() {
     setError(null);
     setSubmittedText("");
     setResultLoading(false);
+    setPartial(EMPTY_PARTIAL);
   }, []);
 
   return {
@@ -267,6 +363,7 @@ export function useTranslate() {
     submittedText,
     resultLoading,
     result,
+    partial,
     error,
     handleTranslate,
     handlePasteInline,

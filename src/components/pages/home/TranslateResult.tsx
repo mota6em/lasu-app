@@ -10,10 +10,11 @@ import { getLanguage, isRTL, langFlag, langName } from "@/lib/languages";
 import { useTranslateStore } from "@/store/useTranslateStore";
 import { cn } from "@/lib/utils";
 import type { TranslateHook } from "@/types/translation";
+import type { PartialTranslation } from "@/lib/partialTranslation";
 
 type Props = Pick<
   TranslateHook,
-  "result" | "resultLoading" | "submittedText" | "error" | "image"
+  "result" | "resultLoading" | "submittedText" | "error" | "image" | "partial"
 >;
 
 const CEFR_TONE: Record<string, string> = {
@@ -38,13 +39,17 @@ function Chip({ children, className }: { children: React.ReactNode; className?: 
   );
 }
 
-function TranslatingPanel({ image }: { image: string | null }) {
+function TranslatingPanel({
+  image,
+  partial,
+}: {
+  image: string | null;
+  partial: PartialTranslation;
+}) {
   const t = useTranslations("result");
   const selectedLanguages = useTranslateStore((s) => s.selectedLanguages);
+  const streamed = Object.keys(partial.translations).length > 0;
 
-  // OmniRoute needs roughly four seconds before its first token, so the wait is
-  // narrated instead of left blank — each line names something real that is
-  // happening, and the bar eases toward a ceiling it never quite reaches.
   const steps = useMemo(() => {
     const lines = [image ? t("loadingReadingImage") : t("loadingThinking")];
     for (const lang of selectedLanguages.slice(0, 4)) {
@@ -72,6 +77,14 @@ function TranslatingPanel({ image }: { image: string | null }) {
     };
   }, [steps.length]);
 
+  const filled = Object.keys(partial.translations).length;
+  const shown = streamed
+    ? Math.min(
+        97,
+        Math.max(progress, 20 + (filled / Math.max(selectedLanguages.length, 1)) * 75)
+      )
+    : progress;
+
   return (
     <div className="space-y-3">
       <div className="surface-card overflow-hidden p-5">
@@ -79,7 +92,7 @@ function TranslatingPanel({ image }: { image: string | null }) {
           <Sparkles className="h-4 w-4 shrink-0 animate-pulse text-brand-500" />
           <span className="text-sm font-semibold">{t("loadingTitle")}</span>
           <span className="ml-auto text-[11px] tabular-nums text-muted-foreground">
-            {Math.round(progress)}%
+            {Math.round(shown)}%
           </span>
         </div>
 
@@ -88,12 +101,12 @@ function TranslatingPanel({ image }: { image: string | null }) {
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={Math.round(progress)}
+          aria-valuenow={Math.round(shown)}
           aria-label={t("loadingTitle")}
         >
           <motion.div
             className="h-full rounded-full bg-gradient-to-r from-brand-500 to-iris-500"
-            animate={{ width: `${progress}%` }}
+            animate={{ width: `${shown}%` }}
             transition={{ ease: "linear", duration: 0.12 }}
           />
         </div>
@@ -101,36 +114,53 @@ function TranslatingPanel({ image }: { image: string | null }) {
         <div className="mt-3 h-5 overflow-hidden" aria-live="polite">
           <AnimatePresence mode="wait">
             <motion.p
-              key={step}
+              key={image && partial.sourceText ? "source" : step}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="text-xs text-muted-foreground"
             >
-              {steps[step]}
+              {image && partial.sourceText ? partial.sourceText : steps[step]}
             </motion.p>
           </AnimatePresence>
         </div>
       </div>
 
-      {selectedLanguages.slice(0, 4).map((lang, i) => (
-        <div
-          key={lang.value}
-          className="surface-card animate-fade-up p-5"
-          style={{ animationDelay: `${i * 90}ms` }}
-        >
-          <div className="flex items-center gap-2">
-            <span aria-hidden>{langFlag(lang.value)}</span>
-            <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-              {langName(lang.value)}
-            </span>
-            <Chip className="ml-auto">{t("loadingWaiting")}</Chip>
+      {selectedLanguages.slice(0, 4).map((lang, i) => {
+        const streaming = partial.translations[lang.value];
+
+        return (
+          <div
+            key={lang.value}
+            className="surface-card animate-fade-up p-5"
+            style={{ animationDelay: `${i * 90}ms` }}
+          >
+            <div className="flex items-center gap-2">
+              <span aria-hidden>{langFlag(lang.value)}</span>
+              <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                {langName(lang.value)}
+              </span>
+              {!streaming && <Chip className="ml-auto">{t("loadingWaiting")}</Chip>}
+            </div>
+
+            {streaming ? (
+              <p
+                dir={isRTL(lang.value) ? "rtl" : "ltr"}
+                className="mt-2 font-display text-2xl font-semibold leading-snug break-words"
+              >
+                {streaming}
+                <span className="ms-0.5 inline-block h-5 w-[2px] translate-y-0.5 animate-pulse bg-brand-500 align-middle" />
+              </p>
+            ) : (
+              <>
+                <div className="shimmer mt-3 h-6 w-3/5 rounded-md" />
+                <div className="shimmer mt-2.5 h-3 w-4/5 rounded-md" />
+              </>
+            )}
           </div>
-          <div className="shimmer mt-3 h-6 w-3/5 rounded-md" />
-          <div className="shimmer mt-2.5 h-3 w-4/5 rounded-md" />
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -185,10 +215,11 @@ export default function TranslateResult({
   submittedText,
   error,
   image,
+  partial,
 }: Props) {
   const t = useTranslations("result");
 
-  if (resultLoading) return <TranslatingPanel image={image} />;
+  if (resultLoading) return <TranslatingPanel image={image} partial={partial} />;
 
   if (error && !result) {
     return (

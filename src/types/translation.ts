@@ -1,3 +1,5 @@
+import type { PartialTranslation } from "@/lib/partialTranslation";
+
 export interface TranslationResult {
   translations: Record<string, string>;
   example?: Record<string, string>;
@@ -32,6 +34,7 @@ export interface TranslateHook {
   resultLoading: boolean;
   error: string | null;
   result: TranslationResult | null;
+  partial: PartialTranslation;
   submittedText: string;
   handleTranslate: () => void;
   handlePasteInline: () => void;
