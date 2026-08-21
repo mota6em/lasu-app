@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "LaSu — Your AI Language Support",
+    name: "LaSu — Learn languages as you read",
     short_name: "LaSu",
     description:
       "Translate, understand, and actually remember every word you look up while you browse.",

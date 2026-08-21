@@ -644,7 +644,7 @@ export async function sendSummary(
               <a href="${LINKS.profile}" style="color:${C.muted};text-decoration:underline;">Turn them off</a> &nbsp;·&nbsp;
               <a href="${LINKS.community}" style="color:${C.muted};text-decoration:underline;">Community</a>
             </div>
-            <div style="font-size:11px;line-height:17px;color:#9a98a6;margin-top:12px;">LaSu — your AI language support · <a href="${APP_URL}" style="color:#9a98a6;text-decoration:none;">lasu.online</a></div>
+            <div style="font-size:11px;line-height:17px;color:#9a98a6;margin-top:12px;">LaSu — learn languages as you read · <a href="${APP_URL}" style="color:#9a98a6;text-decoration:none;">lasu.online</a></div>
           </td>
         </tr>
 
@@ -656,7 +656,7 @@ export async function sendSummary(
 </html>`;
 
   return transporter.sendMail({
-    from: `"LaSu - Your AI Language Support" <${process.env.EMAIL_USER}>`,
+    from: `"LaSu - Learn languages as you read" <${process.env.EMAIL_USER}>`,
     to: user.email,
     subject: subjectFor(type, name, subjectCount, languages.size, spotlight, streak, seed),
     html: htmlContent,
