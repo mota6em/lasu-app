@@ -20,7 +20,7 @@ export default async function handler(
   try {
     const users = await getAllUsersWithTranslations("week");
 
-    for (const { user, translations } of users) {
+    for (const { user, translations, community } of users) {
       if (translations.length === 0) continue;
       const typedUser = {
         _id: user._id.toString(),
@@ -39,7 +39,7 @@ export default async function handler(
         result: (t as any).result,
         createdAt: (t as any).createdAt,
       }));
-      await sendSummary(typedUser, typedTranslations, "weekly");
+      await sendSummary(typedUser, typedTranslations, "weekly", community);
     }
 
     res.status(200).json({ message: "Weekly summaries sent!" });

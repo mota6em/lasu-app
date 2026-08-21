@@ -43,6 +43,16 @@ export async function getAllUsersWithTranslations(period: "week" | "day") {
     (id) => new ObjectId(id)
   );
 
+  const communityStats = await db
+    .collection("communityusers")
+    .find(
+      { userId: { $in: Array.from(translationsByUserId.keys()) } },
+      { projection: { userId: 1, streak: 1, xp: 1, level: 1, rank: 1 } }
+    )
+    .toArray();
+
+  const statsByUserId = new Map(communityStats.map((c) => [c.userId, c]));
+
   const users = await db.collection("users").find(
     { _id: { $in: userIds }, emailSummary: { $ne: false } },
     {
@@ -57,8 +67,18 @@ export async function getAllUsersWithTranslations(period: "week" | "day") {
     }
   ).toArray();
 
-  return users.map((user) => ({
-    user,
-    translations: translationsByUserId.get(user._id.toString()) || [],
-  }));
+  return users.map((user) => {
+    const id = user._id.toString();
+    const stats = statsByUserId.get(id);
+    return {
+      user,
+      translations: translationsByUserId.get(id) || [],
+      community: {
+        streak: stats?.streak,
+        xp: stats?.xp,
+        level: stats?.level,
+        rank: stats?.rank,
+      },
+    };
+  });
 }
