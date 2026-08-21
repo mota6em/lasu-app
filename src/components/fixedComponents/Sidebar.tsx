@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Flame, LogOut, Settings, Sparkles, X, Zap } from "lucide-react";
 import NavIcon from "./NavIcon";
+import Logo from "@/components/brand/Logo";
 import TranslationSettingDialog from "../pages/settings/TranslationSettingDialog";
 import { Link, usePathname } from "@/i18n/routing";
 import { navItems, prefetchRoute } from "@/lib/nav";
@@ -106,7 +107,7 @@ export function Sidebar({
             onClick={() => setMobileOpen(false)}
             className="flex items-baseline gap-2"
           >
-            <span className="lasu-logo-lg text-gradient">LaSu</span>
+            <Logo markClassName="h-9 w-9" wordClassName="text-[26px]" />
           </Link>
           <button
             onClick={() => setMobileOpen(false)}

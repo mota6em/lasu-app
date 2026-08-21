@@ -51,7 +51,13 @@ export async function generateMetadata({
     },
     description: t("siteDescription"),
     keywords: t("keywords").split(",").map((k) => k.trim()),
-    icons: { icon: "/favicon.ico" },
+    icons: {
+      icon: [
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      apple: "/apple-icon.png",
+    },
     authors: [{ name: "Motasem Abubaraka", url: "https://lasu.online" }],
     creator: "Motasem Abubaraka",
     metadataBase: new URL("https://lasu.online"),

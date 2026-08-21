@@ -13,6 +13,7 @@ import { getLocaleMeta } from "@/i18n/locales";
 import { useUserStats } from "@/hooks/useUserStats";
 import { useCommandPalette } from "@/store/useCommandPalette";
 import { useLanguageDialog } from "@/store/useLanguageDialog";
+import Logo from "@/components/brand/Logo";
 
 function greetingKey() {
   const hour = new Date().getHours();
@@ -70,8 +71,8 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         <Menu className="h-5 w-5" />
       </button>
 
-      <Link href="/dashboard" className="lasu-logo text-gradient lg:hidden">
-        LaSu
+      <Link href="/dashboard" className="lg:hidden">
+        <Logo markClassName="h-8 w-8" wordClassName="text-xl" />
       </Link>
 
       <div className="hidden min-w-0 lg:block">

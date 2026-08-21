@@ -562,7 +562,12 @@ export async function sendSummary(
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td align="left" style="font-size:17px;font-weight:800;letter-spacing:-0.01em;color:${C.ink};" class="dm-text">
-                  <span style="display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;background-color:${C.brand};border-radius:8px;color:#2b1503;font-size:13px;font-weight:800;vertical-align:middle;margin-right:7px;">L</span>LaSu
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+                    <td width="26" bgcolor="${C.night}" style="width:26px;border-radius:8px;">
+                      <img src="${APP_URL}/brand/lasu-mark-512.png" width="26" height="26" alt="LaSu" style="display:block;width:26px;height:26px;border:0;border-radius:8px;" />
+                    </td>
+                    <td style="padding-left:8px;font-size:18px;font-weight:800;letter-spacing:-0.02em;color:${C.ink};" class="dm-text">LaSu</td>
+                  </tr></table>
                 </td>
                 <td align="right" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${C.muted};" class="dm-muted">${escapeHtml(periodLabel)} summary</td>
               </tr>

@@ -60,7 +60,7 @@ export default function JoinCommModal() {
           <DialogTitle className="font-display text-xl">
             {t.rich("modalTitle", {
               brand: (chunks) => (
-                <span className="newyork text-2xl text-brand-600 dark:text-brand-400">
+                <span className="font-display text-2xl font-bold tracking-[-0.03em] text-brand-600 dark:text-brand-400">
                   {chunks}
                 </span>
               ),

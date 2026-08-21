@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { FaGoogle } from "react-icons/fa";
 import { BookOpen, Flame, Sparkles, TriangleAlert } from "lucide-react";
+import Logo from "@/components/brand/Logo";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +32,11 @@ export default function WelcomePage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col items-center py-10 text-center">
-      <span className="lasu-logo-lg text-gradient animate-float">LaSu</span>
+      <Logo
+        className="animate-float"
+        markClassName="h-14 w-14"
+        wordClassName="text-4xl"
+      />
 
       <h1 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-5xl">
         {t.rich("heading", {
