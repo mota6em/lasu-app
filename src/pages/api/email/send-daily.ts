@@ -19,6 +19,8 @@ export default async function handler(
   }
   try {
     const users = await getAllUsersWithTranslations("day");
+    let sent = 0;
+    const failed: string[] = [];
 
     for (const { user, translations, community } of users) {
       if(translations.length === 0) continue;
@@ -39,10 +41,22 @@ export default async function handler(
         result: (t as any).result,
         createdAt: (t as any).createdAt,
       }));
-      await sendSummary(typedUser, typedTranslations, "daily", community);
+      try {
+        await sendSummary(typedUser, typedTranslations, "daily", community);
+        sent++;
+      } catch (err) {
+        failed.push(typedUser.email);
+        console.error(`daily summary failed for ${typedUser.email}:`, err);
+      }
     }
 
-    res.status(200).json({ message: "Daily summaries sent!" });
+    if (failed.length) {
+      return res
+        .status(500)
+        .json({ message: `Daily summaries: ${sent} sent, ${failed.length} failed`, failed });
+    }
+
+    res.status(200).json({ message: `Daily summaries sent to ${sent} users` });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error sending daily summaries" });
