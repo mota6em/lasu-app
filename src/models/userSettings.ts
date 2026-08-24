@@ -5,6 +5,7 @@ export interface IUserSettings extends Document {
   settings: {
     selectedLanguages: { value: string; label: string }[];
     translationType: string;
+    uiLocale?: string;
   };
 }
 
@@ -20,6 +21,10 @@ const UserSettingsSchema = new Schema({
     translationType: {
       type: String,
       default: "formal",
+    },
+    uiLocale: {
+      type: String,
+      default: "",
     },
   },
 });

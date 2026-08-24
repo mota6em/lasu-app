@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { useLocale } from "next-intl";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -12,6 +13,7 @@ import {
   type PartialTranslation,
 } from "@/lib/partialTranslation";
 
+import { explainLanguage } from "@/i18n/locales";
 import { readLocalHistory, writeLocalHistory } from "@/lib/localHistory";
 
 const LOCAL_HISTORY_CAP = 200;
@@ -133,6 +135,7 @@ export function useTranslate() {
   const selectedLanguages = useTranslateStore((s) => s.selectedLanguages);
   const { toggleSettingsDialog } = useSettingsDialog();
   const { data: session } = useSession();
+  const explainLang = explainLanguage(useLocale());
   const queryClient = useQueryClient();
   const inFlight = useRef<AbortController | null>(null);
 
@@ -247,6 +250,7 @@ export function useTranslate() {
           ...(image ? { image } : { text: trimmed }),
           langs,
           translationType,
+          explainLang,
           stream: true,
         }),
         signal: controller.signal,
@@ -319,7 +323,15 @@ export function useTranslate() {
     try {
       await persist(sourceText, payload);
     } catch {}
-  }, [text, image, resultLoading, selectedLanguages, translationType, persist]);
+  }, [
+    text,
+    image,
+    resultLoading,
+    selectedLanguages,
+    translationType,
+    explainLang,
+    persist,
+  ]);
 
   const handlePasteInline = useCallback(async () => {
     try {
