@@ -1,23 +1,13 @@
-import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { buildAlternates } from "@/i18n/metadata";
+import { routeMetadata } from "@/i18n/pageMetadata";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "privacyPage" });
-
-  return {
-    title: t("title"),
-    description: t("intro"),
-    alternates: buildAlternates(locale, "/privacy"),
-  };
-}
+export const generateMetadata = routeMetadata({
+  namespace: "privacyPage",
+  path: "/privacy",
+  descriptionKey: "intro",
+});
 
 export default async function PrivacyPage({
   params,

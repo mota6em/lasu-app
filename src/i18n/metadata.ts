@@ -1,6 +1,7 @@
 import { defaultLocale, locales } from "./locales";
 
-const SITE = "https://lasu.online";
+export const SITE = "https://lasu.online";
+export const OG_IMAGE = `${SITE}/meta-img.png`;
 
 const OG_TERRITORY: Record<string, string> = {
   en: "en_US",
@@ -21,7 +22,7 @@ export function openGraphLocale(locale: string) {
   return OG_TERRITORY[locale] ?? "en_US";
 }
 
-function localeHref(locale: string, path: string) {
+export function localeHref(locale: string, path: string) {
   const clean = path === "/" ? "" : path;
   return locale === defaultLocale
     ? `${SITE}${clean || "/"}`

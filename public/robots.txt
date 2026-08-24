@@ -1,6 +1,9 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /dashboard/profile
+Disallow: /dashboard/welcome
 
 # Host
 Host: https://lasu.online

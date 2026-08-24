@@ -1,4 +1,4 @@
-# LaSu - AI Language Support (Web App & Backend)
+# LaSu — Learn Languages As You Browse (Web App & Backend)
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.0__App__Router-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
 &nbsp;
@@ -17,7 +17,7 @@ This repository contains the web application and central API backend responsible
 &nbsp;&nbsp;
 
 🔗 **Production Web Application:** [lasu.online](https://lasu.online)  
-🧩 **Official Browser Extension:** [LaSu - AI Language Support](https://chromewebstore.google.com/detail/jllhdgojepfdpmlppkccogdobopmiaok)
+🧩 **Official Browser Extension:** [LaSu — Learn Languages As You Browse](https://chromewebstore.google.com/detail/jllhdgojepfdpmlppkccogdobopmiaok)
 
 ## ✨ Features
 

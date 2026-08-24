@@ -11,7 +11,7 @@ import ToastHub from "@/components/fixedComponents/ToastHub";
 import { Analytics } from "@vercel/analytics/next";
 import { routing } from "@/i18n/routing";
 import { localeDirection } from "@/i18n/locales";
-import { buildAlternates, openGraphLocale } from "@/i18n/metadata";
+import { buildAlternates, openGraphLocale, localeHref, SITE, OG_IMAGE } from "@/i18n/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +32,9 @@ const outfit = Outfit({
   display: "swap",
 });
 
+const EXTENSION_URL =
+  "https://chromewebstore.google.com/detail/jllhdgojepfdpmlppkccogdobopmiaok";
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -51,6 +54,8 @@ export async function generateMetadata({
     },
     description: t("siteDescription"),
     keywords: t("keywords").split(",").map((k) => k.trim()),
+    applicationName: "LaSu",
+    category: "education",
     icons: {
       icon: [
         { url: "/icon.svg", type: "image/svg+xml" },
@@ -58,20 +63,41 @@ export async function generateMetadata({
       ],
       apple: "/apple-icon.png",
     },
-    authors: [{ name: "Motasem Abubaraka", url: "https://lasu.online" }],
+    authors: [{ name: "Motasem Abubaraka", url: SITE }],
     creator: "Motasem Abubaraka",
-    metadataBase: new URL("https://lasu.online"),
+    publisher: "LaSu",
+    metadataBase: new URL(SITE),
     alternates: buildAlternates(locale, "/"),
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    formatDetection: { telephone: false, address: false, email: false },
+    appleWebApp: {
+      capable: true,
+      title: "LaSu",
+      statusBarStyle: "default",
+    },
     openGraph: {
       title: t("siteTitle"),
       description: t("ogDescription"),
-      url: "https://lasu.online",
+      url: localeHref(locale, "/"),
       siteName: "LaSu",
       locale: openGraphLocale(locale),
+      alternateLocale: routing.locales
+        .filter((l) => l !== locale)
+        .map(openGraphLocale),
       type: "website",
       images: [
         {
-          url: "https://lasu.online/meta-img.png",
+          url: OG_IMAGE,
           width: 1200,
           height: 630,
           alt: t("siteTitle"),
@@ -82,8 +108,9 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t("siteTitle"),
       description: t("twitterDescription"),
-      images: ["https://lasu.online/meta-img.png"],
+      images: [OG_IMAGE],
       creator: "@mota6em",
+      site: "@mota6em",
     },
   };
 }
@@ -126,11 +153,49 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "LaSu",
-              url: "https://lasu.online",
-              inLanguage: locale,
-              description: t("siteDescription"),
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": `${SITE}/#organization`,
+                  name: "LaSu",
+                  url: SITE,
+                  logo: `${SITE}/brand/lasu-mark-512.png`,
+                  sameAs: [EXTENSION_URL, "https://x.com/mota6em"],
+                  founder: {
+                    "@type": "Person",
+                    name: "Motasem Abubaraka",
+                  },
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": `${SITE}/#website`,
+                  name: "LaSu",
+                  alternateName: t("siteTitle"),
+                  url: SITE,
+                  inLanguage: locale,
+                  description: t("siteDescription"),
+                  publisher: { "@id": `${SITE}/#organization` },
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": `${SITE}/#app`,
+                  name: "LaSu",
+                  applicationCategory: "BrowserApplication",
+                  applicationSubCategory: "Browser Extension",
+                  operatingSystem: "Chrome, Edge, Brave",
+                  url: SITE,
+                  installUrl: EXTENSION_URL,
+                  description: t("siteDescription"),
+                  inLanguage: routing.locales,
+                  screenshot: OG_IMAGE,
+                  publisher: { "@id": `${SITE}/#organization` },
+                  offers: {
+                    "@type": "Offer",
+                    price: "0",
+                    priceCurrency: "USD",
+                  },
+                },
+              ],
             }),
           }}
         />

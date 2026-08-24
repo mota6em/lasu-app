@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { buildAlternates, openGraphLocale } from "./metadata";
+import {
+  buildAlternates,
+  localeHref,
+  openGraphLocale,
+  OG_IMAGE,
+} from "./metadata";
 
 interface RouteMetaOptions {
   namespace: string;
@@ -25,20 +30,41 @@ export function routeMetadata({
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace });
 
-    const title = t(titleKey);
+    const title = `${t(titleKey)} | LaSu`;
     const description = t(descriptionKey);
+    const url = localeHref(locale, path);
 
     return {
-      title: { absolute: `${title} | LaSu` },
+      title: { absolute: title },
       description,
       alternates: buildAlternates(locale, path),
-      ...(noIndex && { robots: { index: false, follow: false } }),
+      robots: noIndex
+        ? { index: false, follow: false }
+        : {
+            index: true,
+            follow: true,
+            googleBot: {
+              index: true,
+              follow: true,
+              "max-image-preview": "large",
+              "max-snippet": -1,
+            },
+          },
       openGraph: {
-        title: `${title} | LaSu`,
+        title,
         description,
-        url: `https://lasu.online${locale === "en" ? "" : `/${locale}`}${path}`,
+        url,
+        siteName: "LaSu",
         locale: openGraphLocale(locale),
         type: "website",
+        images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: title }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [OG_IMAGE],
+        creator: "@mota6em",
       },
     };
   };

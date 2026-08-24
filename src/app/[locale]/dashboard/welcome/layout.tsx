@@ -5,6 +5,7 @@ export const generateMetadata = routeMetadata({
   path: "/dashboard/welcome",
   titleKey: "skip",
   descriptionKey: "subheading",
+  noIndex: true,
 });
 
 export default function WelcomeLayout({
