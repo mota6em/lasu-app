@@ -22,6 +22,7 @@ export const navItems: NavItem[] = [
 
 const json = (url: string) => async () => {
   const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url} responded ${res.status}`);
   return res.json();
 };
 
@@ -33,7 +34,7 @@ export function prefetchRoute(
   if (href === "/dashboard/community") {
     queryClient.prefetchQuery({
       queryKey: ["community-stats"],
-      queryFn: async () => (await (await fetch("/api/community/stats")).json()).data,
+      queryFn: async () => (await json("/api/community/stats")()).data,
     });
     queryClient.prefetchQuery({
       queryKey: ["community-live"],

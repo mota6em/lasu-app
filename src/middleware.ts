@@ -17,6 +17,25 @@ function isAllowedOrigin(origin: string | null) {
   return !!origin && (allowedOrigins.includes(origin) || origin === EXT_ID);
 }
 
+// Browsers omit Origin on same-origin GETs, so the app's own fetches arrive
+// bare. Sec-Fetch-Site is what separates those from a cross-site caller.
+function isFirstParty(req: NextRequest) {
+  const site = req.headers.get("sec-fetch-site");
+  if (site) return site === "same-origin" || site === "same-site" || site === "none";
+
+  const referer = req.headers.get("referer");
+  if (!referer) return false;
+  try {
+    return new URL(referer).host === req.headers.get("host");
+  } catch {
+    return false;
+  }
+}
+
+function isTrusted(req: NextRequest, origin: string | null) {
+  return isAllowedOrigin(origin) || (!origin && isFirstParty(req));
+}
+
 // The one live caller (an external cron-job.org job) sends `lasu-api-sec-key`;
 // `x-lasu-api-key` is the name new/internal callers should use going forward.
 function hasInternalKey(req: NextRequest) {
@@ -87,7 +106,7 @@ async function handleApi(req: NextRequest) {
   // ---------------------------
   // Origin verification — trusted origin, or a valid internal key
   // ---------------------------
-  if (!isAllowedOrigin(origin)) {
+  if (!isTrusted(req, origin)) {
     if (!hasInternalKey(req)) {
       return NextResponse.json(
         { error: "Forbidden: untrusted origin", origin },
