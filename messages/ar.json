@@ -40,7 +40,8 @@
     "greetingEvening": "مساء الخير",
     "greetingWithName": "{greeting} يا {name}",
     "tagline": "تعلّم اللغات أثناء تصفّحك",
-    "streakTooltip": "سلسلة {days} يومًا · {xp} نقطة"
+    "streakTooltip": "سلسلة {days} يومًا · {xp} نقطة",
+    "getExtension": "احصل على الإضافة"
   },
   "theme": {
     "change": "تغيير المظهر",

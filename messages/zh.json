@@ -40,7 +40,8 @@
     "greetingEvening": "晚上好",
     "greetingWithName": "{greeting}，{name}",
     "tagline": "边浏览边学语言",
-    "streakTooltip": "连续 {days} 天 · {xp} XP"
+    "streakTooltip": "连续 {days} 天 · {xp} XP",
+    "getExtension": "获取扩展程序"
   },
   "theme": {
     "change": "切换主题",

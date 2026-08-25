@@ -40,7 +40,8 @@
     "greetingEvening": "Добрый вечер",
     "greetingWithName": "{greeting}, {name}",
     "tagline": "Учите языки прямо в браузере",
-    "streakTooltip": "Серия {days} дней · {xp} XP"
+    "streakTooltip": "Серия {days} дней · {xp} XP",
+    "getExtension": "Установить расширение"
   },
   "theme": {
     "change": "Сменить тему",

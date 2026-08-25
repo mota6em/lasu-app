@@ -40,7 +40,8 @@
     "greetingEvening": "İyi akşamlar",
     "greetingWithName": "{greeting}, {name}",
     "tagline": "Gezinirken dil öğren",
-    "streakTooltip": "{days} günlük seri · {xp} XP"
+    "streakTooltip": "{days} günlük seri · {xp} XP",
+    "getExtension": "Uzantıyı edinin"
   },
   "theme": {
     "change": "Temayı değiştir",

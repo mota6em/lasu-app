@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronDown, Flame, Menu, Search } from "lucide-react";
+import { ChevronDown, Flame, Menu, Puzzle, Search } from "lucide-react";
 import { ModeToggle } from "./ModeToggle";
 import { UserMenu } from "./UserMenu";
 import { Skeleton } from "../ui/skeleton";
@@ -14,6 +14,9 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { useCommandPalette } from "@/store/useCommandPalette";
 import { useLanguageDialog } from "@/store/useLanguageDialog";
 import Logo from "@/components/brand/Logo";
+
+const WEB_STORE_URL =
+  "https://chromewebstore.google.com/detail/jllhdgojepfdpmlppkccogdobopmiaok";
 
 function greetingKey() {
   const hour = new Date().getHours();
@@ -130,6 +133,17 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
           <span className="text-xs font-semibold uppercase sm:hidden">{locale}</span>
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
+
+        <a
+          href={WEB_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={t("getExtension")}
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-surface-2 px-2.5 text-sm font-medium transition-colors hover:border-brand-400 hover:bg-brand-500/10"
+        >
+          <Puzzle className="h-4 w-4 shrink-0" />
+          <span className="hidden lg:inline">{t("getExtension")}</span>
+        </a>
 
         <span aria-hidden className="mx-0.5 h-5 w-px bg-border" />
 

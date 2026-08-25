@@ -40,7 +40,8 @@
     "greetingEvening": "Boa noite",
     "greetingWithName": "{greeting}, {name}",
     "tagline": "Aprenda idiomas enquanto navega",
-    "streakTooltip": "Sequência de {days} dias · {xp} XP"
+    "streakTooltip": "Sequência de {days} dias · {xp} XP",
+    "getExtension": "Obter a extensão"
   },
   "theme": {
     "change": "Mudar tema",

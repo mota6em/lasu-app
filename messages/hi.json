@@ -40,7 +40,8 @@
     "greetingEvening": "शुभ संध्या",
     "greetingWithName": "{greeting}, {name}",
     "tagline": "ब्राउज़ करते हुए भाषाएँ सीखें",
-    "streakTooltip": "{days} दिन की स्ट्रीक · {xp} XP"
+    "streakTooltip": "{days} दिन की स्ट्रीक · {xp} XP",
+    "getExtension": "एक्सटेंशन पाएं"
   },
   "theme": {
     "change": "थीम बदलें",

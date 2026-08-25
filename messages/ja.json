@@ -40,7 +40,8 @@
     "greetingEvening": "こんばんは",
     "greetingWithName": "{greeting}、{name}さん",
     "tagline": "ブラウジングしながら語学学習",
-    "streakTooltip": "{days} 日連続 · {xp} XP"
+    "streakTooltip": "{days} 日連続 · {xp} XP",
+    "getExtension": "拡張機能を入手"
   },
   "theme": {
     "change": "テーマを変更",
