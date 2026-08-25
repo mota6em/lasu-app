@@ -53,6 +53,14 @@ async function handleApi(req: NextRequest) {
   const method = req.method;
   const path = req.nextUrl.pathname;
 
+  // NextAuth's own routes (OAuth redirect + callback, CSRF, session, signout)
+  // are driven by top-level browser navigation, not fetch/XHR — browsers send
+  // no Origin header on those, and NextAuth already has its own CSRF/state
+  // protection. Never apply the origin gate to them.
+  if (path.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+
   // Only translate + save are rate-limited
   const isLimitedRoute =
     path.startsWith("/api/translate") ||
