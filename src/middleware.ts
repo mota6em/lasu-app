@@ -1,19 +1,52 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 import createIntlMiddleware from "next-intl/middleware";
 import { rateLimit } from "./lib/rateLimit";
 import { routing } from "./i18n/routing";
 
-const allowedOrigins = [
-  "https://lasu.online",
-  "https://www.lasu.online",
-  "http://localhost:3000",
-];
+const allowedOrigins = ["https://lasu.online", "https://www.lasu.online"];
 
 const EXT_ID = "chrome-extension://jllhdgojepfdpmlppkccogdobopmiaok";
 const SEC_KEY = process.env.LASU_API_SEC_KEY!;
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 
 const intlMiddleware = createIntlMiddleware(routing);
+
+function isAllowedOrigin(origin: string | null) {
+  return !!origin && (allowedOrigins.includes(origin) || origin === EXT_ID);
+}
+
+// The one live caller (an external cron-job.org job) sends `lasu-api-sec-key`;
+// `x-lasu-api-key` is the name new/internal callers should use going forward.
+function hasInternalKey(req: NextRequest) {
+  const key =
+    req.headers.get("x-lasu-api-key") ?? req.headers.get("lasu-api-sec-key");
+  return key === SEC_KEY;
+}
+
+function getClientIp(req: NextRequest) {
+  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
+function rateLimited(
+  status: number,
+  error: string,
+  extra?: Record<string, unknown>,
+  resetAt?: number,
+) {
+  const headers = new Headers();
+  if (resetAt) {
+    headers.set(
+      "Retry-After",
+      String(Math.max(0, Math.ceil((resetAt - Date.now()) / 1000))),
+    );
+  }
+  return NextResponse.json(
+    { error, ...(resetAt ? { resetTime: resetAt } : {}), ...extra },
+    { status, headers },
+  );
+}
 
 async function handleApi(req: NextRequest) {
   const origin = req.headers.get("origin");
@@ -25,79 +58,88 @@ async function handleApi(req: NextRequest) {
     path.startsWith("/api/translate") ||
     path.startsWith("/api/translation/save");
 
-  // OPTIONS always allowed
+  // ---------------------------
+  // CORS preflight — exact-origin match only, never a wildcard
+  // ---------------------------
   if (method === "OPTIONS") {
+    if (!isAllowedOrigin(origin)) {
+      return new NextResponse(null, { status: 403 });
+    }
     const headers = new Headers();
-    headers.set("Access-Control-Allow-Origin", origin ?? "*");
+    headers.set("Access-Control-Allow-Origin", origin as string);
     headers.set("Access-Control-Allow-Credentials", "true");
     headers.set("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
     headers.set(
       "Access-Control-Allow-Headers",
-      "Content-Type, lasu-api-sec-key, x-device-id",
+      "Content-Type, lasu-api-sec-key, x-lasu-api-key, x-device-id",
     );
     return new NextResponse(null, { status: 204, headers });
   }
 
-  if (origin && allowedOrigins.includes(origin)) {
-    return NextResponse.next();
-  }
-
-  const isExtension =
-    origin === null ||
-    origin === "null" ||
-    origin === EXT_ID ||
-    origin?.startsWith("chrome-extension://");
-
   // ---------------------------
-  // Unknown domain → require key
+  // Origin verification — trusted origin, or a valid internal key
   // ---------------------------
-  if (!isExtension) {
-    const apiKey = req.headers.get("lasu-api-sec-key");
-    if (apiKey !== SEC_KEY) {
+  if (!isAllowedOrigin(origin)) {
+    if (!hasInternalKey(req)) {
       return NextResponse.json(
         { error: "Forbidden: untrusted origin", origin },
         { status: 403 },
       );
     }
+    // Internal callers (cron) skip rate limiting entirely.
     return NextResponse.next();
   }
 
-  // ---------------------------
-  // Extension but NOT a limited route → full access
-  // ---------------------------
   if (!isLimitedRoute) {
     return NextResponse.next();
   }
 
-  // ---------------------------
-  // cron-job.org with API key → skip limits
-  // ---------------------------
-  const apiKey = req.headers.get("lasu-api-sec-key");
-  if (apiKey === SEC_KEY) {
+  // A trusted origin presenting the internal key also skips limits.
+  if (hasInternalKey(req)) {
     return NextResponse.next();
   }
 
   // ---------------------------
-  // Extension rate limit ONLY translate + save
+  // Layer 1 — anti-abuse burst (10 req/min per IP)
   // ---------------------------
-  const deviceId =
-    req.headers.get("x-device-id") ||
-    req.headers.get("x-forwarded-for")?.split(",")[0] ||
-    "unknown";
-
-  // 25 per minute
-  const minute = await rateLimit(deviceId, 25, "1m");
-  if (!minute.ok) {
-    return NextResponse.json(
-      { error: "Too many requests (minute limit)" },
-      { status: 429 },
-    );
+  const clientIp = getClientIp(req);
+  const burst = await rateLimit(`ip:${clientIp}`, 10, "1m");
+  if (!burst.ok) {
+    return rateLimited(429, "Too many requests", undefined, burst.resetAt);
   }
 
-  // 250 per day
-  const daily = await rateLimit(deviceId, 250, "1d");
-  if (!daily.ok) {
-    return NextResponse.json({ error: "Daily limit reached" }, { status: 429 });
+  // Only /api/translate spends LLM budget — /api/translation/save just rides
+  // the burst layer above (it already requires its own session).
+  if (!path.startsWith("/api/translate")) {
+    return NextResponse.next();
+  }
+
+  // ---------------------------
+  // Layer 2 — freemium quota, tiered by account status
+  // ---------------------------
+  const token = NEXTAUTH_SECRET
+    ? await getToken({ req, secret: NEXTAUTH_SECRET }).catch(() => null)
+    : null;
+
+  if (!token?.id) {
+    const guest = await rateLimit(`quota:guest:${clientIp}`, 5, "1d");
+    if (!guest.ok) {
+      return rateLimited(401, "login_required", undefined, guest.resetAt);
+    }
+    return NextResponse.next();
+  }
+
+  if (token.tier === "pro") {
+    const pro = await rateLimit(`quota:user:${token.id}`, 300, "1d");
+    if (!pro.ok) {
+      return rateLimited(429, "quota_exceeded", undefined, pro.resetAt);
+    }
+    return NextResponse.next();
+  }
+
+  const free = await rateLimit(`quota:user:${token.id}`, 20, "1d");
+  if (!free.ok) {
+    return rateLimited(402, "upgrade_required", undefined, free.resetAt);
   }
 
   return NextResponse.next();
@@ -108,8 +150,8 @@ export async function middleware(req: NextRequest) {
     try {
       return await handleApi(req);
     } catch (err) {
-      console.error("api middleware failed, passing through:", err);
-      return NextResponse.next();
+      console.error("api middleware failed, failing closed:", err);
+      return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
   }
 
@@ -117,8 +159,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/api/:path*",
-    "/((?!_next|_vercel|.*\\..*).*)",
-  ],
+  matcher: ["/api/:path*", "/((?!_next|_vercel|.*\\..*).*)"],
 };

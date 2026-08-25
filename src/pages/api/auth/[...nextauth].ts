@@ -32,10 +32,12 @@ export const authOptions = {
           token.id = newUser._id.toString();
           token.name = newUser.name;
           token.picture = newUser.image;
+          token.tier = newUser.tier;
         } else {
           token.id = dbUser._id.toString();
           token.name = dbUser.name;
           token.picture = dbUser.image;
+          token.tier = dbUser.tier ?? "free";
         }
       }
 
@@ -52,6 +54,7 @@ export const authOptions = {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
         session.user.image = token.picture as string;
+        session.user.tier = token.tier ?? "free";
       }
       return session;
     },

@@ -8,6 +8,7 @@ export interface IUser extends Document {
   translationType: string;
   createdAt: Date;
   emailSummary: boolean;
+  tier: "free" | "pro";
 }
 
 const userSchema = new Schema({
@@ -18,6 +19,7 @@ const userSchema = new Schema({
   translationType: { type: String, default: "formal" },
   emailSummary: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
+  tier: { type: String, enum: ["free", "pro"], default: "free" },
 });
 
 export const User = models.User || model<IUser>("User", userSchema);

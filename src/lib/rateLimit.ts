@@ -7,6 +7,7 @@ export type RateLimitResult = {
   ok: boolean;
   count: number;
   degraded: boolean;
+  resetAt?: number;
 };
 
 const allow = (reason: string): RateLimitResult => {
@@ -25,6 +26,19 @@ async function redis(path: string) {
     });
   } finally {
     clearTimeout(timer);
+  }
+}
+
+async function fetchResetAt(key: string, window: string): Promise<number | undefined> {
+  try {
+    const response = await redis(`/ttl/${key}`);
+    if (!response.ok) return undefined;
+    const body = await response.json();
+    const ttl = Number(body?.result);
+    if (!Number.isFinite(ttl) || ttl < 0) return undefined;
+    return Date.now() + ttl * 1000;
+  } catch {
+    return undefined;
   }
 }
 
@@ -55,7 +69,13 @@ export async function rateLimit(
       await redis(`/expire/${key}/${convertWindow(window)}`).catch(() => null);
     }
 
-    return { ok: count <= limit, count, degraded: false };
+    const ok = count <= limit;
+    if (!ok) {
+      const resetAt = await fetchResetAt(key, window);
+      return { ok, count, degraded: false, resetAt };
+    }
+
+    return { ok, count, degraded: false };
   } catch (err) {
     return allow(err instanceof Error ? err.message : "redis unreachable");
   }
