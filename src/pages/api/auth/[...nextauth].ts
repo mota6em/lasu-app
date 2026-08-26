@@ -5,6 +5,8 @@ import { User } from "@/models/user";
 import type { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
 
+const TIER_TTL_MS = 5 * 60 * 1000;
+
 export const authOptions = {
   providers: [
     GoogleProvider({
@@ -33,11 +35,24 @@ export const authOptions = {
           token.name = newUser.name;
           token.picture = newUser.image;
           token.tier = newUser.tier;
+          token.tierAt = Date.now();
         } else {
           token.id = dbUser._id.toString();
           token.name = dbUser.name;
           token.picture = dbUser.image;
           token.tier = dbUser.tier ?? "free";
+          token.tierAt = Date.now();
+        }
+      }
+
+      if (token.id && Date.now() - (token.tierAt ?? 0) > TIER_TTL_MS) {
+        try {
+          await connectToDB();
+          const fresh = await User.findById(token.id).select("tier").lean();
+          token.tier = (fresh as { tier?: string } | null)?.tier ?? "free";
+          token.tierAt = Date.now();
+        } catch (err) {
+          console.error("tier refresh failed, keeping cached tier:", err);
         }
       }
 
