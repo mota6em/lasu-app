@@ -12,8 +12,9 @@ export const saveSettings = async (
 
   const res = await fetch("/api/settings", {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: session.user.id, settings }),
+    body: JSON.stringify({ settings }),
   });
 
   if (!res.ok) throw new Error("Could not save your preferences.");

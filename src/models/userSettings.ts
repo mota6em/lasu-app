@@ -7,6 +7,8 @@ export interface IUserSettings extends Document {
     translationType: string;
     uiLocale?: string;
   };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const UserSettingsSchema = new Schema({
@@ -28,6 +30,8 @@ const UserSettingsSchema = new Schema({
     },
   },
 });
+
+UserSettingsSchema.set("timestamps", true);
 
 export const UserSettings =
   models.UserSettings ||
