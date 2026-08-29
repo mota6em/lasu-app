@@ -6,22 +6,38 @@ const TIMEOUT_MS = 2000;
 export type RateLimitResult = {
   ok: boolean;
   count: number;
+  limit: number;
+  remaining: number;
   degraded: boolean;
   resetAt?: number;
 };
 
-const allow = (reason: string): RateLimitResult => {
-  if (reason) console.warn(`rateLimit degraded: ${reason}`);
-  return { ok: true, count: 0, degraded: true };
+export type QuotaSnapshot = {
+  count: number;
+  degraded: boolean;
+  resetAt?: number;
 };
 
-async function redis(path: string) {
+const allow = (limit: number, reason: string): RateLimitResult => {
+  if (reason) console.warn(`rateLimit degraded: ${reason}`);
+  return { ok: true, count: 0, limit, remaining: limit, degraded: true };
+};
+
+function configured() {
+  return Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
+}
+
+async function upstash(path: string, body?: unknown) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
     return await fetch(`${UPSTASH_REDIS_REST_URL}${path}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${UPSTASH_REDIS_REST_TOKEN}` },
+      headers: {
+        Authorization: `Bearer ${UPSTASH_REDIS_REST_TOKEN}`,
+        ...(body ? { "Content-Type": "application/json" } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     });
   } finally {
@@ -29,55 +45,91 @@ async function redis(path: string) {
   }
 }
 
-async function fetchResetAt(key: string, window: string): Promise<number | undefined> {
-  try {
-    const response = await redis(`/ttl/${key}`);
-    if (!response.ok) return undefined;
-    const body = await response.json();
-    const ttl = Number(body?.result);
-    if (!Number.isFinite(ttl) || ttl < 0) return undefined;
-    return Date.now() + ttl * 1000;
-  } catch {
-    return undefined;
-  }
+async function pipeline(commands: (string | number)[][]) {
+  const response = await upstash("/pipeline", commands);
+  if (!response.ok) throw new Error(`pipeline responded ${response.status}`);
+  const body = await response.json();
+  if (!Array.isArray(body)) throw new Error("pipeline returned no array");
+  return body.map((entry) => (entry as { result?: unknown })?.result);
+}
+
+function toNumber(value: unknown) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function resetFromTtl(ttl: number | null) {
+  if (ttl === null || ttl < 0) return undefined;
+  return Date.now() + ttl * 1000;
+}
+
+export function keyFor(identifier: string, window: string) {
+  return `rl:${identifier}:${window}`;
 }
 
 export async function rateLimit(
   identifier: string,
   limit: number,
-  window: string
+  window: string,
 ): Promise<RateLimitResult> {
-  if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) {
-    return allow("UPSTASH_REDIS_REST_URL or _TOKEN is not set");
+  if (!configured()) {
+    return allow(limit, "UPSTASH_REDIS_REST_URL or _TOKEN is not set");
   }
 
-  const key = encodeURIComponent(`rl:${identifier}:${window}`);
+  const key = keyFor(identifier, window);
+  const seconds = convertWindow(window);
 
   try {
-    const response = await redis(`/incr/${key}`);
-    if (!response.ok) {
-      return allow(`incr responded ${response.status}`);
+    const [rawCount, rawTtl] = await pipeline([
+      ["INCR", key],
+      ["TTL", key],
+    ]);
+
+    const count = toNumber(rawCount);
+    if (count === null) return allow(limit, "incr returned no usable count");
+
+    let ttl = toNumber(rawTtl);
+
+    if (ttl === null || ttl < 0) {
+      await pipeline([["EXPIRE", key, seconds]]).catch(() => null);
+      ttl = seconds;
     }
 
-    const body = await response.json();
-    const count = Number(body?.result);
-    if (!Number.isFinite(count)) {
-      return allow("incr returned no usable count");
-    }
-
-    if (count === 1) {
-      await redis(`/expire/${key}/${convertWindow(window)}`).catch(() => null);
-    }
-
-    const ok = count <= limit;
-    if (!ok) {
-      const resetAt = await fetchResetAt(key, window);
-      return { ok, count, degraded: false, resetAt };
-    }
-
-    return { ok, count, degraded: false };
+    const remaining = Math.max(0, limit - count);
+    return {
+      ok: count <= limit,
+      count,
+      limit,
+      remaining,
+      degraded: false,
+      resetAt: resetFromTtl(ttl),
+    };
   } catch (err) {
-    return allow(err instanceof Error ? err.message : "redis unreachable");
+    return allow(limit, err instanceof Error ? err.message : "redis unreachable");
+  }
+}
+
+export async function peekRateLimit(
+  identifier: string,
+  window: string,
+): Promise<QuotaSnapshot> {
+  if (!configured()) return { count: 0, degraded: true };
+
+  const key = keyFor(identifier, window);
+
+  try {
+    const [rawCount, rawTtl] = await pipeline([
+      ["GET", key],
+      ["TTL", key],
+    ]);
+
+    return {
+      count: toNumber(rawCount) ?? 0,
+      degraded: false,
+      resetAt: resetFromTtl(toNumber(rawTtl)),
+    };
+  } catch {
+    return { count: 0, degraded: true };
   }
 }
 

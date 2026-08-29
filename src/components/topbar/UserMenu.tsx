@@ -2,7 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { LogOut, Settings, User } from "lucide-react";
+import { Crown, LogOut, Settings, Sparkles, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,12 +14,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/routing";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
+import { useBilling } from "@/hooks/useBilling";
+import { ProBadge } from "@/components/pages/billing/ProBadge";
 
 export function UserMenu() {
   const t = useTranslations("userMenu");
   const tShell = useTranslations("shell");
   const { data: session, status } = useSession();
   const { toggleSettingsDialog } = useSettingsDialog();
+  const tBilling = useTranslations("billing");
+  const { isPro } = useBilling();
   const user = session?.user;
 
   if (status === "loading") {
@@ -39,8 +43,14 @@ export function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full outline-none ring-offset-2 ring-offset-background transition-shadow focus-visible:ring-2 focus-visible:ring-ring">
-        <Avatar className="h-9 w-9 border border-border">
+      <DropdownMenuTrigger className="relative rounded-full outline-none ring-offset-2 ring-offset-background transition-shadow focus-visible:ring-2 focus-visible:ring-ring">
+        <Avatar
+          className={
+            isPro
+              ? "h-9 w-9 border-2 border-brand-500 shadow-[var(--shadow-brand)]"
+              : "h-9 w-9 border border-border"
+          }
+        >
           <AvatarImage src={user.image ?? ""} alt={user.name ?? "User"} />
           <AvatarFallback className="bg-surface-2 text-xs font-semibold">
             {user.name?.slice(0, 2).toUpperCase() ?? "LS"}
@@ -57,7 +67,10 @@ export function UserMenu() {
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">{user.name}</p>
+            <div className="flex items-center gap-1.5">
+              <p className="truncate text-sm font-semibold">{user.name}</p>
+              {isPro && <ProBadge showIcon={false} />}
+            </div>
             <p className="truncate text-xs text-muted-foreground">{user.email}</p>
           </div>
         </div>
@@ -75,6 +88,20 @@ export function UserMenu() {
           className="cursor-pointer gap-2"
         >
           <Settings className="h-4 w-4" /> {t("preferences")}
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild className="cursor-pointer gap-2">
+          <Link href="/dashboard/upgrade">
+            {isPro ? (
+              <>
+                <Crown className="h-4 w-4 text-brand-500" /> {tBilling("manage")}
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4 text-brand-500" /> {tBilling("upgrade")}
+              </>
+            )}
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

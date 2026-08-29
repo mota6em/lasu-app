@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { useTranslateStore } from "@/store/useTranslateStore";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import type { TranslationResult } from "@/types/translation";
+import type { QuotaErrorCode, TranslateError } from "@/types/billing";
 import {
   parsePartialTranslation,
   type PartialTranslation,
@@ -15,10 +16,43 @@ import {
 
 import { explainLanguage } from "@/i18n/locales";
 import { readLocalHistory, writeLocalHistory } from "@/lib/localHistory";
+import { BILLING_KEY } from "@/hooks/useBilling";
 
 const LOCAL_HISTORY_CAP = 200;
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+
+const QUOTA_CODES: Record<string, QuotaErrorCode> = {
+  login_required: "login_required",
+  upgrade_required: "upgrade_required",
+  quota_exceeded: "quota_exceeded",
+};
+
+function quotaError(res: Response, body: Record<string, unknown> | null): TranslateError | null {
+  const code = QUOTA_CODES[String(body?.error ?? "")];
+  const retryAfter = Number(res.headers.get("Retry-After"));
+  const resetAt =
+    Number(body?.resetTime) ||
+    (Number.isFinite(retryAfter) && retryAfter > 0 ? Date.now() + retryAfter * 1000 : 0);
+
+  if (!code && res.status !== 429) return null;
+
+  return {
+    code: code ?? "rate_limited",
+    message: typeof body?.error === "string" ? body.error : "",
+    limit: Number(body?.limit) || undefined,
+    used: Number(body?.used) || undefined,
+    resetAt: resetAt || undefined,
+  };
+}
+
+function toError(err: unknown): TranslateError {
+  if (err && typeof err === "object" && "code" in err) return err as TranslateError;
+  return {
+    code: "generic",
+    message: err instanceof Error ? err.message : "Something went wrong. Try again.",
+  };
+}
 
 export function fileToDataUrl(file: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -128,7 +162,7 @@ export function useTranslate() {
   const [submittedText, setSubmittedText] = useState("");
   const [resultLoading, setResultLoading] = useState(false);
   const [result, setResult] = useState<TranslationResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<TranslateError | null>(null);
   const [partial, setPartial] = useState<PartialTranslation>(EMPTY_PARTIAL);
 
   const translationType = useTranslateStore((s) => s.translationType);
@@ -152,14 +186,14 @@ export function useTranslate() {
 
     if (input.type && !input.type.startsWith("image/")) {
       const message = "That file is not an image.";
-      setError(message);
+      setError({ code: "generic", message });
       toast.error(message);
       return;
     }
 
     if (input.size > MAX_IMAGE_BYTES) {
       const message = `That photo is over ${Math.round(MAX_IMAGE_BYTES / (1024 * 1024))} MB. Crop it and try again.`;
-      setError(message);
+      setError({ code: "generic", message });
       toast.error(message);
       return;
     }
@@ -169,7 +203,7 @@ export function useTranslate() {
       setError(null);
     } catch {
       const message = "That image could not be read.";
-      setError(message);
+      setError({ code: "generic", message });
       toast.error(message);
     }
   }, []);
@@ -257,9 +291,18 @@ export function useTranslate() {
       });
 
       if (!res.ok || !res.body) {
-        const body = await res.json().catch(() => null);
+        const body = (await res.json().catch(() => null)) as Record<
+          string,
+          unknown
+        > | null;
+
+        const quota = quotaError(res, body);
+        if (quota) throw quota;
+
         throw new Error(
-          body?.error || "Translation failed. Try again shortly.",
+          typeof body?.error === "string"
+            ? body.error
+            : "Translation failed. Try again shortly.",
         );
       }
 
@@ -311,12 +354,14 @@ export function useTranslate() {
       setPartial(EMPTY_PARTIAL);
     } catch (err) {
       if (controller.signal.aborted) return;
-      const message =
-        err instanceof Error ? err.message : "Something went wrong. Try again.";
-      setError(message);
+      const failure = toError(err);
+      setError(failure);
+      if (failure.code !== "generic") {
+        queryClient.invalidateQueries({ queryKey: BILLING_KEY });
+      }
       setResultLoading(false);
       setPartial(EMPTY_PARTIAL);
-      toast.error(message);
+      if (failure.code === "generic" && failure.message) toast.error(failure.message);
       return;
     }
 
@@ -331,6 +376,7 @@ export function useTranslate() {
     translationType,
     explainLang,
     persist,
+    queryClient,
   ]);
 
   const handlePasteInline = useCallback(async () => {

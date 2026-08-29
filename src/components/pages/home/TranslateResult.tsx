@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { Lightbulb, Quote, Sparkles } from "lucide-react";
 import CopyButton from "@/components/ui/copy-button";
+import QuotaPaywall, { isQuotaError } from "@/components/pages/billing/QuotaPaywall";
 import SpeakButton from "@/components/ui/speak-button";
 import { getLanguage, isRTL, langFlag, langName } from "@/lib/languages";
 import { useTranslateStore } from "@/store/useTranslateStore";
@@ -222,9 +223,11 @@ export default function TranslateResult({
   if (resultLoading) return <TranslatingPanel image={image} partial={partial} />;
 
   if (error && !result) {
+    if (isQuotaError(error)) return <QuotaPaywall error={error} />;
+
     return (
       <div className="surface-card border-destructive/30 bg-destructive/5 p-5">
-        <p className="text-sm font-medium text-destructive">{error}</p>
+        <p className="text-sm font-medium text-destructive">{error.message}</p>
         <p className="mt-1 text-xs text-muted-foreground">{t("errorHint")}</p>
       </div>
     );

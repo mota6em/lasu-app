@@ -17,6 +17,7 @@ export default async function handler(
       name: session.user.name,
       image: session.user.image,
       email: session.user.email,
+      tier: session.user.tier ?? "free",
     },
   });
 }

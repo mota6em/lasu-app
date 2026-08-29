@@ -1,7 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@/lib/mongodb";
-import { User } from "@/models/user";
+import { User, type ISubscription } from "@/models/user";
+import { effectiveTier } from "@/lib/entitlement";
 import type { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
 
@@ -34,22 +35,26 @@ export const authOptions = {
           token.id = newUser._id.toString();
           token.name = newUser.name;
           token.picture = newUser.image;
-          token.tier = newUser.tier;
+          token.tier = effectiveTier(newUser);
           token.tierAt = Date.now();
         } else {
           token.id = dbUser._id.toString();
           token.name = dbUser.name;
           token.picture = dbUser.image;
-          token.tier = dbUser.tier ?? "free";
+          token.tier = effectiveTier(dbUser);
           token.tierAt = Date.now();
         }
       }
 
-      if (token.id && Date.now() - (token.tierAt ?? 0) > TIER_TTL_MS) {
+      const forceTier = trigger === "update" && session?.tier === true;
+
+      if (token.id && (forceTier || Date.now() - (token.tierAt ?? 0) > TIER_TTL_MS)) {
         try {
           await connectToDB();
-          const fresh = await User.findById(token.id).select("tier").lean();
-          token.tier = (fresh as { tier?: string } | null)?.tier ?? "free";
+          const fresh = await User.findById(token.id)
+            .select("tier subscription")
+            .lean<{ tier?: "free" | "pro"; subscription?: ISubscription } | null>();
+          token.tier = fresh ? effectiveTier(fresh) : "free";
           token.tierAt = Date.now();
         } catch (err) {
           console.error("tier refresh failed, keeping cached tier:", err);

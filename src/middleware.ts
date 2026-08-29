@@ -2,19 +2,38 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import createIntlMiddleware from "next-intl/middleware";
-import { rateLimit } from "./lib/rateLimit";
+import { rateLimit, type RateLimitResult } from "./lib/rateLimit";
+import {
+  audienceFor,
+  BURST_LIMIT,
+  BURST_WINDOW,
+  quotaFor,
+  quotaIdentifier,
+  QUOTA_WINDOW,
+  type Audience,
+} from "./lib/quota";
 import { routing } from "./i18n/routing";
 
-const allowedOrigins = ["https://lasu.online", "https://www.lasu.online"];
+const allowedOrigins = [
+  "https://lasu.online",
+  "https://www.lasu.online",
+  ...(process.env.NODE_ENV === "development"
+    ? ["http://localhost:3000", "http://127.0.0.1:3000"]
+    : []),
+];
 
 const EXT_ID = "chrome-extension://jllhdgojepfdpmlppkccogdobopmiaok";
 const SEC_KEY = process.env.LASU_API_SEC_KEY!;
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 
+const IS_DEV = process.env.NODE_ENV === "development";
+
 const intlMiddleware = createIntlMiddleware(routing);
 
 function isAllowedOrigin(origin: string | null) {
-  return !!origin && (allowedOrigins.includes(origin) || origin === EXT_ID);
+  if (!origin) return false;
+  if (allowedOrigins.includes(origin) || origin === EXT_ID) return true;
+  return IS_DEV && origin.startsWith("chrome-extension://");
 }
 
 // Browsers omit Origin on same-origin GETs, so the app's own fetches arrive
@@ -48,21 +67,44 @@ function getClientIp(req: NextRequest) {
   return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
+function quotaHeaders(headers: Headers, limit: number, result: RateLimitResult) {
+  headers.set("x-lasu-quota-limit", String(limit));
+  headers.set("x-lasu-quota-used", String(Math.min(result.count, limit)));
+  headers.set("x-lasu-quota-remaining", String(result.remaining));
+  if (result.resetAt) headers.set("x-lasu-quota-reset", String(result.resetAt));
+}
+
+function allowWithQuota(limit: number, result: RateLimitResult, audience: Audience) {
+  const response = NextResponse.next();
+  quotaHeaders(response.headers, limit, result);
+  response.headers.set("x-lasu-tier", audience === "pro" ? "pro" : "free");
+  return response;
+}
+
 function rateLimited(
   status: number,
   error: string,
+  result: RateLimitResult,
   extra?: Record<string, unknown>,
-  resetAt?: number,
 ) {
   const headers = new Headers();
-  if (resetAt) {
+  if (result.resetAt) {
     headers.set(
       "Retry-After",
-      String(Math.max(0, Math.ceil((resetAt - Date.now()) / 1000))),
+      String(Math.max(0, Math.ceil((result.resetAt - Date.now()) / 1000))),
     );
   }
+  quotaHeaders(headers, result.limit, result);
+
   return NextResponse.json(
-    { error, ...(resetAt ? { resetTime: resetAt } : {}), ...extra },
+    {
+      error,
+      limit: result.limit,
+      used: Math.min(result.count, result.limit),
+      remaining: result.remaining,
+      ...(result.resetAt ? { resetTime: result.resetAt } : {}),
+      ...extra,
+    },
     { status, headers },
   );
 }
@@ -71,6 +113,10 @@ async function handleApi(req: NextRequest) {
   const origin = req.headers.get("origin");
   const method = req.method;
   const path = req.nextUrl.pathname;
+
+  if (path.startsWith("/api/webhooks/")) {
+    return NextResponse.next();
+  }
 
   // NextAuth's own routes (OAuth redirect + callback, CSRF, session, signout)
   // are driven by top-level browser navigation, not fetch/XHR — browsers send
@@ -100,6 +146,10 @@ async function handleApi(req: NextRequest) {
       "Access-Control-Allow-Headers",
       "Content-Type, lasu-api-sec-key, x-lasu-api-key, x-device-id",
     );
+    headers.set(
+      "Access-Control-Expose-Headers",
+      "x-lasu-quota-limit, x-lasu-quota-used, x-lasu-quota-remaining, x-lasu-quota-reset, x-lasu-tier",
+    );
     return new NextResponse(null, { status: 204, headers });
   }
 
@@ -127,12 +177,12 @@ async function handleApi(req: NextRequest) {
   }
 
   // ---------------------------
-  // Layer 1 — anti-abuse burst (10 req/min per IP)
+  // Layer 1 — anti-abuse burst (per IP)
   // ---------------------------
   const clientIp = getClientIp(req);
-  const burst = await rateLimit(`ip:${clientIp}`, 10, "1m");
+  const burst = await rateLimit(`ip:${clientIp}`, BURST_LIMIT, BURST_WINDOW);
   if (!burst.ok) {
-    return rateLimited(429, "Too many requests", undefined, burst.resetAt);
+    return rateLimited(429, "Too many requests", burst);
   }
 
   // Only /api/translate spends LLM budget — /api/translation/save just rides
@@ -148,28 +198,26 @@ async function handleApi(req: NextRequest) {
     ? await getToken({ req, secret: NEXTAUTH_SECRET }).catch(() => null)
     : null;
 
-  if (!token?.id) {
-    const guest = await rateLimit(`quota:guest:${clientIp}`, 5, "1d");
-    if (!guest.ok) {
-      return rateLimited(401, "login_required", undefined, guest.resetAt);
-    }
-    return NextResponse.next();
+  const signedIn = Boolean(token?.id);
+  const audience = audienceFor(signedIn, token?.tier);
+  const limit = quotaFor(audience);
+  const identity = signedIn ? (token!.id as string) : clientIp;
+
+  const quota = await rateLimit(quotaIdentifier(audience, identity), limit, QUOTA_WINDOW);
+
+  if (quota.ok) {
+    return allowWithQuota(limit, quota, audience);
   }
 
-  if (token.tier === "pro") {
-    const pro = await rateLimit(`quota:user:${token.id}`, 300, "1d");
-    if (!pro.ok) {
-      return rateLimited(429, "quota_exceeded", undefined, pro.resetAt);
-    }
-    return NextResponse.next();
+  if (audience === "guest") {
+    return rateLimited(401, "login_required", quota);
   }
 
-  const free = await rateLimit(`quota:user:${token.id}`, 20, "1d");
-  if (!free.ok) {
-    return rateLimited(402, "upgrade_required", undefined, free.resetAt);
+  if (audience === "pro") {
+    return rateLimited(429, "quota_exceeded", quota, { tier: "pro" });
   }
 
-  return NextResponse.next();
+  return rateLimited(402, "upgrade_required", quota, { tier: "free" });
 }
 
 export async function middleware(req: NextRequest) {

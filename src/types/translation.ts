@@ -1,3 +1,4 @@
+import type { TranslateError } from "./billing";
 import type { PartialTranslation } from "@/lib/partialTranslation";
 
 export interface TranslationResult {
@@ -32,7 +33,7 @@ export interface TranslateHook {
   setImage: (input: File | Blob | string | null) => Promise<void>;
   clearImage: () => void;
   resultLoading: boolean;
-  error: string | null;
+  error: TranslateError | null;
   result: TranslationResult | null;
   partial: PartialTranslation;
   submittedText: string;

@@ -8,6 +8,7 @@ import LanguageSwitcher from "@/components/fixedComponents/LanguageSwitcher";
 import Footer from "@/components/fixedComponents/Footer";
 import ScrollToTop from "@/components/fixedComponents/ScrollToTop";
 import Topbar from "@/components/topbar/Topbar";
+import UpgradeDialog from "@/components/pages/billing/UpgradeDialog";
 import { useLanguageDialog } from "@/store/useLanguageDialog";
 
 export default function DashboardLayoutClient({
@@ -25,6 +26,7 @@ export default function DashboardLayoutClient({
       <Suspense fallback={null}>
         <LanguageSwitcher open={languageOpen} onOpenChange={setLanguageOpen} />
       </Suspense>
+      <UpgradeDialog />
       <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
       <div className="flex min-h-screen flex-col lg:ps-64">

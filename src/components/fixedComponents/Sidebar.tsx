@@ -6,7 +6,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Flame, LogOut, Settings, Sparkles, X, Zap } from "lucide-react";
+import { Crown, Flame, LogOut, Settings, Sparkles, X, Zap } from "lucide-react";
 import NavIcon from "./NavIcon";
 import Logo from "@/components/brand/Logo";
 import TranslationSettingDialog from "../pages/settings/TranslationSettingDialog";
@@ -14,6 +14,7 @@ import { Link, usePathname } from "@/i18n/routing";
 import { navItems, prefetchRoute } from "@/lib/nav";
 import { useSettingsDialog } from "@/store/useSettingsDialog";
 import { useUserStats } from "@/hooks/useUserStats";
+import { useBilling } from "@/hooks/useBilling";
 import { cn } from "@/lib/utils";
 
 function StreakCard() {
@@ -46,6 +47,73 @@ function StreakCard() {
   );
 }
 
+function UpgradeCard({ onNavigate }: { onNavigate: () => void }) {
+  const t = useTranslations("billing");
+  const { status } = useSession();
+  const { isPro, quota, isLoading } = useBilling();
+
+  if (status === "unauthenticated" || isLoading) return null;
+
+  if (isPro) {
+    return (
+      <Link
+        href="/dashboard/upgrade"
+        onClick={onNavigate}
+        title={t("manage")}
+        className="lift block rounded-xl border border-brand-500/25 bg-gradient-to-br from-brand-500/12 to-iris-500/10 p-3 hover:border-brand-500/45"
+      >
+        <div className="flex items-center gap-2">
+          <Crown className="h-4 w-4 text-brand-500" />
+          <p className="text-sm font-semibold">{t("sidebarPro")}</p>
+        </div>
+        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+          {t("sidebarProBody")}
+        </p>
+      </Link>
+    );
+  }
+
+  const used = quota?.used ?? 0;
+  const limit = quota?.limit ?? 0;
+  const percent = limit ? Math.min(100, (used / limit) * 100) : 0;
+
+  return (
+    <Link
+      href="/dashboard/upgrade"
+      onClick={onNavigate}
+      className="lift block rounded-xl border border-border bg-surface-2 p-3 hover:border-brand-400"
+    >
+      <div className="flex items-center gap-2">
+        <Sparkles className="h-4 w-4 text-brand-500" />
+        <p className="text-sm font-semibold">{t("sidebarTitle")}</p>
+      </div>
+
+      {limit > 0 && (
+        <>
+          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-surface-3">
+            <div
+              className={cn(
+                "h-full rounded-full transition-[width] duration-500",
+                percent >= 100
+                  ? "bg-destructive"
+                  : "bg-gradient-to-r from-brand-500 to-iris-500"
+              )}
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-[11px] text-muted-foreground">
+            {t("sidebarBody", { used, limit })}
+          </p>
+        </>
+      )}
+
+      <span className="mt-2.5 inline-flex w-full items-center justify-center rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-[var(--shadow-brand)]">
+        {t("upgrade")}
+      </span>
+    </Link>
+  );
+}
+
 export function Sidebar({
   mobileOpen,
   setMobileOpen,
@@ -58,6 +126,7 @@ export function Sidebar({
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const { isOpen, toggleSettingsDialog } = useSettingsDialog();
+  const { isPro } = useBilling();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -161,6 +230,25 @@ export function Sidebar({
               );
             })}
 
+            {!isPro && (
+              <li>
+                <Link
+                  href="/dashboard/upgrade"
+                  onClick={() => setMobileOpen(false)}
+                  aria-current={pathname === "/dashboard/upgrade" ? "page" : undefined}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    pathname === "/dashboard/upgrade"
+                      ? "border border-brand-500/25 bg-brand-500/10 text-foreground"
+                      : "text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+                  )}
+                >
+                  <Crown className="h-[18px] w-[18px] shrink-0 text-brand-500" />
+                  <span>{t("upgrade")}</span>
+                </Link>
+              </li>
+            )}
+
             <li>
               <button
                 onClick={toggleSettingsDialog}
@@ -197,6 +285,7 @@ export function Sidebar({
         </nav>
 
         <div className="space-y-3 border-t border-border p-3">
+          <UpgradeCard onNavigate={() => setMobileOpen(false)} />
           <StreakCard />
 
           {session?.user && (
