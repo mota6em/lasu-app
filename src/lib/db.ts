@@ -1,78 +1,97 @@
 import { ObjectId } from "mongodb";
 import clientPromise from "./mongodb";
+import { effectiveTier } from "./entitlement";
+import { isDue, normalizeSchedule, windowStart, type DigestSchedule } from "./summarySchedule";
+import type { ISubscription } from "@/models/user";
 
-export async function getAllUsersWithTranslations(period: "week" | "day") {
+type DueUser = {
+  user: Record<string, unknown> & { _id: ObjectId; email: string };
+  translations: Record<string, unknown>[];
+  community: { streak?: number; xp?: number; level?: number; rank?: number };
+  schedule: DigestSchedule;
+  isPro: boolean;
+  since: Date;
+};
+
+export async function getDueSummaries(at = new Date()): Promise<DueUser[]> {
   const client = await clientPromise;
   const db = client.db("lasu");
 
-  const now = new Date();
-  const startDate =
-    period === "week"
-      ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      : new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
-  // only pull translations in range, and only the fields the email templates use
-  const translations = await db
-    .collection("translations")
+  const candidates = await db
+    .collection("users")
     .find(
-      { createdAt: { $gte: startDate } },
+      { emailSummary: { $ne: false } },
       {
         projection: {
-          userId: 1,
-          sourceText: 1,
+          email: 1,
+          name: 1,
+          image: 1,
+          selectedLanguages: 1,
           translationType: 1,
-          result: 1,
           createdAt: 1,
+          tier: 1,
+          subscription: 1,
+          emailDigest: 1,
         },
-      }
+      },
     )
     .toArray();
 
-  if (translations.length === 0) return [];
+  const due = candidates.flatMap((user) => {
+    const isPro =
+      effectiveTier(
+        user as { tier?: "free" | "pro"; subscription?: ISubscription | null },
+        at.getTime(),
+      ) === "pro";
+    const schedule = normalizeSchedule(user.emailDigest, isPro);
+    const lastSentAt = user.emailDigest?.lastSentAt ? new Date(user.emailDigest.lastSentAt) : null;
+    if (!isDue(schedule, lastSentAt, at)) return [];
+    return [{ user, schedule, isPro, since: windowStart(schedule, lastSentAt, at) }];
+  });
 
-  // group translations by userId in one pass instead of filtering per user
-  const translationsByUserId = new Map<string, typeof translations>();
-  for (const t of translations) {
-    const list = translationsByUserId.get(t.userId);
-    if (list) list.push(t);
-    else translationsByUserId.set(t.userId, [t]);
-  }
+  if (!due.length) return [];
 
-  // only fetch users who actually have translations in range, not the whole collection
-  const userIds = Array.from(translationsByUserId.keys()).map(
-    (id) => new ObjectId(id)
+  const ids = due.map((entry) => entry.user._id.toString());
+  const earliest = due.reduce(
+    (min, entry) => (entry.since < min ? entry.since : min),
+    due[0].since,
   );
 
-  const communityStats = await db
-    .collection("communityusers")
-    .find(
-      { userId: { $in: Array.from(translationsByUserId.keys()) } },
-      { projection: { userId: 1, streak: 1, xp: 1, level: 1, rank: 1 } }
-    )
-    .toArray();
+  const [translations, communityStats] = await Promise.all([
+    db
+      .collection("translations")
+      .find(
+        { userId: { $in: ids }, createdAt: { $gte: earliest } },
+        { projection: { userId: 1, sourceText: 1, translationType: 1, result: 1, createdAt: 1 } },
+      )
+      .toArray(),
+    db
+      .collection("communityusers")
+      .find(
+        { userId: { $in: ids } },
+        { projection: { userId: 1, streak: 1, xp: 1, level: 1, rank: 1 } },
+      )
+      .toArray(),
+  ]);
 
-  const statsByUserId = new Map(communityStats.map((c) => [c.userId, c]));
+  const byUser = new Map<string, typeof translations>();
+  for (const item of translations) {
+    const list = byUser.get(item.userId);
+    if (list) list.push(item);
+    else byUser.set(item.userId, [item]);
+  }
 
-  const users = await db.collection("users").find(
-    { _id: { $in: userIds }, emailSummary: { $ne: false } },
-    {
-      projection: {
-        email: 1,
-        name: 1,
-        image: 1,
-        selectedLanguages: 1,
-        translationType: 1,
-        createdAt: 1,
-      },
-    }
-  ).toArray();
+  const statsByUser = new Map(communityStats.map((entry) => [entry.userId, entry]));
 
-  return users.map((user) => {
-    const id = user._id.toString();
-    const stats = statsByUserId.get(id);
+  return due.map((entry) => {
+    const id = entry.user._id.toString();
+    const stats = statsByUser.get(id);
     return {
-      user,
-      translations: translationsByUserId.get(id) || [],
+      ...entry,
+      user: entry.user as DueUser["user"],
+      translations: (byUser.get(id) || []).filter(
+        (item) => new Date(item.createdAt) >= entry.since,
+      ),
       community: {
         streak: stats?.streak,
         xp: stats?.xp,
@@ -81,4 +100,16 @@ export async function getAllUsersWithTranslations(period: "week" | "day") {
       },
     };
   });
+}
+
+export async function markSummariesSent(userIds: string[], at: Date) {
+  if (!userIds.length) return;
+  const client = await clientPromise;
+  await client
+    .db("lasu")
+    .collection("users")
+    .updateMany(
+      { _id: { $in: userIds.map((id) => new ObjectId(id)) } },
+      { $set: { "emailDigest.lastSentAt": at } },
+    );
 }

@@ -1,12 +1,10 @@
 import { Session } from "next-auth";
 import Settings from "@/types/settings";
 
-export const saveSettings = async (
-  settings: Settings,
-  session: Session | null
-) => {
+export const saveSettings = async (settings: Settings, session: Session | null) => {
   if (!session?.user?.id) {
-    localStorage.setItem("lasu-settings", JSON.stringify(settings));
+    const { emailSummary, emailDigest, ...local } = settings;
+    localStorage.setItem("lasu-settings", JSON.stringify(local));
     return;
   }
 
@@ -18,6 +16,7 @@ export const saveSettings = async (
   });
 
   if (!res.ok) throw new Error("Could not save your preferences.");
+  return res.json();
 };
 
 export default saveSettings;

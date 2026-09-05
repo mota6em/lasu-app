@@ -132,8 +132,8 @@
     "loadingWaiting": "En attente"
   },
   "settings": {
-    "title": "Préférences de traduction",
-    "description": "Choisissez les langues que vous apprenez et le registre que vous voulez recevoir.",
+    "title": "Préférences",
+    "description": "Vos langues, le registre que vous recevez et l’heure de vos récapitulatifs.",
     "register": "Registre",
     "registerHint": "S'applique à toutes les traductions",
     "targets": "Langues cibles",
@@ -145,7 +145,23 @@
     "saved": "Préférences enregistrées",
     "saveFailed": "Impossible d'enregistrer vos préférences. Réessayez.",
     "keepOne": "Gardez au moins une langue sélectionnée.",
-    "maxReached": "Quatre langues à la fois, c'est le bon équilibre."
+    "maxReached": "Quatre langues à la fois, c'est le bon équilibre.",
+    "emailTitle": "Récapitulatifs par e-mail",
+    "emailEnable": "M’envoyer des récapitulatifs",
+    "emailHint": "Un résumé de vos traductions, directement dans votre boîte.",
+    "emailNext": "Le prochain : {when}",
+    "emailDays": "Jours",
+    "emailTime": "Heure ({zone})",
+    "emailContent": "Ce qu’il contient",
+    "emailWordsOnly": "Mots seulement",
+    "emailWordsOnlyHint": "Les mots que vous avez cherchés.",
+    "emailWordsSentences": "Mots + phrases",
+    "emailWordsSentencesHint": "Aussi chaque phrase que vous avez traduite.",
+    "emailFixed": "Avec l’offre gratuite, les récapitulatifs arrivent tous les {days} jours à {hour}, avec vos mots uniquement.",
+    "emailUpgrade": "Choisir votre horaire",
+    "emailNoDays": "Aucun jour choisi — les récapitulatifs continuent d’arriver tous les {days} jours, à l’heure choisie.",
+    "emailOff": "Désactivé",
+    "emailEvery": "Tous les {days} jours · {hour}"
   },
   "overview": {
     "total": "Traductions totales",
@@ -327,8 +343,6 @@
     "locked": "Verrouillés",
     "requiredXp": "{xp} XP",
     "displayName": "Nom affiché",
-    "emailSummaries": "Résumés par e-mail",
-    "emailSummariesHint": "Un récapitulatif de ce que vous avez appris",
     "saveChanges": "Enregistrer",
     "saving": "Enregistrement…",
     "noEmail": "pas d'e-mail",
@@ -531,6 +545,11 @@
     "notIncluded": "Non inclus",
     "lifetimeUpsellTitle": "Échange-le contre l'accès à vie",
     "lifetimeUpsellBody": "Paie une fois et on arrête ton renouvellement — tu gardes Pro pour toujours, sans rien de plus à payer.",
-    "lifetimeUpsellNote": "Ton renouvellement est annulé automatiquement. Rien de ce que tu as déjà payé n'est perdu."
+    "lifetimeUpsellNote": "Ton renouvellement est annulé automatiquement. Rien de ce que tu as déjà payé n'est perdu.",
+    "perkScheduleTitle": "Des récapitulatifs à votre rythme",
+    "perkScheduleBody": "Choisissez les jours et l’heure, et ajoutez chaque phrase traduite.",
+    "featureSummaries": "Récapitulatifs par e-mail",
+    "featureSummariesFree": "Tous les 3 jours, 18:00",
+    "featureSummariesPro": "Vos jours et votre heure"
   }
 }

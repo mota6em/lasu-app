@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ClipboardPaste, CornerDownLeft, Loader2, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TONES, useTranslateStore } from "@/store/useTranslateStore";
+import { useSettingsDialog } from "@/store/useSettingsDialog";
 import { getLanguage } from "@/lib/languages";
 import { cn } from "@/lib/utils";
 import type { TranslateHook } from "@/types/translation";
@@ -26,7 +27,6 @@ type Props = Pick<
   | "setText"
   | "handleTranslate"
   | "handlePasteInline"
-  | "toggleSettingsDialog"
   | "resultLoading"
 >;
 
@@ -35,11 +35,12 @@ export default function TranslateComposer({
   setText,
   handleTranslate,
   handlePasteInline,
-  toggleSettingsDialog,
   resultLoading,
 }: Props) {
   const t = useTranslations("composer");
   const tTone = useTranslations("tone");
+  const openTargets = () =>
+    useSettingsDialog.setState({ isOpen: true, section: "targets" });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const appliedFromUrl = useRef<string | null>(null);
   const searchParams = useSearchParams();
@@ -109,7 +110,7 @@ export default function TranslateComposer({
                 <button
                   key={lang.value}
                   type="button"
-                  onClick={toggleSettingsDialog}
+                  onClick={openTargets}
                   title={t("changeTargets")}
                   className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-1 text-xs font-medium transition-colors hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/40"
                 >
@@ -121,7 +122,7 @@ export default function TranslateComposer({
             {selectedLanguages.length < 4 && (
               <button
                 type="button"
-                onClick={toggleSettingsDialog}
+                onClick={openTargets}
                 className="inline-flex h-[26px] items-center gap-1 rounded-full border border-dashed border-border-strong px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-brand-400 hover:text-brand-600"
               >
                 {t("add")}

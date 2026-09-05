@@ -132,8 +132,8 @@
     "loadingWaiting": "In attesa"
   },
   "settings": {
-    "title": "Preferenze di traduzione",
-    "description": "Scegli le lingue che stai imparando e il registro che vuoi ricevere.",
+    "title": "Preferenze",
+    "description": "Le tue lingue, il registro che ricevi e quando arrivano i tuoi riepiloghi.",
     "register": "Registro",
     "registerHint": "Vale per ogni traduzione",
     "targets": "Lingue di destinazione",
@@ -145,7 +145,23 @@
     "saved": "Preferenze salvate",
     "saveFailed": "Non è stato possibile salvare le preferenze. Riprova.",
     "keepOne": "Tieni selezionata almeno una lingua.",
-    "maxReached": "Quattro lingue alla volta sono il giusto equilibrio."
+    "maxReached": "Quattro lingue alla volta sono il giusto equilibrio.",
+    "emailTitle": "Riepiloghi via e-mail",
+    "emailEnable": "Inviami i riepiloghi",
+    "emailHint": "Un riassunto di ciò che hai tradotto, direttamente nella tua casella.",
+    "emailNext": "Il prossimo: {when}",
+    "emailDays": "Giorni",
+    "emailTime": "Ora ({zone})",
+    "emailContent": "Cosa includere",
+    "emailWordsOnly": "Solo parole",
+    "emailWordsOnlyHint": "Le singole parole che hai cercato.",
+    "emailWordsSentences": "Parole + frasi",
+    "emailWordsSentencesHint": "Anche ogni frase che hai tradotto.",
+    "emailFixed": "Nel piano gratuito i riepiloghi arrivano ogni {days} giorni alle {hour}, solo con le tue parole.",
+    "emailUpgrade": "Scegli i tuoi orari",
+    "emailNoDays": "Nessun giorno scelto: i riepiloghi continuano ad arrivare ogni {days} giorni, all’ora che hai scelto.",
+    "emailOff": "Disattivo",
+    "emailEvery": "Ogni {days} giorni · {hour}"
   },
   "overview": {
     "total": "Traduzioni totali",
@@ -327,8 +343,6 @@
     "locked": "Bloccati",
     "requiredXp": "{xp} XP",
     "displayName": "Nome visualizzato",
-    "emailSummaries": "Riepiloghi via email",
-    "emailSummariesHint": "Un riassunto di quello che hai imparato",
     "saveChanges": "Salva modifiche",
     "saving": "Salvataggio…",
     "noEmail": "nessuna email",
@@ -531,6 +545,11 @@
     "notIncluded": "Non incluso",
     "lifetimeUpsellTitle": "Passa a vita",
     "lifetimeUpsellBody": "Paghi una volta e fermiamo il rinnovo: tieni Pro per sempre, senza altro da pagare.",
-    "lifetimeUpsellNote": "Il rinnovo viene annullato in automatico. Non perdi nulla di ciò che hai già pagato."
+    "lifetimeUpsellNote": "Il rinnovo viene annullato in automatico. Non perdi nulla di ciò che hai già pagato.",
+    "perkScheduleTitle": "Riepiloghi quando vuoi tu",
+    "perkScheduleBody": "Scegli i giorni e l’ora, e aggiungi ogni frase che hai tradotto.",
+    "featureSummaries": "Riepiloghi via e-mail",
+    "featureSummariesFree": "Ogni 3 giorni, 18:00",
+    "featureSummariesPro": "I tuoi giorni e la tua ora"
   }
 }

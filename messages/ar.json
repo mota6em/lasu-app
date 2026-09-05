@@ -132,8 +132,8 @@
     "loadingWaiting": "جارٍ الانتظار"
   },
   "settings": {
-    "title": "تفضيلات الترجمة",
-    "description": "اختر اللغات التي تتعلّمها والأسلوب الذي تريد أن تصلك به الترجمة.",
+    "title": "التفضيلات",
+    "description": "لغاتك، والأسلوب الذي تصلك به الترجمة، وموعد وصول ملخّصاتك.",
     "register": "الأسلوب",
     "registerHint": "يُطبَّق على كل ترجمة",
     "targets": "اللغات المستهدفة",
@@ -145,7 +145,23 @@
     "saved": "تم حفظ التفضيلات",
     "saveFailed": "تعذّر حفظ تفضيلاتك. حاول مرة أخرى.",
     "keepOne": "أبقِ لغة واحدة على الأقل محددة.",
-    "maxReached": "أربع لغات في المرة الواحدة هي العدد المثالي."
+    "maxReached": "أربع لغات في المرة الواحدة هي العدد المثالي.",
+    "emailTitle": "ملخّصات البريد",
+    "emailEnable": "أرسل لي الملخّصات",
+    "emailHint": "خلاصة لما ترجمته، تصل إلى بريدك مباشرة.",
+    "emailNext": "التالي: {when}",
+    "emailDays": "الأيام",
+    "emailTime": "الوقت ({zone})",
+    "emailContent": "ما الذي يُضمَّن",
+    "emailWordsOnly": "الكلمات فقط",
+    "emailWordsOnlyHint": "الكلمات المفردة التي بحثت عنها.",
+    "emailWordsSentences": "الكلمات والجُمل",
+    "emailWordsSentencesHint": "وكل جملة ترجمتها أيضًا.",
+    "emailFixed": "في الخطة المجانية تصل الملخّصات كل {days} أيام عند {hour}، وبالكلمات فقط.",
+    "emailUpgrade": "اختر جدولك الخاص",
+    "emailNoDays": "لم تختر أيامًا — ستظل الملخّصات تصل كل {days} أيام، في الوقت الذي اخترته.",
+    "emailOff": "معطّل",
+    "emailEvery": "كل {days} أيام · {hour}"
   },
   "overview": {
     "total": "إجمالي الترجمات",
@@ -327,8 +343,6 @@
     "locked": "مقفلة",
     "requiredXp": "{xp} نقطة",
     "displayName": "الاسم الظاهر",
-    "emailSummaries": "ملخّصات بالبريد",
-    "emailSummariesHint": "مراجعة سريعة لما تعلّمته",
     "saveChanges": "حفظ التغييرات",
     "saving": "جارٍ الحفظ…",
     "noEmail": "لا يوجد بريد",
@@ -531,6 +545,11 @@
     "notIncluded": "غير مشمول",
     "lifetimeUpsellTitle": "استبدلها باشتراك مدى الحياة",
     "lifetimeUpsellBody": "ادفع مرة واحدة ونوقف التجديد نيابةً عنك — يبقى Pro لك للأبد، دون أي مبالغ أخرى.",
-    "lifetimeUpsellNote": "يُلغى التجديد تلقائيًا، ولا تفقد شيئًا مما دفعته بالفعل."
+    "lifetimeUpsellNote": "يُلغى التجديد تلقائيًا، ولا تفقد شيئًا مما دفعته بالفعل.",
+    "perkScheduleTitle": "ملخّصات على جدولك أنت",
+    "perkScheduleBody": "اختر الأيام والساعة، وأضِف كل جملة ترجمتها.",
+    "featureSummaries": "ملخّصات البريد",
+    "featureSummariesFree": "كل 3 أيام، 18:00",
+    "featureSummariesPro": "أيامك وساعتك"
   }
 }

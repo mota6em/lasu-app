@@ -1,4 +1,5 @@
 import { Schema, Document, models, model } from "mongoose";
+import { FREE_HOUR } from "@/lib/summarySchedule";
 
 export type SubscriptionStatus =
   | "none"
@@ -31,6 +32,14 @@ export interface ISubscription {
   updatedAt?: Date;
 }
 
+export interface IEmailDigest {
+  hour: number;
+  days: number[];
+  includeSentences: boolean;
+  timeZone: string;
+  lastSentAt?: Date | null;
+}
+
 export interface IUser extends Document {
   email: string;
   name?: string;
@@ -39,6 +48,7 @@ export interface IUser extends Document {
   translationType: string;
   createdAt: Date;
   emailSummary: boolean;
+  emailDigest: IEmailDigest;
   tier: "free" | "pro";
   subscription?: ISubscription;
 }
@@ -80,6 +90,17 @@ const subscriptionSchema = new Schema<ISubscription>(
   { _id: false },
 );
 
+const emailDigestSchema = new Schema<IEmailDigest>(
+  {
+    hour: { type: Number, default: FREE_HOUR, min: 0, max: 23 },
+    days: { type: [Number], default: [] },
+    includeSentences: { type: Boolean, default: false },
+    timeZone: { type: String, default: "UTC" },
+    lastSentAt: { type: Date, default: null },
+  },
+  { _id: false },
+);
+
 const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   name: { type: String, required: true },
@@ -87,11 +108,13 @@ const userSchema = new Schema({
   selectedLanguages: { type: [String], default: ["english", "spanish"] },
   translationType: { type: String, default: "formal" },
   emailSummary: { type: Boolean, default: true },
+  emailDigest: { type: emailDigestSchema, default: () => ({}) },
   createdAt: { type: Date, default: Date.now },
   tier: { type: String, enum: ["free", "pro"], default: "free" },
   subscription: { type: subscriptionSchema, default: () => ({}) },
 });
 
+userSchema.index({ emailSummary: 1 });
 userSchema.index({ "subscription.customerId": 1 });
 userSchema.index({ "subscription.subscriptionId": 1 });
 

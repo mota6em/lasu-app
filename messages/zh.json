@@ -132,8 +132,8 @@
     "loadingWaiting": "等待中"
   },
   "settings": {
-    "title": "翻译偏好",
-    "description": "选择你正在学的语言，以及希望得到的语域。",
+    "title": "偏好设置",
+    "description": "你的语言、希望得到的语域，以及摘要送达的时间。",
     "register": "语域",
     "registerHint": "对所有翻译生效",
     "targets": "目标语言",
@@ -145,7 +145,23 @@
     "saved": "偏好已保存",
     "saveFailed": "无法保存你的偏好，请重试。",
     "keepOne": "至少要保留一种语言。",
-    "maxReached": "一次四种语言刚刚好。"
+    "maxReached": "一次四种语言刚刚好。",
+    "emailTitle": "邮件摘要",
+    "emailEnable": "给我发送摘要",
+    "emailHint": "把你翻译过的内容汇总，直接送到收件箱。",
+    "emailNext": "下一封：{when}",
+    "emailDays": "日期",
+    "emailTime": "时间（{zone}）",
+    "emailContent": "包含内容",
+    "emailWordsOnly": "仅单词",
+    "emailWordsOnlyHint": "你查过的单个词。",
+    "emailWordsSentences": "单词 + 句子",
+    "emailWordsSentencesHint": "还包括你翻译过的每个句子。",
+    "emailFixed": "免费方案的摘要每 {days} 天在 {hour} 送达，且只含单词。",
+    "emailUpgrade": "自选时间表",
+    "emailNoDays": "未选择日期 — 摘要仍会按你选定的时间，每 {days} 天送达。",
+    "emailOff": "已关闭",
+    "emailEvery": "每 {days} 天 · {hour}"
   },
   "overview": {
     "total": "翻译总数",
@@ -327,8 +343,6 @@
     "locked": "未解锁",
     "requiredXp": "{xp} XP",
     "displayName": "显示名称",
-    "emailSummaries": "邮件总结",
-    "emailSummariesHint": "回顾你学过的内容",
     "saveChanges": "保存更改",
     "saving": "保存中…",
     "noEmail": "无邮箱",
@@ -531,6 +545,11 @@
     "notIncluded": "不包含",
     "lifetimeUpsellTitle": "换成买断",
     "lifetimeUpsellBody": "付一次，我们就停止你的续订——Pro 永远归你，不再有任何费用。",
-    "lifetimeUpsellNote": "续订会自动取消，你已经付过的部分不会作废。"
+    "lifetimeUpsellNote": "续订会自动取消，你已经付过的部分不会作废。",
+    "perkScheduleTitle": "按你的时间表发送摘要",
+    "perkScheduleBody": "自选日期和时间，还能加入你翻译过的每个句子。",
+    "featureSummaries": "邮件摘要",
+    "featureSummariesFree": "每 3 天，18:00",
+    "featureSummariesPro": "你的日期和时间"
   }
 }

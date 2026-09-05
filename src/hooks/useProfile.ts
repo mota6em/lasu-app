@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -33,7 +33,7 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
     enabled: !!sUserId,
   });
 
-  const { data: selfUser } = useQuery({
+  useQuery({
     queryKey: ["profile-user", sessionUser?.id],
     queryFn: () => fetchUser(sessionUser!.id),
     enabled: !sUserId && !!sessionUser?.id,
@@ -41,15 +41,7 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
 
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
-  const [emailSummary, setEmailSummary] = useState(true);
 
-  // seed the editable emailSummary toggle once the owning user's data lands
-  useEffect(() => {
-    const source = sUserId ? publicUser : selfUser;
-    if (source) setEmailSummary(source.emailSummary ?? true);
-  }, [sUserId, publicUser, selfUser]);
-
-  // stats and cards
   const { data: overview } = useOverviewCards();
   const { stats } = useUserStats(sUserId || sessionUser?.id || "");
 
@@ -66,7 +58,7 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
       const res = await fetch(`/api/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, image: icon, emailSummary }),
+        body: JSON.stringify({ name, image: icon }),
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || "Update failed");
@@ -126,8 +118,6 @@ const useProfile = ({ sUserId }: UseProfileProps = {}) => {
     setName,
     icon,
     setIcon,
-    emailSummary,
-    setEmailSummary,
     loading: saveMutation.isPending,
     publicUserLoading,
     handleSave,

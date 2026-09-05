@@ -132,8 +132,8 @@
     "loadingWaiting": "Warten"
   },
   "settings": {
-    "title": "Übersetzungseinstellungen",
-    "description": "Wähle die Sprachen, die du lernst, und das Register, das du zurückbekommen möchtest.",
+    "title": "Einstellungen",
+    "description": "Deine Sprachen, das gewünschte Register und wann deine Zusammenfassungen kommen.",
     "register": "Register",
     "registerHint": "Gilt für jede Übersetzung",
     "targets": "Zielsprachen",
@@ -145,7 +145,23 @@
     "saved": "Einstellungen gespeichert",
     "saveFailed": "Einstellungen konnten nicht gespeichert werden. Versuch es nochmal.",
     "keepOne": "Mindestens eine Sprache muss ausgewählt bleiben.",
-    "maxReached": "Vier Sprachen gleichzeitig sind genau richtig."
+    "maxReached": "Vier Sprachen gleichzeitig sind genau richtig.",
+    "emailTitle": "E-Mail-Zusammenfassungen",
+    "emailEnable": "Zusammenfassungen senden",
+    "emailHint": "Ein Überblick über deine Übersetzungen, direkt ins Postfach.",
+    "emailNext": "Die nächste: {when}",
+    "emailDays": "Tage",
+    "emailTime": "Uhrzeit ({zone})",
+    "emailContent": "Was enthalten sein soll",
+    "emailWordsOnly": "Nur Wörter",
+    "emailWordsOnlyHint": "Einzelne Wörter, die du nachgeschlagen hast.",
+    "emailWordsSentences": "Wörter + Sätze",
+    "emailWordsSentencesHint": "Auch jeder Satz, den du übersetzt hast.",
+    "emailFixed": "Im kostenlosen Plan kommen Zusammenfassungen alle {days} Tage um {hour} — nur mit deinen Wörtern.",
+    "emailUpgrade": "Eigenen Zeitplan wählen",
+    "emailNoDays": "Keine Tage gewählt — Zusammenfassungen kommen weiter alle {days} Tage, zur gewählten Uhrzeit.",
+    "emailOff": "Aus",
+    "emailEvery": "Alle {days} Tage · {hour}"
   },
   "overview": {
     "total": "Übersetzungen gesamt",
@@ -327,8 +343,6 @@
     "locked": "Gesperrt",
     "requiredXp": "{xp} XP",
     "displayName": "Anzeigename",
-    "emailSummaries": "E-Mail-Zusammenfassungen",
-    "emailSummariesHint": "Ein Rückblick auf das Gelernte",
     "saveChanges": "Änderungen speichern",
     "saving": "Speichere…",
     "noEmail": "keine E-Mail",
@@ -531,6 +545,11 @@
     "notIncluded": "Nicht enthalten",
     "lifetimeUpsellTitle": "Tausch ihn gegen lebenslang",
     "lifetimeUpsellBody": "Einmal zahlen und wir stoppen deine Verlängerung — Pro bleibt für immer, ohne weitere Kosten.",
-    "lifetimeUpsellNote": "Deine Verlängerung wird automatisch gekündigt. Nichts, was du schon bezahlt hast, geht verloren."
+    "lifetimeUpsellNote": "Deine Verlängerung wird automatisch gekündigt. Nichts, was du schon bezahlt hast, geht verloren.",
+    "perkScheduleTitle": "Zusammenfassungen nach deinem Plan",
+    "perkScheduleBody": "Wähle Tage und Uhrzeit — und nimm jeden übersetzten Satz mit auf.",
+    "featureSummaries": "E-Mail-Zusammenfassungen",
+    "featureSummariesFree": "Alle 3 Tage, 18:00",
+    "featureSummariesPro": "Deine Tage und Uhrzeit"
   }
 }
