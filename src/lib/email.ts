@@ -1,6 +1,7 @@
 import Translation from "@/types/translation";
 import User from "@/types/user";
 import { getLanguage } from "@/lib/languages";
+import { cadenceDays, type DigestSchedule } from "@/lib/summarySchedule";
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
@@ -19,7 +20,8 @@ const LINKS = {
   practice: `${APP_URL}/dashboard/practice`,
   stats: `${APP_URL}/dashboard/stats`,
   community: `${APP_URL}/dashboard/community`,
-  profile: `${APP_URL}/dashboard/profile`,
+  upgrade: `${APP_URL}/dashboard/upgrade`,
+  settings: `${APP_URL}/dashboard?settings=email`,
 };
 
 const C = {
@@ -44,6 +46,7 @@ const C = {
 };
 
 const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2"];
+const DAY_MS = 86_400_000;
 
 export interface CommunityStats {
   streak?: number;
@@ -51,6 +54,15 @@ export interface CommunityStats {
   xp?: number;
   rank?: number;
 }
+
+export type SummaryOptions = {
+  since: Date;
+  schedule: DigestSchedule;
+  isPro?: boolean;
+  community?: CommunityStats;
+  nextAt?: Date | null;
+  now?: Date;
+};
 
 type Entry = {
   text: string;
@@ -91,13 +103,46 @@ function langMeta(lang: string) {
 }
 
 function plural(count: number, word: string) {
-  return `${count} ${word}${count === 1 ? "" : "s"}`;
+  if (count === 1) return `${count} ${word}`;
+  const suffix = /[^aeiou]y$/.test(word) ? `${word.slice(0, -1)}ies` : `${word}s`;
+  return `${count} ${suffix}`;
 }
 
 function seedFrom(value: string) {
   let hash = 0;
   for (let i = 0; i < value.length; i++) hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
   return hash;
+}
+
+function dateLabel(at: Date, timeZone: string) {
+  return new Intl.DateTimeFormat("en-US", { timeZone, month: "short", day: "numeric" }).format(at);
+}
+
+function whenLabel(at: Date, timeZone: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(at);
+}
+
+function spanOf(since: Date, now: Date) {
+  const days = Math.max(1, Math.round((now.getTime() - since.getTime()) / DAY_MS));
+  if (days <= 1) {
+    return { days, of: "your day", when: "today", badge: "Daily summary", pick: "Pick of the day" };
+  }
+  if (days >= 6 && days <= 8) {
+    return { days, of: "your week", when: "this week", badge: "Weekly summary", pick: "Pick of the week" };
+  }
+  return {
+    days,
+    of: `the last ${days} days`,
+    when: `over the last ${days} days`,
+    badge: `Every ${days} days`,
+    pick: "Standout pick",
+  };
 }
 
 function buildEntries(userTranslations: Translation[]) {
@@ -197,7 +242,7 @@ function button(href: string, label: string, variant: "solid" | "ghost" = "solid
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;margin:0 auto;">
     <tr>
       <td align="center" bgcolor="${bg}" class="btn" style="border-radius:12px;border:1px solid ${border};">
-        <a href="${href}" target="_blank" style="display:inline-block;padding:13px 26px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;line-height:20px;color:${fg};text-decoration:none;border-radius:12px;">${label}</a>
+        <a href="${href}" target="_blank" style="display:inline-block;padding:13px 24px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;line-height:20px;color:${fg};text-decoration:none;border-radius:12px;">${label}</a>
       </td>
     </tr>
   </table>`;
@@ -250,12 +295,12 @@ function translationRows(entry: Entry, withExamples: boolean) {
     .join("");
 }
 
-function spotlightCard(entry: Entry, period: string) {
+function spotlightCard(entry: Entry, label: string) {
   return `
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.brandTint};border:1px solid ${C.brandLine};border-radius:18px;margin:0 0 26px 0;" class="dm-spot">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.brandTint};border:1px solid ${C.brandLine};border-radius:18px;margin:0 0 8px 0;" class="dm-spot">
     <tr>
       <td style="padding:20px 22px 22px 22px;">
-        <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${C.brandDeep};">⭐ Word of the ${escapeHtml(period)}</div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${C.brandDeep};">⭐ ${escapeHtml(label)}</div>
         <div style="font-size:30px;line-height:38px;font-weight:800;color:${C.ink};margin:8px 0 4px 0;letter-spacing:-0.01em;" class="dm-text">${escapeHtml(entry.text)}</div>
         <div>${entry.partOfSpeech ? chip(entry.partOfSpeech, "#ffffff", C.brandDeep, C.brandLine) : ""}${difficultyChip(entry.difficulty)}</div>
         ${
@@ -287,7 +332,7 @@ function spotlightCard(entry: Entry, period: string) {
 
 function detailCard(entry: Entry) {
   return `
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.card};border:1px solid ${C.line};border-radius:16px;margin:0 0 12px 0;" class="dm-card">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.card};border:1px solid ${C.line};border-radius:16px;margin:0 0 10px 0;" class="dm-card">
     <tr>
       <td style="padding:16px 18px 14px 18px;">
         <div style="font-size:20px;line-height:26px;font-weight:700;color:${C.ink};letter-spacing:-0.01em;" class="dm-text">${escapeHtml(entry.text)}</div>
@@ -303,6 +348,23 @@ function detailCard(entry: Entry) {
             ? `<div style="font-size:12px;line-height:18px;color:${C.brandDeep};margin-top:10px;padding-top:10px;border-top:1px solid ${C.line};" class="dm-divider">💡 ${escapeHtml(entry.note)}</div>`
             : ""
         }
+      </td>
+    </tr>
+  </table>`;
+}
+
+function sentenceCard(entry: Entry) {
+  return `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.irisTint};border:1px solid ${C.irisLine};border-radius:16px;margin:0 0 10px 0;" class="dm-card">
+    <tr>
+      <td style="padding:15px 18px 14px 18px;">
+        <div style="font-size:16px;line-height:24px;font-weight:650;color:${C.ink};letter-spacing:-0.01em;" class="dm-text">“${escapeHtml(entry.text)}”</div>
+        ${
+          entry.meaning
+            ? `<div style="font-size:12px;line-height:19px;color:${C.muted};margin-top:4px;" class="dm-muted">${escapeHtml(entry.meaning)}</div>`
+            : ""
+        }
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;">${translationRows(entry, false)}</table>
       </td>
     </tr>
   </table>`;
@@ -343,9 +405,24 @@ function statTile(value: string, label: string, accent: string) {
   </td>`;
 }
 
+function languageStrip(counts: Map<string, number>) {
+  if (counts.size < 2) return "";
+
+  const items = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([lang, count]) => {
+      const meta = langMeta(lang);
+      return `<span style="display:inline-block;margin:0 6px 6px 0;padding:5px 10px;background-color:${C.card};border:1px solid ${C.line};border-radius:999px;font-size:12px;line-height:16px;color:${C.inkSoft};" class="dm-card dm-text-soft">${meta.flag}&nbsp;${escapeHtml(meta.name)}&nbsp;<b style="color:${C.ink};" class="dm-text">${count}</b></span>`;
+    })
+    .join("");
+
+  return `<div style="padding:14px 0 0 0;">${items}</div>`;
+}
+
 function sectionHeading(title: string, hint: string) {
   return `
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 12px 0;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 12px 0;">
     <tr>
       <td>
         <div style="font-size:16px;line-height:22px;font-weight:750;color:${C.ink};letter-spacing:-0.01em;" class="dm-text">${escapeHtml(title)}</div>
@@ -355,7 +432,7 @@ function sectionHeading(title: string, hint: string) {
   </table>`;
 }
 
-function recallBlock(entries: Entry[], period: string) {
+function recallBlock(entries: Entry[], of: string) {
   if (entries.length < 3) return "";
 
   const prompts = entries
@@ -382,7 +459,7 @@ function recallBlock(entries: Entry[], period: string) {
       <td style="padding:22px 22px 24px 22px;">
         <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${C.brand};">🧠 60-second recall</div>
         <div style="font-size:19px;line-height:26px;font-weight:750;color:#ffffff;margin:7px 0 3px 0;">Can you still remember these?</div>
-        <div style="font-size:13px;line-height:19px;color:#c9c3ee;">Three from your ${escapeHtml(period)}. Answer them out loud before you scroll.</div>
+        <div style="font-size:13px;line-height:19px;color:#c9c3ee;">Three from ${escapeHtml(of)}. Answer them out loud before you scroll.</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 18px 0;">${prompts}</table>
         ${button(LINKS.practice, "Check yourself in Practice →")}
       </td>
@@ -390,36 +467,44 @@ function recallBlock(entries: Entry[], period: string) {
   </table>`;
 }
 
+function upsellBlock() {
+  return `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.brandTint};border:1px solid ${C.brandLine};border-radius:16px;margin:26px 0 0 0;" class="dm-spot">
+    <tr>
+      <td style="padding:16px 18px;">
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.11em;text-transform:uppercase;color:${C.brandDeep};">👑 On Pro</div>
+        <div style="font-size:15px;line-height:22px;font-weight:700;color:${C.ink};margin-top:5px;" class="dm-text">Pick your own days and hour</div>
+        <div style="font-size:13px;line-height:20px;color:${C.inkSoft};margin-top:4px;" class="dm-text-soft">Free summaries land every 3 days at 18:00 with your words only. Pro lets you choose the days and the time, and adds every sentence you translated.</div>
+        <div style="margin-top:12px;"><a href="${LINKS.upgrade}" style="font-size:13px;font-weight:700;color:${C.brandDeep};text-decoration:underline;">See what Pro changes →</a></div>
+      </td>
+    </tr>
+  </table>`;
+}
+
 function subjectFor(
-  type: "daily" | "weekly",
+  span: ReturnType<typeof spanOf>,
   name: string,
-  wordCount: number,
+  count: number,
   langCount: number,
   spotlight: Entry | null,
   streak: number,
   seed: number,
 ) {
-  const spot = spotlight ? spotlight.text : "";
-  const variants =
-    type === "daily"
-      ? [
-          `${name}, ${plural(wordCount, "new word")} from today ✨`,
-          spot ? `Today you met “${spot}” — and ${wordCount - 1} more` : `${plural(wordCount, "new word")} are waiting for you ✨`,
-          streak > 1
-            ? `🔥 Day ${streak} of your streak — ${plural(wordCount, "word")} to keep`
-            : `Your LaSu day: ${plural(wordCount, "word")} in ${plural(langCount, "language")}`,
-        ]
-      : [
-          `Your week: ${plural(wordCount, "word")} in ${plural(langCount, "language")} 🌍`,
-          spot ? `“${spot}” and ${wordCount - 1} more from your week` : `📚 ${plural(wordCount, "word")} later — your week in review`,
-          `${name}, here's everything you learned this week 📚`,
-        ];
+  if (count === 1) return `${name}, one new word from ${span.of} ✨`;
 
-  const chosen = variants[seed % variants.length];
-  return wordCount > 1 ? chosen : `${name}, one new word from your ${type === "daily" ? "day" : "week"} ✨`;
+  const spot = spotlight ? spotlight.text : "";
+  const variants = [
+    `${name}, ${plural(count, "new word")} from ${span.of} ✨`,
+    spot ? `“${spot}” and ${count - 1} more from ${span.of}` : `${plural(count, "new word")} are waiting for you ✨`,
+    streak > 1
+      ? `🔥 Day ${streak} of your streak — ${plural(count, "word")} to keep`
+      : `${plural(count, "word")} in ${plural(langCount, "language")} 🌍`,
+  ];
+
+  return variants[seed % variants.length];
 }
 
-function preheaderFor(spotlight: Entry | null, words: Entry[], phrases: Entry[]) {
+function preheaderFor(spotlight: Entry | null, words: Entry[], sentences: Entry[]) {
   const parts: string[] = [];
   if (spotlight) {
     const first = Object.values(spotlight.langs)[0];
@@ -427,26 +512,27 @@ function preheaderFor(spotlight: Entry | null, words: Entry[], phrases: Entry[])
   }
   const rest = words.length - (spotlight ? 1 : 0);
   if (rest > 0) parts.push(`${plural(rest, "more word")} inside`);
-  if (phrases.length) parts.push(plural(phrases.length, "phrase"));
+  if (sentences.length) parts.push(plural(sentences.length, "sentence"));
   return parts.join(" · ") || "Your latest words are ready.";
 }
 
 function plainText(
   user: User,
-  entries: Entry[],
+  words: Entry[],
+  sentences: Entry[],
   spotlight: Entry | null,
-  type: "daily" | "weekly",
+  span: ReturnType<typeof spanOf>,
+  nextLine: string,
 ) {
-  const period = type === "daily" ? "day" : "week";
   const lines = [
     `Hi ${firstName(user)},`,
     "",
-    `Here is your LaSu ${type} summary — ${plural(entries.length, "entry")} from the last ${period}.`,
+    `Here is your LaSu summary — ${plural(words.length + sentences.length, "entry")} from ${span.of}.`,
     "",
   ];
 
   if (spotlight) {
-    lines.push(`WORD OF THE ${period.toUpperCase()}: ${spotlight.text}`);
+    lines.push(`${span.pick.toUpperCase()}: ${spotlight.text}`);
     if (spotlight.meaning) lines.push(spotlight.meaning);
     for (const [lang, value] of Object.entries(spotlight.langs)) {
       lines.push(`  ${langMeta(lang).name}: ${value}`);
@@ -456,20 +542,27 @@ function plainText(
     lines.push("");
   }
 
-  lines.push("EVERYTHING ELSE");
-  for (const entry of entries.slice(0, 50)) {
-    const targets = Object.entries(entry.langs)
-      .map(([lang, value]) => `${langMeta(lang).name}: ${value}`)
-      .join(" | ");
-    lines.push(`- ${entry.text} — ${targets}`);
-  }
+  const list = (title: string, entries: Entry[]) => {
+    if (!entries.length) return;
+    lines.push(title);
+    for (const entry of entries) {
+      const targets = Object.entries(entry.langs)
+        .map(([lang, value]) => `${langMeta(lang).name}: ${value}`)
+        .join(" | ");
+      lines.push(`- ${entry.text} — ${targets}`);
+    }
+    lines.push("");
+  };
+
+  list("WORDS", words.filter((entry) => entry !== spotlight));
+  list("SENTENCES", sentences);
 
   lines.push(
-    "",
     `Practice them: ${LINKS.practice}`,
     `See everything: ${LINKS.history}`,
     "",
-    `To stop these summaries, turn them off in your profile settings: ${LINKS.profile}`,
+    nextLine,
+    `Change when these arrive, or turn them off: ${LINKS.settings}`,
   );
 
   return lines.join("\n");
@@ -478,43 +571,54 @@ function plainText(
 export async function sendSummary(
   user: User,
   userTranslations: Translation[],
-  type: "daily" | "weekly",
-  community: CommunityStats = {},
+  options: SummaryOptions,
 ) {
-  const entries = buildEntries(userTranslations).slice(0, 50);
-  if (entries.length === 0) return;
+  const now = options.now ?? new Date();
+  const { schedule, community = {} } = options;
+  const span = spanOf(options.since, now);
 
-  const words = entries.filter((e) => e.kind === "word");
-  const phrases = entries.filter((e) => e.kind === "phrase");
-  const period = type === "daily" ? "day" : "week";
-  const periodLabel = type === "daily" ? "Daily" : "Weekly";
+  const all = buildEntries(userTranslations);
+  const words = all.filter((entry) => entry.kind === "word").slice(0, 50);
+  const sentences = schedule.includeSentences
+    ? all.filter((entry) => entry.kind === "phrase").slice(0, 20)
+    : [];
+
+  if (!words.length && !sentences.length) return false;
+
   const name = firstName(user);
-  const seed = seedFrom(`${user.email}-${new Date().toDateString()}`);
+  const seed = seedFrom(`${user.email}-${now.toDateString()}`);
+  const total = words.length + sentences.length;
 
-  const languages = new Set<string>();
+  const counts = new Map<string, number>();
   let topLevel = "";
-  for (const entry of entries) {
-    Object.keys(entry.langs).forEach((lang) => languages.add(lang));
+  for (const entry of [...words, ...sentences]) {
+    for (const lang of Object.keys(entry.langs)) counts.set(lang, (counts.get(lang) ?? 0) + 1);
     if (CEFR.indexOf(entry.difficulty) > CEFR.indexOf(topLevel)) topLevel = entry.difficulty;
   }
 
-  const spotlightPool = words.length ? words : entries;
-  const spotlight = pickSpotlight(spotlightPool, seed);
-  const rest = entries.filter((e) => e !== spotlight);
+  const spotlight = pickSpotlight(words.length ? words : sentences, seed);
+  const rest = words.filter((entry) => entry !== spotlight);
   const detailed = rest.slice(0, 6);
   const compact = rest.slice(6);
   const streak = community.streak ?? 0;
-  const subjectCount = words.length || entries.length;
 
   const statTiles = [
-    statTile(String(entries.length), entries.length === 1 ? "new entry" : "new entries", C.brandDeep),
-    statTile(String(languages.size), languages.size === 1 ? "language" : "languages", C.iris),
+    statTile(String(words.length), words.length === 1 ? "word" : "words", C.brandDeep),
+    statTile(String(counts.size), counts.size === 1 ? "language" : "languages", C.iris),
     streak > 1
       ? statTile(`${streak}🔥`, "day streak", C.brandDeep)
-      : statTile(topLevel || (phrases.length ? String(phrases.length) : "—"), topLevel ? "top level" : "phrases", C.success),
+      : statTile(
+          sentences.length ? String(sentences.length) : topLevel || "—",
+          sentences.length ? "sentences" : topLevel ? "top level" : "keep going",
+          C.success,
+        ),
   ].join("");
 
-  const headline = `${entries.length === 1 ? "1 new thing" : `${entries.length} new things`} you picked up ${type === "daily" ? "today" : "this week"}`;
+  const headline = `${total === 1 ? "1 new thing" : `${total} new things`} you picked up ${span.when}`;
+  const range = `${dateLabel(options.since, schedule.timeZone)} – ${dateLabel(now, schedule.timeZone)}`;
+  const nextLine = options.nextAt
+    ? `Your next summary: ${whenLabel(options.nextAt, schedule.timeZone)}.`
+    : `These arrive every ${plural(cadenceDays(schedule), "day")}.`;
 
   const htmlContent = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -524,7 +628,7 @@ export async function sendSummary(
 <meta name="x-apple-disable-message-reformatting" />
 <meta name="color-scheme" content="light dark" />
 <meta name="supported-color-schemes" content="light dark" />
-<title>Your LaSu ${periodLabel} Summary</title>
+<title>Your LaSu summary</title>
 <style type="text/css">
   body { margin:0 !important; padding:0 !important; width:100% !important; }
   img { border:0; outline:none; text-decoration:none; }
@@ -534,7 +638,7 @@ export async function sendSummary(
     .wrap { width:100% !important; }
     .pad { padding-left:16px !important; padding-right:16px !important; }
     .stack { display:block !important; width:100% !important; padding:0 0 8px 0 !important; }
-    .hero-title { font-size:26px !important; line-height:33px !important; }
+    .hero-title { font-size:25px !important; line-height:32px !important; }
   }
   @media (prefers-color-scheme: dark) {
     .dm-page { background-color:#101018 !important; }
@@ -549,7 +653,7 @@ export async function sendSummary(
 </style>
 </head>
 <body style="margin:0;padding:0;background-color:${C.page};" class="dm-page">
-<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${escapeHtml(preheaderFor(spotlight, words, phrases))}</div>
+<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${escapeHtml(preheaderFor(spotlight, words, sentences))}</div>
 <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;</div>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.page}" class="dm-page" style="background-color:${C.page};">
@@ -561,7 +665,7 @@ export async function sendSummary(
           <td style="padding:0 0 14px 0;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td align="left" style="font-size:17px;font-weight:800;letter-spacing:-0.01em;color:${C.ink};" class="dm-text">
+                <td align="left">
                   <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
                     <td width="26" bgcolor="${C.night}" style="width:26px;border-radius:8px;">
                       <img src="${APP_URL}/brand/lasu-mark-512.png" width="26" height="26" alt="LaSu" style="display:block;width:26px;height:26px;border:0;border-radius:8px;" />
@@ -569,7 +673,7 @@ export async function sendSummary(
                     <td style="padding-left:8px;font-size:18px;font-weight:800;letter-spacing:-0.02em;color:${C.ink};" class="dm-text">LaSu</td>
                   </tr></table>
                 </td>
-                <td align="right" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${C.muted};" class="dm-muted">${escapeHtml(periodLabel)} summary</td>
+                <td align="right" style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${C.muted};" class="dm-muted">${escapeHtml(span.badge)} &nbsp;·&nbsp; ${escapeHtml(range)}</td>
               </tr>
             </table>
           </td>
@@ -592,39 +696,47 @@ export async function sendSummary(
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>${statTiles}</tr>
             </table>
+            ${languageStrip(counts)}
           </td>
         </tr>
 
         <tr>
-          <td class="pad" style="padding:26px 0 0 0;">
-            ${spotlight ? spotlightCard(spotlight, period) : ""}
-            ${detailed.length ? sectionHeading(type === "daily" ? "The rest of today" : "The rest of your week", "Newest first, with the example sentences you asked for.") : ""}
+          <td class="pad" style="padding:22px 0 0 0;">
+            ${spotlight ? spotlightCard(spotlight, span.pick) : ""}
+            ${detailed.length ? sectionHeading("Your words", "Newest first, with the example sentences you asked for.") : ""}
             ${detailed.map(detailCard).join("")}
             ${
               compact.length
-                ? `${sectionHeading("Quick list", `${plural(compact.length, "more entry")} from the same ${period}.`)}
+                ? `${sectionHeading("Quick list", `${plural(compact.length, "more word")} from ${span.of}.`)}
                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.card};border:1px solid ${C.line};border-radius:16px;overflow:hidden;" class="dm-card">
                      ${compact.map(compactRow).join("")}
                    </table>`
                 : ""
             }
-            ${recallBlock(rest.filter((e) => e.kind === "word"), period)}
+            ${
+              sentences.length
+                ? `${sectionHeading("Your sentences", `${plural(sentences.length, "phrase")} you translated in full.`)}
+                   ${sentences.map(sentenceCard).join("")}`
+                : ""
+            }
+            ${recallBlock(rest, span.of)}
+            ${options.isPro ? "" : upsellBlock()}
           </td>
         </tr>
 
         <tr>
-          <td align="center" style="padding:26px 0 6px 0;">
-            ${button(LINKS.history, "Open your full history")}
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:10px 0 0 0;">
-            ${button(LINKS.stats, "See your progress", "ghost")}
+          <td style="padding:26px 0 0 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td width="50%" align="center" class="stack" style="padding:0 5px;">${button(LINKS.history, "Open your history")}</td>
+                <td width="50%" align="center" class="stack" style="padding:0 5px;">${button(LINKS.stats, "See your progress", "ghost")}</td>
+              </tr>
+            </table>
           </td>
         </tr>
 
         <tr>
-          <td style="padding:28px 0 0 0;">
+          <td style="padding:26px 0 0 0;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;background-color:${C.irisTint};border:1px solid ${C.irisLine};border-radius:16px;" class="dm-card">
               <tr>
                 <td style="padding:16px 18px;">
@@ -639,9 +751,9 @@ export async function sendSummary(
         <tr>
           <td align="center" style="padding:26px 8px 0 8px;">
             <div style="font-size:12px;line-height:19px;color:${C.muted};" class="dm-muted">
-              You're getting this because email summaries are on for your LaSu account.<br />
-              <a href="${LINKS.profile}" style="color:${C.muted};text-decoration:underline;">Change how often</a> &nbsp;·&nbsp;
-              <a href="${LINKS.profile}" style="color:${C.muted};text-decoration:underline;">Turn them off</a> &nbsp;·&nbsp;
+              ${escapeHtml(nextLine)}<br />
+              <a href="${LINKS.settings}" style="color:${C.muted};text-decoration:underline;">Change the schedule</a> &nbsp;·&nbsp;
+              <a href="${LINKS.settings}" style="color:${C.muted};text-decoration:underline;">Turn these off</a> &nbsp;·&nbsp;
               <a href="${LINKS.community}" style="color:${C.muted};text-decoration:underline;">Community</a>
             </div>
             <div style="font-size:11px;line-height:17px;color:#9a98a6;margin-top:12px;">LaSu — learn languages as you browse · <a href="${APP_URL}" style="color:#9a98a6;text-decoration:none;">lasu.online</a></div>
@@ -655,14 +767,16 @@ export async function sendSummary(
 </body>
 </html>`;
 
-  return transporter.sendMail({
+  await transporter.sendMail({
     from: `"LaSu — Learn Languages As You Browse" <${process.env.EMAIL_USER}>`,
     to: user.email,
-    subject: subjectFor(type, name, subjectCount, languages.size, spotlight, streak, seed),
+    subject: subjectFor(span, name, words.length || total, counts.size, spotlight, streak, seed),
     html: htmlContent,
-    text: plainText(user, entries, spotlight, type),
+    text: plainText(user, words, sentences, spotlight, span, nextLine),
     headers: {
-      "List-Unsubscribe": `<${LINKS.profile}>`,
+      "List-Unsubscribe": `<${LINKS.settings}>`,
     },
   });
+
+  return true;
 }

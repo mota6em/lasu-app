@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Infinity as InfinityIcon,
   Loader2,
+  MailCheck,
   Puzzle,
   Rocket,
   Shield,
@@ -29,9 +30,10 @@ import type { PlanId } from "@/lib/plans";
 
 const PERKS = [
   { key: "perkUnlimited", icon: InfinityIcon, accent: "brand" },
-  { key: "perkEverywhere", icon: Puzzle, accent: "iris" },
-  { key: "perkKeep", icon: Shield, accent: "brand" },
-  { key: "perkFuture", icon: Rocket, accent: "iris" },
+  { key: "perkSchedule", icon: MailCheck, accent: "iris" },
+  { key: "perkEverywhere", icon: Puzzle, accent: "brand" },
+  { key: "perkKeep", icon: Shield, accent: "iris" },
+  { key: "perkFuture", icon: Rocket, accent: "brand" },
 ] as const;
 
 const FAQ = ["faqCancel", "faqExtension", "faqSwitch", "faqPayment"] as const;
@@ -40,7 +42,7 @@ function Perks() {
   const t = useTranslations("billing");
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {PERKS.map((perk, index) => {
         const Icon = perk.icon;
         return (
@@ -78,6 +80,11 @@ function Comparison({ freeLimit }: { freeLimit: number }) {
 
   const rows = [
     { label: t("featureDaily"), free: t("featureDailyFree", { limit: freeLimit }), pro: t("featureDailyPro") },
+    {
+      label: t("featureSummaries"),
+      free: t("featureSummariesFree"),
+      pro: t("featureSummariesPro"),
+    },
     { label: t("featureExtension"), free: true, pro: true },
     { label: t("featureHistory"), free: true, pro: true },
     { label: t("featureFuture"), free: false, pro: true },
@@ -94,8 +101,8 @@ function Comparison({ freeLimit }: { freeLimit: number }) {
     <div className="surface-card overflow-hidden">
       <div className="grid grid-cols-[1fr_auto_auto] items-center gap-4 border-b border-border bg-surface-2/60 px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         <span>{t("compareTitle")}</span>
-        <span className="w-20 text-center">{t("compareFree")}</span>
-        <span className="w-20 text-center text-brand-700 dark:text-brand-300">
+        <span className="w-24 text-center">{t("compareFree")}</span>
+        <span className="w-24 text-center text-brand-700 dark:text-brand-300">
           {t("comparePro")}
         </span>
       </div>
@@ -106,10 +113,10 @@ function Comparison({ freeLimit }: { freeLimit: number }) {
             className="grid grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-3.5 text-sm"
           >
             <span>{row.label}</span>
-            <span className="w-20 text-center text-xs tabular-nums text-muted-foreground">
+            <span className="w-24 text-center text-xs tabular-nums text-muted-foreground">
               {typeof row.free === "boolean" ? mark(row.free) : row.free}
             </span>
-            <span className="w-20 text-center text-xs font-semibold tabular-nums">
+            <span className="w-24 text-center text-xs font-semibold tabular-nums">
               {typeof row.pro === "boolean" ? mark(row.pro) : row.pro}
             </span>
           </li>

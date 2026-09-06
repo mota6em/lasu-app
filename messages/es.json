@@ -132,8 +132,8 @@
     "loadingWaiting": "Esperando"
   },
   "settings": {
-    "title": "Preferencias de traducción",
-    "description": "Elige los idiomas que estás aprendiendo y el registro que quieres recibir.",
+    "title": "Preferencias",
+    "description": "Tus idiomas, el registro que recibes y cuándo llegan tus resúmenes.",
     "register": "Registro",
     "registerHint": "Se aplica a todas las traducciones",
     "targets": "Idiomas de destino",
@@ -145,7 +145,23 @@
     "saved": "Preferencias guardadas",
     "saveFailed": "No se pudieron guardar tus preferencias. Inténtalo de nuevo.",
     "keepOne": "Mantén al menos un idioma seleccionado.",
-    "maxReached": "Cuatro idiomas a la vez es el punto justo."
+    "maxReached": "Cuatro idiomas a la vez es el punto justo.",
+    "emailTitle": "Resúmenes por correo",
+    "emailEnable": "Enviarme resúmenes",
+    "emailHint": "Un resumen de lo que tradujiste, directo a tu bandeja.",
+    "emailNext": "El próximo: {when}",
+    "emailDays": "Días",
+    "emailTime": "Hora ({zone})",
+    "emailContent": "Qué incluir",
+    "emailWordsOnly": "Solo palabras",
+    "emailWordsOnlyHint": "Las palabras sueltas que buscaste.",
+    "emailWordsSentences": "Palabras + frases",
+    "emailWordsSentencesHint": "También cada frase que tradujiste.",
+    "emailFixed": "En el plan gratuito los resúmenes llegan cada {days} días a las {hour}, solo con tus palabras.",
+    "emailUpgrade": "Elige tu propio horario",
+    "emailNoDays": "Sin días elegidos: los resúmenes siguen llegando cada {days} días, a la hora que elegiste.",
+    "emailOff": "Desactivado",
+    "emailEvery": "Cada {days} días · {hour}"
   },
   "overview": {
     "total": "Traducciones totales",
@@ -327,8 +343,6 @@
     "locked": "Bloqueados",
     "requiredXp": "{xp} XP",
     "displayName": "Nombre visible",
-    "emailSummaries": "Resúmenes por correo",
-    "emailSummariesHint": "Un repaso de lo que has aprendido",
     "saveChanges": "Guardar cambios",
     "saving": "Guardando…",
     "noEmail": "sin correo",
@@ -531,6 +545,11 @@
     "notIncluded": "No incluido",
     "lifetimeUpsellTitle": "Cámbialo por el acceso de por vida",
     "lifetimeUpsellBody": "Paga una vez y cancelamos tu renovación: conservas Pro para siempre, sin nada más que pagar.",
-    "lifetimeUpsellNote": "Tu renovación se cancela automáticamente. No pierdes nada de lo que ya has pagado."
+    "lifetimeUpsellNote": "Tu renovación se cancela automáticamente. No pierdes nada de lo que ya has pagado.",
+    "perkScheduleTitle": "Resúmenes a tu ritmo",
+    "perkScheduleBody": "Elige los días y la hora, y añade cada frase que tradujiste.",
+    "featureSummaries": "Resúmenes por correo",
+    "featureSummariesFree": "Cada 3 días, 18:00",
+    "featureSummariesPro": "Tus días y tu hora"
   }
 }

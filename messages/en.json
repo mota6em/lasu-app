@@ -132,8 +132,8 @@
     "loadingWaiting": "Waiting"
   },
   "settings": {
-    "title": "Translation preferences",
-    "description": "Pick the languages you are learning and the register you want back.",
+    "title": "Preferences",
+    "description": "Your languages, the register you get back, and when your summaries arrive.",
     "register": "Register",
     "registerHint": "Applies to every translation",
     "targets": "Target languages",
@@ -145,7 +145,23 @@
     "saved": "Preferences saved",
     "saveFailed": "Could not save your preferences. Try again.",
     "keepOne": "Keep at least one language selected.",
-    "maxReached": "Four languages at a time is the sweet spot."
+    "maxReached": "Four languages at a time is the sweet spot.",
+    "emailTitle": "Email summaries",
+    "emailEnable": "Send me summaries",
+    "emailHint": "A digest of what you translated, straight to your inbox.",
+    "emailNext": "Next one: {when}",
+    "emailDays": "Days",
+    "emailTime": "Time ({zone})",
+    "emailContent": "What to include",
+    "emailWordsOnly": "Words only",
+    "emailWordsOnlyHint": "Single words you looked up.",
+    "emailWordsSentences": "Words + sentences",
+    "emailWordsSentencesHint": "Every phrase you translated too.",
+    "emailFixed": "On the free plan summaries arrive every {days} days at {hour}, with your words only.",
+    "emailUpgrade": "Pick your own schedule",
+    "emailNoDays": "No days picked — summaries keep arriving every {days} days, at the time you chose.",
+    "emailOff": "Off",
+    "emailEvery": "Every {days} days · {hour}"
   },
   "overview": {
     "total": "Total translations",
@@ -327,8 +343,6 @@
     "locked": "Locked",
     "requiredXp": "{xp} XP",
     "displayName": "Display name",
-    "emailSummaries": "Email summaries",
-    "emailSummariesHint": "A recap of what you learned",
     "saveChanges": "Save changes",
     "saving": "Saving…",
     "noEmail": "no email",
@@ -531,6 +545,11 @@
     "notIncluded": "Not included",
     "lifetimeUpsellTitle": "Trade it for lifetime",
     "lifetimeUpsellBody": "Pay once and we stop your renewal — you keep Pro for good, with nothing left to pay.",
-    "lifetimeUpsellNote": "Your renewal is cancelled automatically. Nothing you have already paid for is lost."
+    "lifetimeUpsellNote": "Your renewal is cancelled automatically. Nothing you have already paid for is lost.",
+    "perkScheduleTitle": "Summaries on your schedule",
+    "perkScheduleBody": "Pick the days and the hour, and add every sentence you translated.",
+    "featureSummaries": "Email summaries",
+    "featureSummariesFree": "Every 3 days, 18:00",
+    "featureSummariesPro": "Your days and time"
   }
 }

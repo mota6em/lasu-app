@@ -132,8 +132,8 @@
     "loadingWaiting": "इंतज़ार किया जा रहा है"
   },
   "settings": {
-    "title": "अनुवाद प्राथमिकताएँ",
-    "description": "जो भाषाएँ आप सीख रहे हैं और जो शैली चाहिए, वह चुनें।",
+    "title": "प्राथमिकताएँ",
+    "description": "आपकी भाषाएँ, आपको मिलने वाली शैली, और आपके सारांश कब आएँ।",
     "register": "शैली",
     "registerHint": "हर अनुवाद पर लागू",
     "targets": "लक्ष्य भाषाएँ",
@@ -145,7 +145,23 @@
     "saved": "प्राथमिकताएँ सहेज ली गईं",
     "saveFailed": "आपकी प्राथमिकताएँ सहेजी नहीं जा सकीं। दोबारा कोशिश करें।",
     "keepOne": "कम से कम एक भाषा चुनी रहने दें।",
-    "maxReached": "एक बार में चार भाषाएँ सबसे उपयुक्त हैं।"
+    "maxReached": "एक बार में चार भाषाएँ सबसे उपयुक्त हैं।",
+    "emailTitle": "ईमेल सारांश",
+    "emailEnable": "मुझे सारांश भेजें",
+    "emailHint": "आपने जो अनुवाद किया, उसका सार सीधे आपके इनबॉक्स में।",
+    "emailNext": "अगला: {when}",
+    "emailDays": "दिन",
+    "emailTime": "समय ({zone})",
+    "emailContent": "क्या शामिल हो",
+    "emailWordsOnly": "केवल शब्द",
+    "emailWordsOnlyHint": "वे शब्द जो आपने देखे।",
+    "emailWordsSentences": "शब्द + वाक्य",
+    "emailWordsSentencesHint": "आपके अनुवाद किए हर वाक्य के साथ।",
+    "emailFixed": "मुफ़्त प्लान में सारांश हर {days} दिन में {hour} बजे आते हैं, केवल शब्दों के साथ।",
+    "emailUpgrade": "अपना समय खुद चुनें",
+    "emailNoDays": "कोई दिन नहीं चुना — सारांश आपके चुने समय पर, हर {days} दिन में आते रहेंगे।",
+    "emailOff": "बंद",
+    "emailEvery": "हर {days} दिन · {hour}"
   },
   "overview": {
     "total": "कुल अनुवाद",
@@ -327,8 +343,6 @@
     "locked": "लॉक",
     "requiredXp": "{xp} XP",
     "displayName": "प्रदर्शित नाम",
-    "emailSummaries": "ईमेल सारांश",
-    "emailSummariesHint": "आपने जो सीखा उसका सार",
     "saveChanges": "बदलाव सहेजें",
     "saving": "सहेजा जा रहा है…",
     "noEmail": "कोई ईमेल नहीं",
@@ -531,6 +545,11 @@
     "notIncluded": "शामिल नहीं",
     "lifetimeUpsellTitle": "इसे आजीवन में बदलें",
     "lifetimeUpsellBody": "एक बार भुगतान करें और हम आपका नवीनीकरण रोक देंगे — Pro हमेशा के लिए आपका, आगे कुछ भी देना नहीं।",
-    "lifetimeUpsellNote": "आपका नवीनीकरण अपने आप रद्द हो जाता है। जो आपने पहले चुकाया है वह नहीं जाता।"
+    "lifetimeUpsellNote": "आपका नवीनीकरण अपने आप रद्द हो जाता है। जो आपने पहले चुकाया है वह नहीं जाता।",
+    "perkScheduleTitle": "आपके समय पर सारांश",
+    "perkScheduleBody": "दिन और समय चुनें, और अनुवाद किया हर वाक्य भी जोड़ें।",
+    "featureSummaries": "ईमेल सारांश",
+    "featureSummariesFree": "हर 3 दिन, 18:00",
+    "featureSummariesPro": "आपके दिन और समय"
   }
 }

@@ -132,8 +132,8 @@
     "loadingWaiting": "Bekleniyor"
   },
   "settings": {
-    "title": "Çeviri tercihleri",
-    "description": "Öğrendiğin dilleri ve almak istediğin üslubu seç.",
+    "title": "Tercihler",
+    "description": "Dillerin, aldığın üslup ve özetlerinin ne zaman geleceği.",
     "register": "Üslup",
     "registerHint": "Her çeviriye uygulanır",
     "targets": "Hedef diller",
@@ -145,7 +145,23 @@
     "saved": "Tercihler kaydedildi",
     "saveFailed": "Tercihlerin kaydedilemedi. Tekrar dene.",
     "keepOne": "En az bir dil seçili kalsın.",
-    "maxReached": "Aynı anda dört dil tam kıvamında."
+    "maxReached": "Aynı anda dört dil tam kıvamında.",
+    "emailTitle": "E-posta özetleri",
+    "emailEnable": "Bana özet gönder",
+    "emailHint": "Çevirdiklerinin özeti, doğrudan gelen kutuna.",
+    "emailNext": "Sıradaki: {when}",
+    "emailDays": "Günler",
+    "emailTime": "Saat ({zone})",
+    "emailContent": "Neler girsin",
+    "emailWordsOnly": "Sadece kelimeler",
+    "emailWordsOnlyHint": "Aradığın tek tek kelimeler.",
+    "emailWordsSentences": "Kelimeler + cümleler",
+    "emailWordsSentencesHint": "Çevirdiğin her cümle de dahil.",
+    "emailFixed": "Ücretsiz planda özetler {days} günde bir {hour} saatinde, yalnızca kelimelerinle gelir.",
+    "emailUpgrade": "Kendi programını seç",
+    "emailNoDays": "Gün seçilmedi — özetler seçtiğin saatte, {days} günde bir gelmeye devam eder.",
+    "emailOff": "Kapalı",
+    "emailEvery": "{days} günde bir · {hour}"
   },
   "overview": {
     "total": "Toplam çeviri",
@@ -327,8 +343,6 @@
     "locked": "Kilitli",
     "requiredXp": "{xp} XP",
     "displayName": "Görünen ad",
-    "emailSummaries": "E-posta özetleri",
-    "emailSummariesHint": "Öğrendiklerinin kısa özeti",
     "saveChanges": "Değişiklikleri kaydet",
     "saving": "Kaydediliyor…",
     "noEmail": "e-posta yok",
@@ -531,6 +545,11 @@
     "notIncluded": "Dahil değil",
     "lifetimeUpsellTitle": "Ömür boyu erişime geç",
     "lifetimeUpsellBody": "Bir kez öde, yenilemeni biz durduralım — Pro sonsuza dek sende kalır, ödenecek başka bir şey olmaz.",
-    "lifetimeUpsellNote": "Yenilemen otomatik olarak iptal edilir. Zaten ödediğin hiçbir şey kaybolmaz."
+    "lifetimeUpsellNote": "Yenilemen otomatik olarak iptal edilir. Zaten ödediğin hiçbir şey kaybolmaz.",
+    "perkScheduleTitle": "Özetler senin programına göre",
+    "perkScheduleBody": "Günleri ve saati seç, çevirdiğin her cümleyi de ekle.",
+    "featureSummaries": "E-posta özetleri",
+    "featureSummariesFree": "3 günde bir, 18:00",
+    "featureSummariesPro": "Kendi gün ve saatin"
   }
 }

@@ -132,8 +132,8 @@
     "loadingWaiting": "待機中"
   },
   "settings": {
-    "title": "翻訳の設定",
-    "description": "学習中の言語と、返してほしい文体を選んでください。",
+    "title": "設定",
+    "description": "学習言語、返ってくる文体、そしてサマリーが届くタイミング。",
     "register": "文体",
     "registerHint": "すべての翻訳に適用されます",
     "targets": "翻訳先の言語",
@@ -145,7 +145,23 @@
     "saved": "設定を保存しました",
     "saveFailed": "設定を保存できませんでした。もう一度お試しください。",
     "keepOne": "少なくとも 1 つの言語を残してください。",
-    "maxReached": "同時に 4 言語がちょうどよいバランスです。"
+    "maxReached": "同時に 4 言語がちょうどよいバランスです。",
+    "emailTitle": "メールサマリー",
+    "emailEnable": "サマリーを送る",
+    "emailHint": "翻訳した内容のまとめを、受信トレイに直接。",
+    "emailNext": "次回: {when}",
+    "emailDays": "曜日",
+    "emailTime": "時刻 ({zone})",
+    "emailContent": "含める内容",
+    "emailWordsOnly": "単語のみ",
+    "emailWordsOnlyHint": "調べた単語だけ。",
+    "emailWordsSentences": "単語 + 文",
+    "emailWordsSentencesHint": "翻訳した文もすべて。",
+    "emailFixed": "無料プランではサマリーは{days}日ごとの{hour}に、単語のみで届きます。",
+    "emailUpgrade": "自分でスケジュールを決める",
+    "emailNoDays": "曜日が未選択です — サマリーは選んだ時刻に、{days}日ごとに届き続けます。",
+    "emailOff": "オフ",
+    "emailEvery": "{days}日ごと · {hour}"
   },
   "overview": {
     "total": "翻訳の総数",
@@ -327,8 +343,6 @@
     "locked": "未解放",
     "requiredXp": "{xp} XP",
     "displayName": "表示名",
-    "emailSummaries": "メールのまとめ",
-    "emailSummariesHint": "学んだ内容の振り返り",
     "saveChanges": "変更を保存",
     "saving": "保存中…",
     "noEmail": "メールなし",
@@ -531,6 +545,11 @@
     "notIncluded": "含まない",
     "lifetimeUpsellTitle": "買い切りに乗り換える",
     "lifetimeUpsellBody": "一度支払えば更新を停止します。Pro はずっとあなたのもので、これ以上の支払いはありません。",
-    "lifetimeUpsellNote": "更新は自動的に解約されます。すでにお支払いいただいた分が失われることはありません。"
+    "lifetimeUpsellNote": "更新は自動的に解約されます。すでにお支払いいただいた分が失われることはありません。",
+    "perkScheduleTitle": "自分のペースで届くサマリー",
+    "perkScheduleBody": "曜日と時刻を選び、翻訳した文もすべて追加できます。",
+    "featureSummaries": "メールサマリー",
+    "featureSummariesFree": "3日ごと、18:00",
+    "featureSummariesPro": "好きな曜日と時刻"
   }
 }

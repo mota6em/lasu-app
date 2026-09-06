@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { Camera, Check, Loader2, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -29,8 +28,6 @@ export default function Hero() {
     setName,
     icon,
     setIcon,
-    emailSummary,
-    setEmailSummary,
     loading,
     handleSave,
   } = useProfile();
@@ -171,29 +168,11 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-              {t("displayName")}
-            </label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-
-          <label className="flex cursor-pointer items-center justify-between gap-3 self-end rounded-lg border border-border bg-surface-2 px-3 py-2">
-            <span>
-              <span className="block text-sm font-medium">
-                {t("emailSummaries")}
-              </span>
-              <span className="block text-[11px] text-muted-foreground">
-                {t("emailSummariesHint")}
-              </span>
-            </span>
-            <Switch
-              checked={emailSummary}
-              onCheckedChange={setEmailSummary}
-              className="data-[state=checked]:bg-primary"
-            />
+        <div className="mt-6 border-t border-border pt-5">
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            {t("displayName")}
           </label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} />
         </div>
 
         <Button onClick={handleSave} disabled={loading} className="mt-4 gap-2">
